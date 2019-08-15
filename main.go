@@ -21,15 +21,18 @@ func main() {
 	var (
 		concurrency uint64
 		totalNumber uint64
+		requestUrl  string
 	)
 
 	flag.Uint64Var(&concurrency, "c", 1, "并发数")
 	flag.Uint64Var(&totalNumber, "n", 1, "请求总数")
+	flag.StringVar(&requestUrl, "u", "", "请求地址")
 
 	// 解析参数
 	flag.Parse()
+	if concurrency == 0 || totalNumber == 0 || requestUrl == "" {
+		fmt.Printf("示例: go run main.go -c 1 -n 1 -u https://www.baidu.com/ \n")
 
-	if concurrency == 0 || totalNumber == 0 {
 		flag.Usage()
 
 		return
@@ -37,12 +40,12 @@ func main() {
 
 	fmt.Printf("开始启动  并发数:%d 请求数:%d\n", concurrency, totalNumber)
 
-	dispose(concurrency, totalNumber)
+	dispose(concurrency, totalNumber,requestUrl)
 
 	return
 }
 
-func dispose(concurrency, totalNumber uint64) {
+func dispose(concurrency, totalNumber uint64,requestUrl string) {
 
 	// 设置接收数据缓存
 	ch := make(chan *model.RequestResults, 1000)
@@ -63,7 +66,6 @@ func dispose(concurrency, totalNumber uint64) {
 	close(ch)
 
 	time.Sleep(1 * time.Second)
-
 
 	fmt.Println("完成")
 
