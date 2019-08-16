@@ -8,15 +8,23 @@
 package model
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 )
 
 const (
-	HttpOk         = 200
-	RequestTimeout = 506
-	RequestErr     = 509
+	HttpOk         = 200 // 请求成功
+	RequestTimeout = 506 // 请求超时
+	RequestErr     = 509 // 请求错误
+	ParseError     = 510 // 解析错误
+)
+
+var (
+	verifyMap = map[string]VerifyHttp{
+		"http.statusCode": HttpStatusCode,
+		"http.json":       HttpJson,
+	}
 )
 
 // 验证器
@@ -31,7 +39,9 @@ type VerifyHttp func(request *Request, response *http.Response) (code int, isSuc
 // 请求结果
 type Request struct {
 	Url        string     // Url
+	Form       string     // http/webSocket/tcp
 	Method     string     // 方法 get/post/put
+	Verify     string     // 验证的方法
 	VerifyHttp VerifyHttp // 验证的方法
 	Timeout    uint32     // 请求超时时间 秒
 	Debug      bool       // 是否开启Debug模式
@@ -44,7 +54,18 @@ func (r *Request) GetDebug() bool {
 
 func (r *Request) IsParameterLegal() (err error) {
 
-	r.VerifyHttp = HttpCode
+	r.Form = "http"
+	// statusCode json
+	r.Verify = "json"
+
+	key := fmt.Sprintf("%s.%s", r.Form, r.Verify)
+	value, ok := verifyMap[key]
+	if !ok {
+
+		return errors.New("验证器不存在:" + key)
+	}
+
+	r.VerifyHttp = value
 
 	return
 }
@@ -61,22 +82,4 @@ func (r *RequestResults) SetId(chanId uint64, number uint64) {
 	id := fmt.Sprintf("%d_%d", chanId, number)
 
 	r.Id = id
-}
-
-/***************************  校验信息  ********************************/
-
-func HttpCode(request *Request, response *http.Response) (code int, isSucceed bool) {
-
-	defer response.Body.Close()
-	code = response.StatusCode
-	if code == http.StatusOK {
-		isSucceed = true
-	}
-
-	if request.GetDebug() {
-		body, err := ioutil.ReadAll(response.Body)
-		fmt.Printf("请求结果 httpCode:%d body:%s err:%v", response.StatusCode, string(body), err)
-	}
-
-	return
 }
