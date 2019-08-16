@@ -12,3 +12,5 @@
 *.out
 .idea/*
 main
+main_linux
+main_win.exe
