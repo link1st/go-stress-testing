@@ -14,6 +14,7 @@ import (
 )
 
 // 接收结果
+// 统计的时间都是纳秒，显示的时间 都是毫秒
 // concurrent 并发数
 func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 
@@ -30,7 +31,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 	statTime := uint64(time.Now().UnixNano())
 
 	// 错误码/错误个数
-	var errCode = make(map[uint32]int)
+	var errCode = make(map[int]int)
 
 	// 每个秒时间输出一次 计算结果
 	ticker := time.NewTicker(1 * time.Second)
@@ -44,7 +45,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 	}()
 
 	for data := range ch {
-		fmt.Println("处理一条数据", data.Time, data.IsSucceed, data.ErrCode)
+		// fmt.Println("处理一条数据", data.Id, data.Time, data.IsSucceed, data.ErrCode)
 		processingTime = processingTime + data.Time
 
 		if maxTime <= data.Time {
@@ -76,8 +77,8 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 	requestTime = endTime - statTime
 
 	fmt.Println("*************************  结果 stat  ****************************")
-	fmt.Println("处理协程数量:", concurrent, "程序处理总时长:", fmt.Sprintf("%.3f", float64(processingTime/concurrent)/(1000*1000*1000)), "秒")
-	fmt.Println("请求总数:", successNum+failureNum, "总请求时间:", fmt.Sprintf("%.3f", float64(requestTime)/(1000*1000*1000)),
+	fmt.Println("处理协程数量:", concurrent, "程序处理总时长:", fmt.Sprintf("%.3f", float64(processingTime/concurrent)/1e9), "秒")
+	fmt.Println("请求总数:", successNum+failureNum, "总请求时间:", fmt.Sprintf("%.3f", float64(requestTime)/1e9),
 		"秒", "successNum:", successNum, "failureNum:", failureNum)
 
 	calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, errCode)
@@ -86,7 +87,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 }
 
 // 计算数据
-func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum uint64, errCode map[uint32]int) {
+func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum uint64, errCode map[int]int) {
 	if processingTime == 0 {
 		processingTime = 1
 	}
