@@ -21,40 +21,42 @@ func main() {
 	var (
 		concurrency uint64
 		totalNumber uint64
-		debug       string
+		debugStr    string
 		requestUrl  string
 	)
 
 	flag.Uint64Var(&concurrency, "c", 1, "并发数")
 	flag.Uint64Var(&totalNumber, "n", 1, "请求总数")
-	flag.StringVar(&debug, "d", "false", "调试模式")
+	flag.StringVar(&debugStr, "d", "false", "调试模式")
 	flag.StringVar(&requestUrl, "u", "", "请求地址")
 
 	// 解析参数
 	flag.Parse()
 	if concurrency == 0 || totalNumber == 0 || requestUrl == "" {
 		fmt.Printf("示例: go run main.go -c 1 -n 1 -u https://www.baidu.com/ \n")
-		fmt.Printf("-c %d -n %d -d %v -u %s \n", concurrency, totalNumber, debug, requestUrl)
+		fmt.Printf("-c %d -n %d -d %v -u %s \n", concurrency, totalNumber, debugStr, requestUrl)
 
 		flag.Usage()
 
 		return
 	}
 
-	var request = &model.Request{
-		Url:        requestUrl,
-		Method:     "GET",
-		VerifyHttp: nil,
-		Debug:      debug == "true",
-	}
-	fmt.Printf("开始启动  并发数:%d 请求数:%d 请求参数: \n %#v \n", concurrency, totalNumber, request)
-
-	err := request.IsParameterLegal()
+	debug := debugStr == "true"
+	request, err := model.NewRequest(requestUrl, "", "", 0, debug)
 	if err != nil {
 		fmt.Printf("参数不合法 %v \n", err)
 
 		return
 	}
+
+	fmt.Printf("开始启动  并发数:%d 请求数:%d 请求参数: \n %#v \n", concurrency, totalNumber, request)
+
+	// err = request.IsParameterLegal()
+	// if err != nil {
+	// 	fmt.Printf("参数不合法 %v \n", err)
+	//
+	// 	return
+	// }
 
 	dispose(concurrency, totalNumber, request)
 
@@ -113,7 +115,8 @@ func goLink(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, 
 			errCode   = model.HttpOk
 		)
 
-		resp, err := server.HttpGetResp(request.Url)
+		resp, err := server.HttpRequest(request.Method, request.Url, request.Body, request.Headers, request.Timeout)
+		// resp, err := server.HttpGetResp(request.Url)
 		if err != nil {
 			errCode = model.RequestErr // 请求错误
 		} else {

@@ -10,7 +10,10 @@ package model
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
+	"time"
 )
 
 const (
@@ -18,6 +21,9 @@ const (
 	RequestTimeout = 506 // 请求超时
 	RequestErr     = 509 // 请求错误
 	ParseError     = 510 // 解析错误
+
+	FormTypeHttp      = "http"
+	FormTypeWebSocket = "webSocket"
 )
 
 var (
@@ -38,13 +44,61 @@ type VerifyHttp func(request *Request, response *http.Response) (code int, isSuc
 
 // 请求结果
 type Request struct {
-	Url        string     // Url
-	Form       string     // http/webSocket/tcp
-	Method     string     // 方法 get/post/put
-	Verify     string     // 验证的方法
-	VerifyHttp VerifyHttp // 验证的方法
-	Timeout    uint32     // 请求超时时间 秒
-	Debug      bool       // 是否开启Debug模式
+	Url        string            // Url
+	Form       string            // http/webSocket/tcp
+	Method     string            // 方法 get/post/put
+	Headers    map[string]string // Headers
+	Body       io.Reader         // body
+	Verify     string            // 验证的方法
+	VerifyHttp VerifyHttp        // 验证的方法
+	Timeout    time.Duration     // 请求超时时间
+	Debug      bool              // 是否开启Debug模式
+}
+
+func NewRequest(url string, method string, verify string, timeout time.Duration, debug bool) (request *Request, err error) {
+	form := ""
+	if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
+		form = FormTypeHttp
+	} else if strings.HasPrefix(url, "ws://") || strings.HasPrefix(url, "wss://") {
+		form = FormTypeWebSocket
+	}
+
+	if form == "" {
+		err = errors.New(fmt.Sprintf("url:%s 不合法,必须是完整http、webSocket连接", url))
+
+		return
+	}
+
+	// verify
+	if verify == "" {
+		verify = "statusCode"
+	}
+
+	key := fmt.Sprintf("%s.%s", form, verify)
+	verifyHttp, ok := verifyMap[key]
+	if !ok {
+		err = errors.New("验证器不存在:" + key)
+
+		return
+	}
+
+	if timeout == 0 {
+		timeout = 3 * time.Second
+	}
+
+	request = &Request{
+		Url:        url,
+		Form:       form,
+		Method:     strings.ToUpper(method),
+		Headers:    make(map[string]string),
+		Verify:     verify,
+		VerifyHttp: verifyHttp,
+		Timeout:    timeout,
+		Debug:      debug,
+	}
+
+	return
+
 }
 
 func (r *Request) GetDebug() bool {
