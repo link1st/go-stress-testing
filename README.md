@@ -46,6 +46,14 @@ go 实现的压测工具
 
 ## 注意事项
 
+## 工作
+- 通过文件的方式设置 body Headers
+- 解析curl的参数
+
+```
+curl 'https://api.h5game.g.mi.com/task/getTaskList' -H 'Accept: application/json, text/plain, */*' -H 'Referer: https://static.g.mi.com/game/platform/linkGame.html' -H 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded' --data 'fromApp=&serviceToken=_SW01_qyWxdVoBW2Qlv3G1yk9aObtnXVj4fnZ9cC9TceXkUaTnH3%2FCzuucnCi2M0gfaVy2&channel=1' --compressed
+
+```
 
 ## 完善的
 
