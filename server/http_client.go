@@ -9,6 +9,7 @@ package server
 
 import (
 	"crypto/tls"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -46,6 +47,7 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 	resp, err = client.Do(req)
 	if err != nil {
+		fmt.Println("请求失败:", err)
 
 		return
 	}
