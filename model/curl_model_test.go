@@ -21,13 +21,12 @@ func TestCurl(t *testing.T) {
 		return
 	}
 
-	fmt.Printf("curl:%s \n",c.String())
-	fmt.Printf("url:%s \n",c.GetUrl())
-	fmt.Printf("method:%s \n",c.GetMethod())
-	fmt.Printf("body:%v \n",c.GetBody())
-	fmt.Printf("body string:%v \n",c.GetBodyStr())
+	fmt.Printf("curl:%s \n", c.String())
+	fmt.Printf("url:%s \n", c.GetUrl())
+	fmt.Printf("method:%s \n", c.GetMethod())
+	fmt.Printf("body:%v \n", c.GetBody())
+	fmt.Printf("body string:%v \n", c.GetBodyStr())
 
-	fmt.Printf("headers:%s \n",c.GetHeadersStr())
-
+	fmt.Printf("headers:%s \n", c.GetHeadersStr())
 
 }
