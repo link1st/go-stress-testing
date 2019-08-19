@@ -8,11 +8,30 @@
 package model
 
 import (
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
+
+func getZipData(response *http.Response) (body []byte, err error) {
+	var reader io.ReadCloser
+	switch response.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err = gzip.NewReader(response.Body)
+		defer func() {
+			reader.Close()
+		}()
+	default:
+		reader = response.Body
+	}
+
+	body, err = ioutil.ReadAll(reader)
+
+	return
+}
 
 // 通过Http状态码判断是否请求成功
 func HttpStatusCode(request *Request, response *http.Response) (code int, isSucceed bool) {
@@ -25,8 +44,9 @@ func HttpStatusCode(request *Request, response *http.Response) (code int, isSucc
 
 	// 开启调试模式
 	if request.GetDebug() {
-		body, err := ioutil.ReadAll(response.Body)
+		body, err := getZipData(response)
 		fmt.Printf("请求结果 httpCode:%d body:%s err:%v \n", response.StatusCode, string(body), err)
+
 	}
 
 	return
@@ -49,7 +69,7 @@ func HttpJson(request *Request, response *http.Response) (code int, isSucceed bo
 	code = response.StatusCode
 	if code == http.StatusOK {
 
-		body, err := ioutil.ReadAll(response.Body)
+		body, err := getZipData(response)
 		if err != nil {
 			code = ParseError
 			fmt.Printf("请求结果 ioutil.ReadAll err:%v", err)

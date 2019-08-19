@@ -44,21 +44,15 @@ func main() {
 	}
 
 	debug := debugStr == "true"
-	request, err := model.NewRequest(requestUrl, "", 0, debug,path)
+	request, err := model.NewRequest(requestUrl, "", 0, debug, path)
 	if err != nil {
 		fmt.Printf("参数不合法 %v \n", err)
 
 		return
 	}
 
-	fmt.Printf("开始启动  并发数:%d 请求数:%d 请求参数: \n %#v \n", concurrency, totalNumber, request)
-
-	// err = request.IsParameterLegal()
-	// if err != nil {
-	// 	fmt.Printf("参数不合法 %v \n", err)
-	//
-	// 	return
-	// }
+	fmt.Printf("\n 开始启动  并发数:%d 请求数:%d 请求参数: \n", concurrency, totalNumber)
+	request.Print()
 
 	dispose(concurrency, totalNumber, request)
 
@@ -85,9 +79,7 @@ func dispose(concurrency, totalNumber uint64, request *model.Request) {
 
 	close(ch)
 
-	time.Sleep(1 * time.Second)
-
-	fmt.Println("完成")
+	time.Sleep(50 * time.Microsecond)
 
 }
 
@@ -101,13 +93,14 @@ func forHowLong(startTime time.Time) (diff uint64) {
 	return
 }
 
+// http go link
 func goLink(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request) {
 
 	defer func() {
 		wg.Done()
 	}()
 
-	fmt.Printf("启动协程 编号:%05d \n", chanId)
+	// fmt.Printf("启动协程 编号:%05d \n", chanId)
 
 	for i := uint64(0); i < totalNumber; i++ {
 

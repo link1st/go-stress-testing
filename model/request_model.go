@@ -53,6 +53,9 @@ type Request struct {
 	VerifyHttp VerifyHttp        // 验证的方法
 	Timeout    time.Duration     // 请求超时时间
 	Debug      bool              // 是否开启Debug模式
+
+	// 连接以后初始化事件
+	// 循环事件 切片 时间 动作
 }
 
 func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string) (request *Request, err error) {
@@ -123,6 +126,20 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 
 	return
 
+}
+
+// 打印
+func (r *Request) Print() {
+	if r == nil {
+
+		return
+	}
+
+	result := fmt.Sprintf("request:\n url:%s \n form:%s \n method:%s \n headers:%v \n", r.Url, r.Form, r.Method, r.Headers)
+	result = fmt.Sprintf("%s verify:%s \n timeout:%s \n debu:%v \n", result, r.Verify, r.Timeout, r.Debug)
+	fmt.Println(result)
+
+	return
 }
 
 func (r *Request) GetDebug() bool {
