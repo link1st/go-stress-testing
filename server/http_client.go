@@ -9,24 +9,10 @@ package server
 
 import (
 	"crypto/tls"
-	"fmt"
 	"io"
 	"net/http"
-	"net/http/cookiejar"
 	"time"
 )
-
-// http get
-func HttpGetResp(url string) (resp *http.Response, err error) {
-	resp, err = http.Get(url)
-	if err != nil {
-		fmt.Println("HttpGet err:", err)
-
-		return
-	}
-
-	return
-}
 
 // 请求
 func HttpRequest(method, url string, body io.Reader, headers map[string]string, timeout time.Duration) (resp *http.Response, err error) {
@@ -36,12 +22,8 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
-	// http cookie接口
-	cookieJar, _ := cookiejar.New(nil)
-
 	client := &http.Client{
 		Transport: tr,
-		Jar:       cookieJar,
 		Timeout:   timeout,
 	}
 
@@ -67,6 +49,9 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 		return
 	}
+
+	// bytes, err := json.Marshal(req)
+	// fmt.Printf("%#v \n", req)
 
 	return
 }

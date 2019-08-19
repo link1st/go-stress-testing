@@ -14,3 +14,5 @@
 main
 main_linux
 main_win.exe
+curl.txt
+*curl.txt

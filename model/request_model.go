@@ -55,7 +55,30 @@ type Request struct {
 	Debug      bool              // 是否开启Debug模式
 }
 
-func NewRequest(url string, method string, verify string, timeout time.Duration, debug bool) (request *Request, err error) {
+func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string) (request *Request, err error) {
+
+	var (
+		method  = "GET"
+		headers = make(map[string]string)
+		body    io.Reader
+	)
+
+	if path != "" {
+		curl, err := ParseTheFile(path)
+		if err != nil {
+
+			return nil, err
+		}
+
+		if url == "" {
+			url = curl.GetUrl()
+		}
+
+		method = curl.GetMethod()
+		headers = curl.GetHeaders()
+		body = curl.GetBody()
+	}
+
 	form := ""
 	if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
 		form = FormTypeHttp
@@ -90,7 +113,8 @@ func NewRequest(url string, method string, verify string, timeout time.Duration,
 		Url:        url,
 		Form:       form,
 		Method:     strings.ToUpper(method),
-		Headers:    make(map[string]string),
+		Headers:    headers,
+		Body:       body,
 		Verify:     verify,
 		VerifyHttp: verifyHttp,
 		Timeout:    timeout,

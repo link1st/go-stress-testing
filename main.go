@@ -23,16 +23,18 @@ func main() {
 		totalNumber uint64
 		debugStr    string
 		requestUrl  string
+		path        string
 	)
 
 	flag.Uint64Var(&concurrency, "c", 1, "并发数")
 	flag.Uint64Var(&totalNumber, "n", 1, "请求总数")
 	flag.StringVar(&debugStr, "d", "false", "调试模式")
 	flag.StringVar(&requestUrl, "u", "", "请求地址")
+	flag.StringVar(&path, "p", "", "curl文件")
 
 	// 解析参数
 	flag.Parse()
-	if concurrency == 0 || totalNumber == 0 || requestUrl == "" {
+	if concurrency == 0 || totalNumber == 0 || (requestUrl == "" && path == "") {
 		fmt.Printf("示例: go run main.go -c 1 -n 1 -u https://www.baidu.com/ \n")
 		fmt.Printf("-c %d -n %d -d %v -u %s \n", concurrency, totalNumber, debugStr, requestUrl)
 
@@ -42,7 +44,7 @@ func main() {
 	}
 
 	debug := debugStr == "true"
-	request, err := model.NewRequest(requestUrl, "", "", 0, debug)
+	request, err := model.NewRequest(requestUrl, "", 0, debug,path)
 	if err != nil {
 		fmt.Printf("参数不合法 %v \n", err)
 
@@ -123,6 +125,7 @@ func goLink(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, 
 			// 验证请求是否成功
 			errCode, isSucceed = request.VerifyHttp(request, resp)
 		}
+
 		requestTime := forHowLong(startTime)
 
 		requestResults := &model.RequestResults{
