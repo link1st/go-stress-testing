@@ -146,20 +146,20 @@ func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, su
 // 打印表头信息
 func header() {
 	fmt.Printf("\n\n")
-	// 打印的时长都为毫秒
-	fmt.Println("─────┬───────┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬────")
-	result := fmt.Sprintf(" 耗时│ 并发数│ 总请数│ 成功数│ 失败数│   qps  │最长耗时│最短耗时│平均耗时│错误码")
+	// 打印的时长都为毫秒 总请数
+	fmt.Println("─────┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬────")
+	result := fmt.Sprintf(" 耗时│ 并发数│ 成功数│ 失败数│   qps  │最长耗时│最短耗时│平均耗时│错误码")
 	fmt.Println(result)
 	// result = fmt.Sprintf("耗时(s)  │总请求数│成功数│失败数│QPS│最长耗时│最短耗时│平均耗时│错误码")
 	// fmt.Println(result)
-	fmt.Println("─────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼────")
+	fmt.Println("─────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼────")
 
 	return
 }
 
 func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat float64, chanIdLen int) {
 	// 打印的时长都为毫秒
-	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%v", requestTimeFloat,chanIdLen, successNum+failureNum, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime, printMap(errCode))
+	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%v", requestTimeFloat, chanIdLen, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime, printMap(errCode))
 	fmt.Println(result)
 
 	return
