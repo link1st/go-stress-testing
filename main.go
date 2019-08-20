@@ -167,30 +167,6 @@ func goLinkWebSocket(chanId uint64, ch chan<- *model.RequestResults, totalNumber
 	}()
 
 	// 初始化请求
-	seq := fmt.Sprintf("%d_%d", chanId, time.Now().Unix())
-
-	err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"login","data":{"userId":"` + seq + `","appId":101}}`))
-	if err != nil {
-		fmt.Println("发送请求失败")
-
-		return
-	} else {
-		msg, err := ws.Read()
-		if err != nil {
-			fmt.Println("读取数据失败")
-
-			return
-		} else {
-			// fmt.Println(msg)
-			_, isSucceed := request.VerifyWebSocket(request, seq, msg)
-			if isSucceed == false {
-				fmt.Println("读取数据失败")
-
-				return
-			}
-		}
-	}
-
 	for i := uint64(0); i < totalNumber; i++ {
 
 		var (
@@ -200,7 +176,7 @@ func goLinkWebSocket(chanId uint64, ch chan<- *model.RequestResults, totalNumber
 		)
 
 		seq := fmt.Sprintf("%d_%d", chanId, i)
-		err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"heartbeat","data":{}}`))
+		err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"ping","data":{}}`))
 		if err != nil {
 			errCode = model.RequestErr // 请求错误
 		} else {
