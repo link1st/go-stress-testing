@@ -198,6 +198,7 @@ func (r *Request) IsParameterLegal() (err error) {
 // 请求结果
 type RequestResults struct {
 	Id        string // 消息Id
+	ChanId    uint64 // 消息Id
 	Time      uint64 // 请求时间 纳秒
 	IsSucceed bool   // 是否请求成功
 	ErrCode   int    // 错误码
@@ -207,4 +208,5 @@ func (r *RequestResults) SetId(chanId uint64, number uint64) {
 	id := fmt.Sprintf("%d_%d", chanId, number)
 
 	r.Id = id
+	r.ChanId = chanId
 }

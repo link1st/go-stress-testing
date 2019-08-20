@@ -65,10 +65,12 @@ func dispose(concurrency, totalNumber uint64, request *model.Request) {
 	ch := make(chan *model.RequestResults, 1000)
 	var (
 		// TODO::容易丢数据 或不及时返回
-		wg sync.WaitGroup
+		wg          sync.WaitGroup
+		wgReceiving sync.WaitGroup
 	)
 
-	go server.ReceivingResults(concurrency, ch)
+	wgReceiving.Add(1)
+	go server.ReceivingResults(concurrency, ch, &wgReceiving)
 
 	for i := uint64(0); i < concurrency; i++ {
 		wg.Add(1)
@@ -93,12 +95,15 @@ func dispose(concurrency, totalNumber uint64, request *model.Request) {
 		}
 	}
 
+	// 等待所有的数据都发送完成
 	wg.Wait()
-	time.Sleep(100 * time.Microsecond)
 
+	// 延时1毫秒 确保数据都处理完成了
+	time.Sleep(1 * time.Millisecond)
 	close(ch)
 
-	time.Sleep(200 * time.Millisecond)
+	// 数据全部处理完成了
+	wgReceiving.Wait()
 
 }
 
@@ -175,6 +180,7 @@ func goLinkWebSocket(chanId uint64, ch chan<- *model.RequestResults, totalNumber
 			errCode   = model.HttpOk
 		)
 
+		// 需要发送的数据
 		seq := fmt.Sprintf("%d_%d", chanId, i)
 		err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"ping","data":{}}`))
 		if err != nil {

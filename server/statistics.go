@@ -11,13 +11,18 @@ import (
 	"fmt"
 	"go-stress-testing/model"
 	"strings"
+	"sync"
 	"time"
 )
 
 // 接收结果
 // 统计的时间都是纳秒，显示的时间 都是毫秒
 // concurrent 并发数
-func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
+func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sync.WaitGroup) {
+
+	defer func() {
+		wg.Done()
+	}()
 
 	// 时间
 	var (
@@ -27,6 +32,8 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 		minTime        uint64 // 最小时长
 		successNum     uint64 // 成功处理数，code为0
 		failureNum     uint64 // 处理失败数，code不为0
+		chanIdLen      int    // 并发数
+		chanIds        = make(map[uint64]bool)
 	)
 
 	statTime := uint64(time.Now().UnixNano())
@@ -42,7 +49,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 			case <-ticker.C:
 				endTime := uint64(time.Now().UnixNano())
 				requestTime = endTime - statTime
-				go calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, errCode)
+				go calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIdLen, errCode)
 			}
 		}
 	}()
@@ -76,12 +83,17 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 		} else {
 			errCode[data.ErrCode] = 1
 		}
+
+		if _, ok := chanIds[data.ChanId]; !ok {
+			chanIds[data.ChanId] = true
+			chanIdLen = len(chanIds)
+		}
 	}
 
 	endTime := uint64(time.Now().UnixNano())
 	requestTime = endTime - statTime
 
-	calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, errCode)
+	calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIdLen, errCode)
 
 	fmt.Printf("\n\n")
 
@@ -97,7 +109,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults) {
 }
 
 // 计算数据
-func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum uint64, errCode map[int]int) {
+func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum uint64, chanIdLen int, errCode map[int]int) {
 	if processingTime == 0 {
 		processingTime = 1
 	}
@@ -128,26 +140,26 @@ func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, su
 	// 打印的时长都为毫秒
 	// result := fmt.Sprintf("请求总数:%8d|successNum:%8d|failureNum:%8d|qps:%9.3f|maxTime:%9.3f|minTime:%9.3f|平均时长:%9.3f|errCode:%v", successNum+failureNum, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime, errCode)
 	// fmt.Println(result)
-	table(successNum, failureNum, errCode, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat)
+	table(successNum, failureNum, errCode, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat, chanIdLen)
 }
 
 // 打印表头信息
 func header() {
 	fmt.Printf("\n\n")
 	// 打印的时长都为毫秒
-	fmt.Println("─────┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬───────────")
-	result := fmt.Sprintf(" 耗时│总请数 │ 成功数│ 失败数│   qps  │最长耗时│最短耗时│平均耗时│  错误码")
+	fmt.Println("─────┬───────┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬────")
+	result := fmt.Sprintf(" 耗时│ 并发数│ 总请数│ 成功数│ 失败数│   qps  │最长耗时│最短耗时│平均耗时│错误码")
 	fmt.Println(result)
 	// result = fmt.Sprintf("耗时(s)  │总请求数│成功数│失败数│QPS│最长耗时│最短耗时│平均耗时│错误码")
 	// fmt.Println(result)
-	fmt.Println("─────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼───────────")
+	fmt.Println("─────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼────")
 
 	return
 }
 
-func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat float64) {
+func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat float64, chanIdLen int) {
 	// 打印的时长都为毫秒
-	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%v", requestTimeFloat, successNum+failureNum, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime, printMap(errCode))
+	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%v", requestTimeFloat,chanIdLen, successNum+failureNum, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime, printMap(errCode))
 	fmt.Println(result)
 
 	return
