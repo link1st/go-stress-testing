@@ -27,9 +27,13 @@ const (
 )
 
 var (
-	verifyMap = map[string]VerifyHttp{
+	verifyMapHttp = map[string]VerifyHttp{
 		"http.statusCode": HttpStatusCode,
 		"http.json":       HttpJson,
+	}
+
+	verifyMapWebSocket = map[string]VerifyWebSocket{
+		"webSocket.json": WebSocketJson,
 	}
 )
 
@@ -41,18 +45,20 @@ type Verify interface {
 
 // 200为成功
 type VerifyHttp func(request *Request, response *http.Response) (code int, isSucceed bool)
+type VerifyWebSocket func(request *Request, seq string, msg []byte) (code int, isSucceed bool)
 
 // 请求结果
 type Request struct {
-	Url        string            // Url
-	Form       string            // http/webSocket/tcp
-	Method     string            // 方法 get/post/put
-	Headers    map[string]string // Headers
-	Body       io.Reader         // body
-	Verify     string            // 验证的方法
-	VerifyHttp VerifyHttp        // 验证的方法
-	Timeout    time.Duration     // 请求超时时间
-	Debug      bool              // 是否开启Debug模式
+	Url             string            // Url
+	Form            string            // http/webSocket/tcp
+	Method          string            // 方法 get/post/put
+	Headers         map[string]string // Headers
+	Body            io.Reader         // body
+	Verify          string            // 验证的方法
+	VerifyHttp      VerifyHttp        // 验证的方法
+	VerifyWebSocket VerifyWebSocket   // 验证的方法
+	Timeout         time.Duration     // 请求超时时间
+	Debug           bool              // 是否开启Debug模式
 
 	// 连接以后初始化事件
 	// 循环事件 切片 时间 动作
@@ -95,17 +101,40 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		return
 	}
 
-	// verify
-	if verify == "" {
-		verify = "statusCode"
-	}
+	var (
+		verifyHttp      VerifyHttp
+		verifyWebSocket VerifyWebSocket
+		ok              bool
+	)
 
-	key := fmt.Sprintf("%s.%s", form, verify)
-	verifyHttp, ok := verifyMap[key]
-	if !ok {
-		err = errors.New("验证器不存在:" + key)
+	switch form {
+	case FormTypeHttp:
+		// verify
+		if verify == "" {
+			verify = "statusCode"
+		}
 
-		return
+		key := fmt.Sprintf("%s.%s", form, verify)
+		verifyHttp, ok = verifyMapHttp[key]
+		if !ok {
+			err = errors.New("验证器不存在:" + key)
+
+			return
+		}
+	case FormTypeWebSocket:
+		// verify
+		if verify == "" {
+			verify = "json"
+		}
+
+		key := fmt.Sprintf("%s.%s", form, verify)
+		verifyWebSocket, ok = verifyMapWebSocket[key]
+		if !ok {
+			err = errors.New("验证器不存在:" + key)
+
+			return
+		}
+
 	}
 
 	if timeout == 0 {
@@ -113,15 +142,16 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 	}
 
 	request = &Request{
-		Url:        url,
-		Form:       form,
-		Method:     strings.ToUpper(method),
-		Headers:    headers,
-		Body:       body,
-		Verify:     verify,
-		VerifyHttp: verifyHttp,
-		Timeout:    timeout,
-		Debug:      debug,
+		Url:             url,
+		Form:            form,
+		Method:          strings.ToUpper(method),
+		Headers:         headers,
+		Body:            body,
+		Verify:          verify,
+		VerifyHttp:      verifyHttp,
+		VerifyWebSocket: verifyWebSocket,
+		Timeout:         timeout,
+		Debug:           debug,
 	}
 
 	return
@@ -154,7 +184,7 @@ func (r *Request) IsParameterLegal() (err error) {
 	r.Verify = "json"
 
 	key := fmt.Sprintf("%s.%s", r.Form, r.Verify)
-	value, ok := verifyMap[key]
+	value, ok := verifyMapHttp[key]
 	if !ok {
 
 		return errors.New("验证器不存在:" + key)

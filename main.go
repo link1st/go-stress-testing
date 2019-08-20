@@ -72,10 +72,29 @@ func dispose(concurrency, totalNumber uint64, request *model.Request) {
 
 	for i := uint64(0); i < concurrency; i++ {
 		wg.Add(1)
-		go goLink(i, ch, totalNumber, &wg, request)
+		switch request.Form {
+		case model.FormTypeHttp:
+			go goLinkHttp(i, ch, totalNumber, &wg, request)
+		case model.FormTypeWebSocket:
+
+			// 连接以后再启动协程
+			ws := server.NewWebSocket(request.Url)
+			err := ws.GetConn()
+			if err != nil {
+				fmt.Println("连接失败:", i, err)
+
+				continue
+			}
+
+			go goLinkWebSocket(i, ch, totalNumber, &wg, request, ws)
+		default:
+			// 类型不支持
+			wg.Done()
+		}
 	}
 
 	wg.Wait()
+	time.Sleep(100 * time.Microsecond)
 
 	close(ch)
 
@@ -94,14 +113,13 @@ func forHowLong(startTime time.Time) (diff uint64) {
 }
 
 // http go link
-func goLink(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request) {
+func goLinkHttp(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request) {
 
 	defer func() {
 		wg.Done()
 	}()
 
 	// fmt.Printf("启动协程 编号:%05d \n", chanId)
-
 	for i := uint64(0); i < totalNumber; i++ {
 
 		var (
@@ -117,6 +135,82 @@ func goLink(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, 
 		} else {
 			// 验证请求是否成功
 			errCode, isSucceed = request.VerifyHttp(request, resp)
+		}
+
+		requestTime := forHowLong(startTime)
+
+		requestResults := &model.RequestResults{
+			Time:      requestTime,
+			IsSucceed: isSucceed,
+			ErrCode:   errCode,
+		}
+
+		requestResults.SetId(chanId, i)
+
+		ch <- requestResults
+	}
+
+	return
+}
+
+// web socket go link
+func goLinkWebSocket(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request, ws *server.WebSocket) {
+
+	defer func() {
+		wg.Done()
+	}()
+
+	// fmt.Printf("启动协程 编号:%05d \n", chanId)
+
+	defer func() {
+		ws.Close()
+	}()
+
+	// 初始化请求
+	seq := fmt.Sprintf("%d_%d", chanId, time.Now().Unix())
+
+	err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"login","data":{"userId":"` + seq + `","appId":101}}`))
+	if err != nil {
+		fmt.Println("发送请求失败")
+
+		return
+	} else {
+		msg, err := ws.Read()
+		if err != nil {
+			fmt.Println("读取数据失败")
+
+			return
+		} else {
+			// fmt.Println(msg)
+			_, isSucceed := request.VerifyWebSocket(request, seq, msg)
+			if isSucceed == false {
+				fmt.Println("读取数据失败")
+
+				return
+			}
+		}
+	}
+
+	for i := uint64(0); i < totalNumber; i++ {
+
+		var (
+			startTime = time.Now()
+			isSucceed = false
+			errCode   = model.HttpOk
+		)
+
+		seq := fmt.Sprintf("%d_%d", chanId, i)
+		err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"heartbeat","data":{}}`))
+		if err != nil {
+			errCode = model.RequestErr // 请求错误
+		} else {
+			msg, err := ws.Read()
+			if err != nil {
+				errCode = model.ParseError
+			} else {
+				// fmt.Println(msg)
+				errCode, isSucceed = request.VerifyWebSocket(request, seq, msg)
+			}
 		}
 
 		requestTime := forHowLong(startTime)
