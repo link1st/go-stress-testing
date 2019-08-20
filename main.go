@@ -98,7 +98,7 @@ func dispose(concurrency, totalNumber uint64, request *model.Request) {
 
 	close(ch)
 
-	time.Sleep(50 * time.Microsecond)
+	time.Sleep(200 * time.Millisecond)
 
 }
 
@@ -207,6 +207,7 @@ func goLinkWebSocket(chanId uint64, ch chan<- *model.RequestResults, totalNumber
 			msg, err := ws.Read()
 			if err != nil {
 				errCode = model.ParseError
+				fmt.Println("读取数据 失败~")
 			} else {
 				// fmt.Println(msg)
 				errCode, isSucceed = request.VerifyWebSocket(request, seq, msg)

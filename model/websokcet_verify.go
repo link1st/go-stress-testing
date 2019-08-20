@@ -38,6 +38,7 @@ func WebSocketJson(request *Request, seq string, msg []byte) (code int, isSuccee
 
 		if seq != responseJson.Seq {
 			code = ParseError
+			fmt.Println("请求和返回seq不一致 ~请求:", seq, responseJson.Seq, string(msg))
 		} else {
 			code = responseJson.Response.Code
 			// body 中code返回200为返回数据成功
