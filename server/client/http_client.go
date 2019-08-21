@@ -5,30 +5,22 @@
 * Time: 21:03
  */
 
-package server
+package client
 
 import (
 	"crypto/tls"
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/cookiejar"
 	"time"
 )
 
-// http get
-func HttpGetResp(url string) (resp *http.Response, err error) {
-	resp, err = http.Get(url)
-	if err != nil {
-		fmt.Println("HttpGet err:", err)
-
-		return
-	}
-
-	return
-}
-
-// 请求
+// HTTP 请求
+// method 方法 GET POST
+// url 请求的url
+// body 请求的body
+// headers 请求头信息
+// timeout 请求超时时间
 func HttpRequest(method, url string, body io.Reader, headers map[string]string, timeout time.Duration) (resp *http.Response, err error) {
 
 	// 跳过证书验证
@@ -36,12 +28,8 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
-	// http cookie接口
-	cookieJar, _ := cookiejar.New(nil)
-
 	client := &http.Client{
 		Transport: tr,
-		Jar:       cookieJar,
 		Timeout:   timeout,
 	}
 
@@ -51,6 +39,7 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 		return
 	}
 
+	// 设置默认为utf-8编码
 	if _, ok := headers["Content-Type"]; !ok {
 		if headers == nil {
 			headers = make(map[string]string)
@@ -64,9 +53,13 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 	resp, err = client.Do(req)
 	if err != nil {
+		fmt.Println("请求失败:", err)
 
 		return
 	}
+
+	// bytes, err := json.Marshal(req)
+	// fmt.Printf("%#v \n", req)
 
 	return
 }
