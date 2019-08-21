@@ -1,6 +1,5 @@
 # go-stress-testing
-go 实现的压测工具 一句话简介
-
+go 实现的压测工具 未完，待续~
 
 
 
