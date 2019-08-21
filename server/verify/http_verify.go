@@ -5,17 +5,19 @@
 * Time: 16:03
  */
 
-package model
+package verify
 
 import (
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
+	"go-stress-testing/model"
 	"io"
 	"io/ioutil"
 	"net/http"
 )
 
+// 处理gzip压缩
 func getZipData(response *http.Response) (body []byte, err error) {
 	var reader io.ReadCloser
 	switch response.Header.Get("Content-Encoding") {
@@ -34,7 +36,7 @@ func getZipData(response *http.Response) (body []byte, err error) {
 }
 
 // 通过Http状态码判断是否请求成功
-func HttpStatusCode(request *Request, response *http.Response) (code int, isSucceed bool) {
+func HttpStatusCode(request *model.Request, response *http.Response) (code int, isSucceed bool) {
 
 	defer response.Body.Close()
 	code = response.StatusCode
@@ -54,6 +56,7 @@ func HttpStatusCode(request *Request, response *http.Response) (code int, isSucc
 
 /***************************  返回值为json  ********************************/
 
+// 返回数据结构体
 type ResponseJson struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
@@ -61,9 +64,9 @@ type ResponseJson struct {
 }
 
 // 通过返回的Body 判断
-// 返回示例:: {"code":200,"msg":"Success","data":{}}
+// 返回示例: {"code":200,"msg":"Success","data":{}}
 // code 默认将http code作为返回码，http code 为200时 取body中的返回code
-func HttpJson(request *Request, response *http.Response) (code int, isSucceed bool) {
+func HttpJson(request *model.Request, response *http.Response) (code int, isSucceed bool) {
 
 	defer response.Body.Close()
 	code = response.StatusCode
@@ -71,13 +74,13 @@ func HttpJson(request *Request, response *http.Response) (code int, isSucceed bo
 
 		body, err := getZipData(response)
 		if err != nil {
-			code = ParseError
+			code = model.ParseError
 			fmt.Printf("请求结果 ioutil.ReadAll err:%v", err)
 		} else {
 			responseJson := &ResponseJson{}
 			err = json.Unmarshal(body, responseJson)
 			if err != nil {
-				code = ParseError
+				code = model.ParseError
 				fmt.Printf("请求结果 json.Unmarshal err:%v", err)
 			} else {
 

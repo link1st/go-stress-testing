@@ -5,7 +5,7 @@
 * Time: 21:03
  */
 
-package server
+package client
 
 import (
 	"errors"
@@ -45,13 +45,13 @@ func NewWebSocket(urlLink string) (ws *WebSocket) {
 	return
 }
 
-func (w *WebSocket) GetLink() (link string) {
+func (w *WebSocket) getLink() (link string) {
 	link = w.UrlLink
 
 	return
 }
 
-func (w *WebSocket) GetOrigin() (origin string) {
+func (w *WebSocket) getOrigin() (origin string) {
 	origin = "http://"
 	if w.IsSsl {
 		origin = "https://"
@@ -79,7 +79,7 @@ func (w *WebSocket) Close() (err error) {
 }
 
 func (w *WebSocket) GetConn() (err error) {
-	conn, err := websocket.Dial(w.GetLink(), "", w.GetOrigin())
+	conn, err := websocket.Dial(w.getLink(), "", w.getOrigin())
 	if err != nil {
 		fmt.Println("建立连接失败")
 		return err
@@ -90,6 +90,7 @@ func (w *WebSocket) GetConn() (err error) {
 	return
 }
 
+// 发送数据
 func (w *WebSocket) Write(body []byte) (err error) {
 	if w.conn == nil {
 		err = errors.New("未建立连接")

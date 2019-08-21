@@ -13,6 +13,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -27,15 +28,31 @@ const (
 )
 
 var (
-	verifyMapHttp = map[string]VerifyHttp{
-		"http.statusCode": HttpStatusCode,
-		"http.json":       HttpJson,
-	}
+	// 校验函数
+	verifyMapHttp      = make(map[string]VerifyHttp)
+	verifyMapHttpMutex sync.RWMutex
 
-	verifyMapWebSocket = map[string]VerifyWebSocket{
-		"webSocket.json": WebSocketJson,
-	}
+	verifyMapWebSocket      = make(map[string]VerifyWebSocket)
+	verifyMapWebSocketMutex sync.RWMutex
 )
+
+// 注册http校验函数
+func RegisterVerifyHttp(verify string, verifyFunc VerifyHttp) {
+	verifyMapHttpMutex.Lock()
+	defer verifyMapHttpMutex.Unlock()
+
+	key := fmt.Sprintf("%s.%s", FormTypeHttp, verify)
+	verifyMapHttp[key] = verifyFunc
+}
+
+// 注册webSocket校验函数
+func RegisterVerifyWebSocket(verify string, verifyFunc VerifyWebSocket) {
+	verifyMapWebSocketMutex.Lock()
+	defer verifyMapWebSocketMutex.Unlock()
+
+	key := fmt.Sprintf("%s.%s", FormTypeWebSocket, verify)
+	verifyMapWebSocket[key] = verifyFunc
+}
 
 // 验证器
 type Verify interface {
@@ -43,7 +60,7 @@ type Verify interface {
 	GetResult() bool // 返回是否成功
 }
 
-// 200为成功
+// 验证方法
 type VerifyHttp func(request *Request, response *http.Response) (code int, isSucceed bool)
 type VerifyWebSocket func(request *Request, seq string, msg []byte) (code int, isSucceed bool)
 
@@ -64,6 +81,12 @@ type Request struct {
 	// 循环事件 切片 时间 动作
 }
 
+// NewRequest
+// url 压测的url
+// verify 验证方法 在server/verify中 http 支持:statusCode、json webSocket支持:json
+// timeout 请求超时时间
+// debug 是否开启debug
+// path curl文件路径 http接口压测，自定义参数设置
 func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string) (request *Request, err error) {
 
 	var (

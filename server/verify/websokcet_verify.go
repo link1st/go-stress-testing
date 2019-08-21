@@ -5,15 +5,17 @@
 * Time: 16:03
  */
 
-package model
+package verify
 
 import (
 	"encoding/json"
 	"fmt"
+	"go-stress-testing/model"
 )
 
 /***************************  返回值为json  ********************************/
 
+// 返回数据结构体
 type WebSocketResponseJson struct {
 	Seq      string `json:"seq"`
 	Cmd      string `json:"cmd"`
@@ -25,19 +27,19 @@ type WebSocketResponseJson struct {
 }
 
 // 通过返回的Body 判断
-// 返回示例:: {"seq":"1566276523281-585638","cmd":"heartbeat","response":{"code":200,"codeMsg":"Success","data":null}}
+// 返回示例: {"seq":"1566276523281-585638","cmd":"heartbeat","response":{"code":200,"codeMsg":"Success","data":null}}
 // code 取body中的返回code
-func WebSocketJson(request *Request, seq string, msg []byte) (code int, isSucceed bool) {
+func WebSocketJson(request *model.Request, seq string, msg []byte) (code int, isSucceed bool) {
 
 	responseJson := &WebSocketResponseJson{}
 	err := json.Unmarshal(msg, responseJson)
 	if err != nil {
-		code = ParseError
+		code = model.ParseError
 		fmt.Printf("请求结果 json.Unmarshal msg:%s err:%v", string(msg), err)
 	} else {
 
 		if seq != responseJson.Seq {
-			code = ParseError
+			code = model.ParseError
 			fmt.Println("请求和返回seq不一致 ~请求:", seq, responseJson.Seq, string(msg))
 		} else {
 			code = responseJson.Response.Code

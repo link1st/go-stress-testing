@@ -5,7 +5,7 @@
 * Time: 18:14
  */
 
-package server
+package statistics
 
 import (
 	"fmt"
@@ -15,7 +15,12 @@ import (
 	"time"
 )
 
-// 接收结果
+var (
+	// 输出统计数据的时间
+	exportStatisticsTime = 1 * time.Second
+)
+
+// 接收结果并处理
 // 统计的时间都是纳秒，显示的时间 都是毫秒
 // concurrent 并发数
 func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sync.WaitGroup) {
@@ -23,6 +28,10 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	defer func() {
 		wg.Done()
 	}()
+
+	var (
+		stopChan = make(chan bool)
+	)
 
 	// 时间
 	var (
@@ -41,8 +50,8 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	// 错误码/错误个数
 	var errCode = make(map[int]int)
 
-	// 每个秒时间输出一次 计算结果
-	ticker := time.NewTicker(1 * time.Second)
+	// 定时输出一次计算结果
+	ticker := time.NewTicker(exportStatisticsTime)
 	go func() {
 		for {
 			select {
@@ -50,6 +59,10 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 				endTime := uint64(time.Now().UnixNano())
 				requestTime = endTime - statTime
 				go calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIdLen, errCode)
+			case <-stopChan:
+				// 处理完成
+
+				return
 			}
 		}
 	}()
@@ -89,6 +102,9 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 			chanIdLen = len(chanIds)
 		}
 	}
+
+	// 数据全部接受完成，停止定时输出统计数据
+	stopChan <- true
 
 	endTime := uint64(time.Now().UnixNano())
 	requestTime = endTime - statTime
@@ -147,16 +163,17 @@ func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, su
 func header() {
 	fmt.Printf("\n\n")
 	// 打印的时长都为毫秒 总请数
-	fmt.Println("─────┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬────")
-	result := fmt.Sprintf(" 耗时│ 并发数│ 成功数│ 失败数│   qps  │最长耗时│最短耗时│平均耗时│错误码")
+	fmt.Println("─────┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬────────")
+	result := fmt.Sprintf(" 耗时│ 并发数│ 成功数│ 失败数│   qps  │最长耗时│最短耗时│平均耗时│ 错误码")
 	fmt.Println(result)
 	// result = fmt.Sprintf("耗时(s)  │总请求数│成功数│失败数│QPS│最长耗时│最短耗时│平均耗时│错误码")
 	// fmt.Println(result)
-	fmt.Println("─────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼────")
+	fmt.Println("─────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼────────")
 
 	return
 }
 
+// 打印表格
 func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat float64, chanIdLen int) {
 	// 打印的时长都为毫秒
 	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%v", requestTimeFloat, chanIdLen, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime, printMap(errCode))
@@ -165,6 +182,7 @@ func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime,
 	return
 }
 
+// 输出错误码、次数 节约字符(终端一行字符大小有限)
 func printMap(errCode map[int]int) (mapStr string) {
 
 	var (

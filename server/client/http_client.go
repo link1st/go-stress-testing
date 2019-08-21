@@ -5,7 +5,7 @@
 * Time: 21:03
  */
 
-package server
+package client
 
 import (
 	"crypto/tls"
@@ -15,7 +15,12 @@ import (
 	"time"
 )
 
-// 请求
+// HTTP 请求
+// method 方法 GET POST
+// url 请求的url
+// body 请求的body
+// headers 请求头信息
+// timeout 请求超时时间
 func HttpRequest(method, url string, body io.Reader, headers map[string]string, timeout time.Duration) (resp *http.Response, err error) {
 
 	// 跳过证书验证
@@ -34,6 +39,7 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 		return
 	}
 
+	// 设置默认为utf-8编码
 	if _, ok := headers["Content-Type"]; !ok {
 		if headers == nil {
 			headers = make(map[string]string)
