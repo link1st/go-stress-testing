@@ -36,7 +36,7 @@ go 实现的压测工具
 
 ### 1.2 项目使用
 
-```
+```shell script
 go run main.go -c 1 -n 1 -u https://www.baidu.com/
 ```
 
@@ -44,7 +44,7 @@ go run main.go -c 1 -n 1 -u https://www.baidu.com/
 
 ```
 ─────┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬────────
- 耗时│ 并发数 │ 成功数 │ 失败数 │   qps  │最长耗时 │最短耗时 │平均耗时 │ 错误码
+ 耗时│ 并发数 │ 成功数│ 失败数 │   qps  │最长耗时 │最短耗时 │平均耗时 │ 错误码
 ─────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼────────
    1s│      1│     21│      0│   21.53│  127.67│   29.61│   46.46│200:21
    2s│      1│     36│      0│   18.00│  214.19│   29.61│   55.56│200:36
@@ -142,7 +142,7 @@ ab属于一个轻量级的压测工具，结果不会特别准确，可以用作
 
 - 安装
 
-```
+```shell script
 # 在linux环境安装
 sudo yum -y install httpd
 ```
@@ -163,11 +163,12 @@ Options are:
 
 - 压测命令
 
-```
+```shell script
 # 使用ab压测工具，对百度的链接 请求100次，并发数1
 ab -n 100 -c 1 https://www.baidu.com/
 ```
 
+压测结果
 
 ```
 ~ >ab -n 100 -c 1 https://www.baidu.com/
@@ -241,7 +242,7 @@ Percentage of the requests served within a certain time (ms)
 
 - 安装
 
-```
+```shell script
 # pip3 安装locust
 pip3  install locust
 # 查看是否安装成功
@@ -256,7 +257,7 @@ pip3 install websocket-client
 
 编写压测脚本 **test.py**
 
-```
+```python
 from locust import HttpLocust, TaskSet, task
 
 # 定义用户行为
@@ -275,7 +276,7 @@ class WebsiteUser(HttpLocust):
 
 - 启动压测
 
-```
+```shell script
 locust -f  test.py --host=https://www.baidu.com
 ```
 
