@@ -20,8 +20,12 @@ import (
 
 // 注册验证器
 func init() {
+
+	// http
 	model.RegisterVerifyHttp("statusCode", verify.HttpStatusCode)
 	model.RegisterVerifyHttp("json", verify.HttpJson)
+
+	// webSocket
 	model.RegisterVerifyWebSocket("json", verify.WebSocketJson)
 }
 

@@ -14,5 +14,8 @@
 main
 main_linux
 main_win.exe
+go_stress_testing_mac
+go_stress_testing_linux
+go_stress_testing_win.ext
 curl.txt
 *curl.txt
