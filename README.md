@@ -114,6 +114,51 @@ go_stress_testing_win.exe -c="1" -n="100" -u="https://www.baidu.com/"
 
 ## 2、介绍go-stress-testing
 
+### 2.1 介绍
+
+- go-stress-testing 是go语言实现的简单压测工具，源码开源、支持二次开发，可以压测http、webSocket请求，使用协程模拟单个用户，可以更高效的利用CPU资源。
+
+- 项目地址 [https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
+
+### 2.2 用法
+
+- 支持参数:
+
+```
+Usage of ./go_stress_testing_mac:
+  -c uint
+        并发数 (default 1)
+  -d string
+        调试模式 (default "false")
+  -n uint
+        请求总数 (default 1)
+  -p string
+        curl文件路径
+  -u string
+        请求地址
+  -v string
+        验证方法 http 支持:statusCode、json webSocket支持:json (default "statusCode")
+```
+
+- 使用示例:
+
+```
+# 查看用法
+./go_stress_testing_mac
+
+# 使用debug模式请求百度页面
+./go_stress_testing_mac -c 1 -n 1 -d true -u https://www.baidu.com/
+
+# 使用 curl文件(文件在curl目录下) 的方式请求
+./go_stress_testing_mac -c 1 -n 1 -p curl/baidu.curl.txt
+
+# 使用json的方式验证返回信息
+./go_stress_testing_mac -c 1 -n 1 -d true -u https://www.baidu.com/ -v json
+
+# 压测webSocket连接
+./go_stress_testing_mac -c 1 -n 1 -u ws://127.0.0.1:8089/acc
+```
+
 
 
 ## 3、压测
@@ -384,7 +429,7 @@ JMeter能够对应用程序做功能/回归测试，通过创建带有断言的�
 
 - 用法
 
-JMeter的功能过于强大，这里暂时不介绍用法，可以查询相关文档使用
+JMeter的功能过于强大，这里暂时不介绍用法，可以查询相关文档使用(参考文献中有推荐的教程文档)
 
 
 ### 4.4 云压测
@@ -491,12 +536,18 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 
 [PV、TPS、QPS是怎么计算出来的？](https://www.zhihu.com/question/21556347)
 
+[超实用压力测试工具－ab工具](https://www.jianshu.com/p/43d04d8baaf7)
+
+[Locust 介绍](http://www.testclass.net/locust/introduce)
+
+[Jmeter性能测试 入门](https://www.cnblogs.com/TankXiao/p/4045439.html)
+
 [阿里云 性能测试 PTS](https://cn.aliyun.com/product/pts)
 
 [腾讯云 压测大师 LM](https://cloud.tencent.com/product/lm/details)
 
 
-github 搜:link1st 进入项目
+github 搜:link1st 查看项目
 
 [https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
 

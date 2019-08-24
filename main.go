@@ -15,6 +15,7 @@ import (
 	"strings"
 )
 
+// go 实现的压测工具
 func main() {
 	var (
 		concurrency uint64 // 并发数
@@ -37,7 +38,7 @@ func main() {
 	if concurrency == 0 || totalNumber == 0 || (requestUrl == "" && path == "") {
 		fmt.Printf("示例: go run main.go -c 1 -n 1 -u https://www.baidu.com/ \n")
 		fmt.Printf("压测地址或curl路径必填 \n")
-		fmt.Printf("-c %d -n %d -d %v -u %s \n", concurrency, totalNumber, debugStr, requestUrl)
+		fmt.Printf("当前请求参数: -c %d -n %d -d %v -u %s \n", concurrency, totalNumber, debugStr, requestUrl)
 
 		flag.Usage()
 
