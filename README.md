@@ -48,6 +48,12 @@ go 实现的压测工具，每个用户用一个协程的方式模拟，最大�
 
 ```shell script
 
+# clone 项目
+git clone git@github.com:link1st/go-stress-testing.git 
+
+# 进入项目目录
+cd go-stress-testing
+
 # mac 
 ./go_stress_testing_mac -c 1 -n 100 -u https://www.baidu.com/
 
@@ -158,7 +164,6 @@ Usage of ./go_stress_testing_mac:
 # 压测webSocket连接
 ./go_stress_testing_mac -c 1 -n 1 -u ws://127.0.0.1:8089/acc
 ```
-
 
 
 ## 3、压测
