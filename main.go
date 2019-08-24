@@ -12,11 +12,14 @@ import (
 	"fmt"
 	"go-stress-testing/model"
 	"go-stress-testing/server"
+	"runtime"
 	"strings"
 )
 
 // go 实现的压测工具
 func main() {
+
+	runtime.GOMAXPROCS(1)
 	var (
 		concurrency uint64 // 并发数
 		totalNumber uint64 // 请求总数(单个并发)
