@@ -12,11 +12,15 @@ import (
 	"fmt"
 	"go-stress-testing/model"
 	"go-stress-testing/server"
+	"runtime"
 	"strings"
 )
 
 // go 实现的压测工具
 func main() {
+
+	runtime.GOMAXPROCS(1)
+
 	var (
 		concurrency uint64 // 并发数
 		totalNumber uint64 // 请求总数(单个并发)
@@ -31,7 +35,7 @@ func main() {
 	flag.StringVar(&debugStr, "d", "false", "调试模式")
 	flag.StringVar(&requestUrl, "u", "", "压测地址")
 	flag.StringVar(&path, "p", "", "curl文件路径")
-	flag.StringVar(&verify, "v", "statusCode", "验证方法 http 支持:statusCode、json webSocket支持:json")
+	flag.StringVar(&verify, "v", "", "验证方法 http 支持:statusCode、json webSocket支持:json")
 
 	// 解析参数
 	flag.Parse()

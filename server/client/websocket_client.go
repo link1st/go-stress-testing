@@ -15,6 +15,10 @@ import (
 	"strings"
 )
 
+const (
+	connRetry = 3 // 建立连接重试次数
+)
+
 type WebSocket struct {
 	conn    *websocket.Conn
 	UrlLink string
@@ -79,13 +83,27 @@ func (w *WebSocket) Close() (err error) {
 }
 
 func (w *WebSocket) GetConn() (err error) {
-	conn, err := websocket.Dial(w.getLink(), "", w.getOrigin())
-	if err != nil {
-		fmt.Println("建立连接失败")
-		return err
+
+	var (
+		conn *websocket.Conn
+		i    int
+	)
+
+	for i = 0; i < connRetry; i++ {
+		conn, err = websocket.Dial(w.getLink(), "", w.getOrigin())
+		if err != nil {
+			fmt.Println("GetConn 建立连接失败 in...", i, err)
+
+			continue
+		}
+		w.conn = conn
+
+		return
 	}
 
-	w.conn = conn
+	if err != nil {
+		fmt.Println("GetConn 建立连接失败", i, err)
+	}
 
 	return
 }

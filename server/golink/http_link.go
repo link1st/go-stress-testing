@@ -32,6 +32,7 @@ func Http(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg
 		)
 
 		resp, err := client.HttpRequest(request.Method, request.Url, request.Body, request.Headers, request.Timeout)
+		requestTime := uint64(heper.DiffNano(startTime))
 		// resp, err := server.HttpGetResp(request.Url)
 		if err != nil {
 			errCode = model.RequestErr // 请求错误
@@ -39,8 +40,6 @@ func Http(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg
 			// 验证请求是否成功
 			errCode, isSucceed = request.VerifyHttp(request, resp)
 		}
-
-		requestTime := uint64(heper.DiffNano(startTime))
 
 		requestResults := &model.RequestResults{
 			Time:      requestTime,
