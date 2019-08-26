@@ -16,6 +16,20 @@ import (
 	"time"
 )
 
+const (
+	firstTime    = 1 * time.Second // 连接以后首次请求数据的时间
+	intervalTime = 1 * time.Second // 发送数据的时间间隔
+)
+
+var (
+	// 请求完成以后是否保持连接
+	keepAlive bool
+)
+
+func init() {
+	keepAlive = true
+}
+
 // web socket go link
 func WebSocket(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request, ws *client.WebSocket) {
 
@@ -29,43 +43,77 @@ func WebSocket(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint6
 		ws.Close()
 	}()
 
-	// 初始化请求
-	for i := uint64(0); i < totalNumber; i++ {
+	var (
+		i uint64
+	)
 
-		var (
-			startTime = time.Now()
-			isSucceed = false
-			errCode   = model.HttpOk
-		)
+	// 暂停60秒
+	t := time.NewTimer(firstTime)
+	for {
+		select {
+		case <-t.C:
+			t.Reset(intervalTime)
 
-		// 需要发送的数据
-		seq := fmt.Sprintf("%d_%d", chanId, i)
-		err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"ping","data":{}}`))
-		if err != nil {
-			errCode = model.RequestErr // 请求错误
-		} else {
-			msg, err := ws.Read()
-			if err != nil {
-				errCode = model.ParseError
-				fmt.Println("读取数据 失败~")
-			} else {
-				// fmt.Println(msg)
-				errCode, isSucceed = request.VerifyWebSocket(request, seq, msg)
+			// 请求
+			webSocketRequest(chanId, ch, i, request, ws)
+
+			// 结束条件
+			i = i + 1
+			if i >= totalNumber {
+				goto end
 			}
 		}
+	}
 
-		requestTime := uint64(heper.DiffNano(startTime))
+end:
+	t.Stop()
 
-		requestResults := &model.RequestResults{
-			Time:      requestTime,
-			IsSucceed: isSucceed,
-			ErrCode:   errCode,
-		}
-
-		requestResults.SetId(chanId, i)
-
-		ch <- requestResults
+	if keepAlive {
+		// 保持连接
+		chWaitFor := make(chan int, 0)
+		<-chWaitFor
 	}
 
 	return
+}
+
+// 请求
+func webSocketRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, request *model.Request, ws *client.WebSocket) {
+
+	var (
+		startTime = time.Now()
+		isSucceed = false
+		errCode   = model.HttpOk
+	)
+
+	// 需要发送的数据
+	seq := fmt.Sprintf("%d_%d", chanId, i)
+	err := ws.Write([]byte(`{"seq":"` + seq + `","cmd":"ping","data":{}}`))
+	if err != nil {
+		errCode = model.RequestErr // 请求错误
+	} else {
+
+		// time.Sleep(1 * time.Second)
+		msg, err := ws.Read()
+		if err != nil {
+			errCode = model.ParseError
+			fmt.Println("读取数据 失败~")
+		} else {
+			// fmt.Println(msg)
+			errCode, isSucceed = request.VerifyWebSocket(request, seq, msg)
+		}
+	}
+
+	requestTime := uint64(heper.DiffNano(startTime))
+
+	requestResults := &model.RequestResults{
+		Time:      requestTime,
+		IsSucceed: isSucceed,
+		ErrCode:   errCode,
+	}
+
+	requestResults.SetId(chanId, i)
+
+	ch <- requestResults
+
 }

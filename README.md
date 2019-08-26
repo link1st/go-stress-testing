@@ -504,6 +504,9 @@ const (
 )
 
 func main() {
+
+    runtime.GOMAXPROCS(runtime.NumCPU() - 1)
+
     hello := func(w http.ResponseWriter, req *http.Request) {
         data := "Hello, World!"
 
@@ -535,6 +538,8 @@ ab -c 100 -n 100000  http://127.0.0.1:8088/
 ./go_stress_testing_linux -c 100 -n 10000 -u http://127.0.0.1:8088/
 ```
 
+
+QPS 用时的比较
 
 ### 压测注意事项
 
