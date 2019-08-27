@@ -50,7 +50,9 @@ func Dispose(concurrency, totalNumber uint64, request *model.Request) {
 		wg.Add(1)
 		switch request.Form {
 		case model.FormTypeHttp:
+
 			go golink.Http(i, ch, totalNumber, &wg, request)
+
 		case model.FormTypeWebSocket:
 
 			switch connectionMode {
