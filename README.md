@@ -1,4 +1,4 @@
-# 压测工具如何选择? ab、locust、Jmeter、GO压测工具【单台机器100w连接压测实战】
+# 压测工具如何选择? ab、locust、Jmeter、go压测工具【单台机器100w连接压测实战】
 
 本文介绍压测是什么，解释压测的专属名词，教大家如何计算压测指标。介绍市面上的常见压测工具(ab、locust、Jmeter、go实现的压测工具、云压测)，对比这些压测工具，教大家如何选择一款适合自己的压测工具，本文还有两个压测实战项目：
 
@@ -79,7 +79,7 @@ go run main.go -c 1 -n 100 -u https://www.baidu.com/
 
 - 压测结果展示
 
-执行以后，终端每秒钟都会输出一次结果，压测完成以后输出执行的最后的统计结果
+执行以后，终端每秒钟都会输出一次结果，压测完成以后输出执行的压测结果
 
 压测结果展示:
 
@@ -542,7 +542,7 @@ CPU: 4核 (Intel Xeon(Cascade Lake) Platinum 8269  2.5 GHz/3.2 GHz)
 
 go version: go1.12.9 linux/amd64
 
-![go-stress-testing01]([https://img.mukewang.com/5d64a48e0001bb8421170573.png)
+![go-stress-testing01](https://img.mukewang.com/5d64a48e0001bb8421170573.png)
 
 - go server
 
