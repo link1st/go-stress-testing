@@ -855,6 +855,8 @@ VmSize: 27133804 kB
 
 [基于websocket单台机器支持百万连接分布式聊天(IM)系统](https://github.com/link1st/gowebsocket)
 
+[go-stress-testing](https://github.com/link1st/go-stress-testing)
+
 github 搜:link1st 查看项目 go-stress-testing
 
 [https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
