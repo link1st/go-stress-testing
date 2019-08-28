@@ -842,8 +842,7 @@ VmSize: 27133804 kB
 
 单台机器支持100W连接是实测是满足的，但是实际业务比较复杂，还是需要持续优化~
 
-通过实现介绍什么是压测，在什么情况下需要压测，如果觉得现有的压测工具不适用，可以自己实现或者是改造成适合自己的工具。
-
+通过实现介绍什么是压测，在什么情况下需要压测，通过单台机器100W长连接的压测实战了解Linux内核的参数的调优。
 
 
 ## 8、参考文献
@@ -864,8 +863,6 @@ VmSize: 27133804 kB
 
 [基于websocket单台机器支持百万连接分布式聊天(IM)系统](https://github.com/link1st/gowebsocket)
 
-github 搜:link1st 查看项目 go-stress-testing
-
 [https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
 
-
+github 搜:link1st 查看项目 go-stress-testing
