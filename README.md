@@ -755,6 +755,8 @@ net.ipv4.tcp_rmem = 4096 4096 16777216
 net.ipv4.tcp_wmem = 4096 4096 16777216
 ```
 
+`sysctl -p` 修改配置以后使得配置生效命令
+
 配置解释:
 
 - `ip_local_port_range` 表示TCP/UDP协议允许使用的本地端口号 范围:1024~65000
