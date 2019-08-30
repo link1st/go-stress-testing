@@ -701,7 +701,7 @@ centOS 7.6 上述设置不生效，需要手动修改配置文件
 core 是限制内核文件的大小，这里设置为 unlimited
 
 ```
-# 添加一下参数
+# 添加以下参数
 root soft nofile 1040000
 root hard nofile 1040000
 
