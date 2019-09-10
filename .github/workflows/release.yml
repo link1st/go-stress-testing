@@ -12,13 +12,13 @@ jobs:
       - name: Check out chode
         uses: actions/checkout@v1
 
-      - name: Go PATH
-        run: export PATH=$PATH:$(go env GOPATH)/bin
-
       - name: Validates GO releaser config
         uses: docker://goreleaser/goreleaser:latest
         with:
           args: check
+
+      - name: Go PATH
+        run: export PATH=$PATH:$(go env GOPATH)/bin
 
       - name: Create release on GitHub
         uses: docker://goreleaser/goreleaser:latest
