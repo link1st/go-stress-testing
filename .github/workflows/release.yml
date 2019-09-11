@@ -17,6 +17,18 @@ jobs:
         with:
           args: check
 
+#/home/runner/work/actions/actions
+      - name: go path
+        run: |
+          ls
+          cd ..
+          pwd
+          mkdir -vp go/{src/,bin/,pkg/}
+          mv go-stress-testing go/src/
+          export GOPATH=${pwd}/go
+          export GO111MODULE=off
+          cd go/src/go-stress-testing
+
       - name: Go PATH
         run: export PATH=$PATH:$(go env GOPATH)/bin
 
