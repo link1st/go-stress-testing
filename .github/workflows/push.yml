@@ -25,11 +25,13 @@ jobs:
           ls
           cd ..
           pwd
+          ls
           mkdir -vp go/{src/,bin/,pkg/}
           mv go-stress-testing go/src/
           export GOPATH=$(pwd)/go/
           export GO111MODULE=off
           cd go/src/go-stress-testing
+          pwd
           ls
           go env
           echo $(go env GOPATH)
