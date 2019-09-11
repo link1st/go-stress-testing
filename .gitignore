@@ -14,9 +14,8 @@
 main
 main_linux
 main_win.exe
-go_stress_testing_mac
-go_stress_testing_linux
-go_stress_testing_win.exe
+go-stress-testing-mac
+go-stress-testing-linux
+go-stress-testing-win.exe
 curl.txt
 *curl.txt
-go-stress-testing-mac

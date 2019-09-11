@@ -53,7 +53,7 @@ go 实现的压测工具，每个用户用一个协程的方式模拟，最大�
 
 - 可以在 mac/linux/windows 不同平台下执行的命令
 
-- [go-stress-testing][https://github.com/link1st/go-stress-testing/releases] 下载地址
+- [go-stress-testing](https://github.com/link1st/go-stress-testing/releases) 压测工具下载地址
 
 参数说明:
 
@@ -65,15 +65,8 @@ go 实现的压测工具，每个用户用一个协程的方式模拟，最大�
 
 ```shell
 
-# clone 项目
-git clone https://github.com/link1st/go-stress-testing.git
-
-# 进入项目目录
-cd go-stress-testing
-
-# 运行 
-go run main.go -c 1 -n 100 -u https://www.baidu.com/
-
+# 运行 以mac为示例
+./go-stress-testing-mac -c 1 -n 100 -u https://www.baidu.com/
 
 ```
 
@@ -462,26 +455,28 @@ Usage of ./go_stress_testing_mac:
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数
 
+- [下载地址](https://github.com/link1st/go-stress-testing/releases)
+
+- 下载以后执行下面命令即可压测
 
 - 使用示例:
 
 ```
 # 查看用法
-go run main.go
+./go-stress-testing-mac
 
 # 使用请求百度页面
-go run main.go -c 1 -n 100 -u https://www.baidu.com/
+./go-stress-testing-mac -c 1 -n 100 -u https://www.baidu.com/
 
 # 使用debug模式请求百度页面
-go run main.go -c 1 -n 1 -d true -u https://www.baidu.com/
+./go-stress-testing-mac -c 1 -n 1 -d true -u https://www.baidu.com/
 
 # 使用 curl文件(文件在curl目录下) 的方式请求
-go run main.go -c 1 -n 1 -p curl/baidu.curl.txt
+./go-stress-testing-mac -c 1 -n 1 -p curl/baidu.curl.txt
 
 # 压测webSocket连接
-go run main.go -c 10 -n 10 -u ws://127.0.0.1:8089/acc
+./go-stress-testing-mac -c 10 -n 10 -u ws://127.0.0.1:8089/acc
 ```
-
 
 - 使用 curl文件进行压测
 
