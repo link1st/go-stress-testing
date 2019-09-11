@@ -53,6 +53,8 @@ go 实现的压测工具，每个用户用一个协程的方式模拟，最大�
 
 - 可以在 mac/linux/windows 不同平台下执行的命令
 
+- [go-stress-testing][https://github.com/link1st/go-stress-testing/releases] 下载地址
+
 参数说明:
 
 `-c` 表示并发数
@@ -439,6 +441,7 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 
 ### 4.2 用法
 
+- [go-stress-testing][https://github.com/link1st/go-stress-testing/releases] 下载地址
 - 支持参数:
 
 ```

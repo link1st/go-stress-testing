@@ -19,3 +19,4 @@ go_stress_testing_linux
 go_stress_testing_win.exe
 curl.txt
 *curl.txt
+go-stress-testing-mac
