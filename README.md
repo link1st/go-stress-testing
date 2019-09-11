@@ -434,11 +434,11 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 
 ### 4.2 用法
 
-- [go-stress-testing][https://github.com/link1st/go-stress-testing/releases] 下载地址
+- [go-stress-testing](https://github.com/link1st/go-stress-testing/releases) 下载地址
 - 支持参数:
 
 ```
-Usage of ./go_stress_testing_mac:
+Usage of ./go-stress-testing-mac:
   -c uint
         并发数 (default 1)
   -d string
@@ -454,8 +454,6 @@ Usage of ./go_stress_testing_mac:
 ```
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数
-
-- [下载地址](https://github.com/link1st/go-stress-testing/releases)
 
 - 下载以后执行下面命令即可压测
 
