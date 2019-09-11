@@ -34,9 +34,8 @@ jobs:
           pwd
           echo $(go env GOPATH)/bin/
 
-
-      - name: Go PATH
-        run: export PATH=$PATH:$(go env GOPATH)/bin/
+#      - name: Go PATH
+#        run: export PATH=$PATH:$(go env GOPATH)/bin/
 
       - name: ls
         run: |
