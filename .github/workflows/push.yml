@@ -27,9 +27,13 @@ jobs:
           pwd
           mkdir -vp go/{src/,bin/,pkg/}
           mv go-stress-testing go/src/
-          export GOPATH=${pwd}/go
+          export GOPATH=${pwd}/go/
           export GO111MODULE=off
           cd go/src/go-stress-testing
+          ls
+          go env
+          echo $(go env GOPATH)
+
 
       - name: Go PATH
         run: export PATH=$PATH:$(go env GOPATH)/bin
