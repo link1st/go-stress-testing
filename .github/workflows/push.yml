@@ -28,28 +28,15 @@ jobs:
           ls
           mkdir -vp go/{src/,bin/,pkg/}
           mv go-stress-testing go/src/
-          export GOPATH=$(pwd)/go/
+          export GOPATH=$(pwd)/go
           export GO111MODULE=off
           cd go/src/go-stress-testing
           pwd
-          ls
-          go env
-          echo $(go env GOPATH)
-          ls $(go env GOPATH)
           echo $(go env GOPATH)/bin/
-          ls $(go env GOPATH)/bin/
 
 
-#      - name: Go PATH
-#        run: export PATH=$PATH:$(go env GOPATH)/bin/
-
-      - name: Get dependencies
-        run: |
-          go get -v -t -d ./...
-          if [ -f Gopkg.toml ]; then
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-          fi
+      - name: Go PATH
+        run: export PATH=$PATH:$(go env GOPATH)/bin/
 
       - name: ls
         run: |
