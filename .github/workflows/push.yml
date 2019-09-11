@@ -35,6 +35,7 @@ jobs:
           ls
           go env
           echo $(go env GOPATH)
+          ls $(go env GOPATH)
 
 
       - name: Go PATH
