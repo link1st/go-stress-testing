@@ -31,7 +31,7 @@ func Http(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg
 			errCode   = model.HttpOk
 		)
 
-		resp, err := client.HttpRequest(request.Method, request.Url, request.Body, request.Headers, request.Timeout)
+		resp, err := client.HttpRequest(request.Method, request.Url, request.GetBody(), request.Headers, request.Timeout)
 		requestTime := uint64(heper.DiffNano(startTime))
 		// resp, err := server.HttpGetResp(request.Url)
 		if err != nil {

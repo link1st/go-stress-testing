@@ -70,7 +70,7 @@ type Request struct {
 	Form            string            // http/webSocket/tcp
 	Method          string            // 方法 get/post/put
 	Headers         map[string]string // Headers
-	Body            io.Reader         // body
+	Body            string            // body
 	Verify          string            // 验证的方法
 	VerifyHttp      VerifyHttp        // 验证的方法
 	VerifyWebSocket VerifyWebSocket   // 验证的方法
@@ -79,6 +79,12 @@ type Request struct {
 
 	// 连接以后初始化事件
 	// 循环事件 切片 时间 动作
+}
+
+func (r *Request) GetBody() (body io.Reader) {
+	body = strings.NewReader(r.Body)
+
+	return
 }
 
 // NewRequest
@@ -92,7 +98,7 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 	var (
 		method  = "GET"
 		headers = make(map[string]string)
-		body    io.Reader
+		body    string
 	)
 
 	if path != "" {

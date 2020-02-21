@@ -10,7 +10,6 @@ package model
 import (
 	"encoding/json"
 	"errors"
-	"io"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -172,7 +171,7 @@ func (c *CURL) GetHeadersStr() string {
 }
 
 // 获取body
-func (c *CURL) GetBody() (body io.Reader) {
+func (c *CURL) GetBody() (body string) {
 
 	value, ok := c.Data["--data"]
 	if !ok {
@@ -189,20 +188,8 @@ func (c *CURL) GetBody() (body io.Reader) {
 		return
 	}
 
-	body = strings.NewReader(value[0])
+	// body = strings.NewReader(value[0])
+	body = value[0]
 
-	return
-}
-
-// 获取body
-func (c *CURL) GetBodyStr() (str string) {
-
-	body := c.GetBody()
-	if body == nil {
-
-		return
-	}
-	bytes, _ := ioutil.ReadAll(body)
-	str = string(bytes)
 	return
 }
