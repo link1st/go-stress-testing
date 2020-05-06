@@ -17,5 +17,5 @@ main_win.exe
 go-stress-testing-mac
 go-stress-testing-linux
 go-stress-testing-win.exe
-curl.txt
-*curl.txt
+model/modeltest/*
+model/modeltest*

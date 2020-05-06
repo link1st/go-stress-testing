@@ -122,6 +122,9 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		form = FormTypeHttp
 	} else if strings.HasPrefix(url, "ws://") || strings.HasPrefix(url, "wss://") {
 		form = FormTypeWebSocket
+	} else {
+		form = FormTypeHttp
+		url = fmt.Sprintf("http://%s", url)
 	}
 
 	if form == "" {
@@ -194,7 +197,8 @@ func (r *Request) Print() {
 		return
 	}
 
-	result := fmt.Sprintf("request:\n url:%s \n form:%s \n method:%s \n headers:%v \n", r.Url, r.Form, r.Method, r.Headers)
+	result := fmt.Sprintf("request:\n form:%s \n url:%s \n method:%s \n headers:%v \n", r.Form, r.Url, r.Method, r.Headers)
+	result = fmt.Sprintf("%s data:%v \n", result, r.Body)
 	result = fmt.Sprintf("%s verify:%s \n timeout:%s \n debu:%v \n", result, r.Verify, r.Timeout, r.Debug)
 	fmt.Println(result)
 
