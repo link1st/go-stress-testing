@@ -170,7 +170,7 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 	}
 
 	if timeout == 0 {
-		timeout = 3 * time.Second
+		timeout = 30 * time.Second
 	}
 
 	request = &Request{
