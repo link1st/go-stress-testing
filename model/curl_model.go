@@ -208,9 +208,10 @@ func (c *CURL) GetHeaders() (headers map[string]string) {
 			continue
 		}
 
-		vIndex := index + 2
+		vIndex := index + 1
 		if len(v) >= vIndex {
-			headers[v[:index]] = v[vIndex:]
+			value := v[vIndex:]
+			headers[v[:index]] = strings.TrimPrefix(value, " ")
 		}
 	}
 

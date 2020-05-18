@@ -93,7 +93,7 @@ func (r *Request) GetBody() (body io.Reader) {
 // timeout 请求超时时间
 // debug 是否开启debug
 // path curl文件路径 http接口压测，自定义参数设置
-func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string) (request *Request, err error) {
+func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string, reqHeaders []string, reqBody string) (request *Request, err error) {
 
 	var (
 		method  = "GET"
@@ -115,6 +115,25 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		method = curl.GetMethod()
 		headers = curl.GetHeaders()
 		body = curl.GetBody()
+	} else {
+
+		if reqBody != "" {
+			method = "POST"
+			body = reqBody
+		}
+
+		for _, v := range reqHeaders {
+			index := strings.Index(v, ":")
+			if index < 0 {
+				continue
+			}
+
+			vIndex := index + 1
+			if len(v) >= vIndex {
+				value := v[vIndex:]
+				headers[v[:index]] = strings.TrimPrefix(value, " ")
+			}
+		}
 	}
 
 	form := ""
