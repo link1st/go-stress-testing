@@ -203,16 +203,7 @@ func (c *CURL) GetHeaders() (headers map[string]string) {
 	value := c.getDataValue(keys)
 
 	for _, v := range value {
-		index := strings.Index(v, ":")
-		if index < 0 {
-			continue
-		}
-
-		vIndex := index + 1
-		if len(v) >= vIndex {
-			value := v[vIndex:]
-			headers[v[:index]] = strings.TrimPrefix(value, " ")
-		}
+		getHeaderValue(v, headers)
 	}
 
 	return

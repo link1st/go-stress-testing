@@ -120,19 +120,12 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		if reqBody != "" {
 			method = "POST"
 			body = reqBody
+
+			headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
 		}
 
 		for _, v := range reqHeaders {
-			index := strings.Index(v, ":")
-			if index < 0 {
-				continue
-			}
-
-			vIndex := index + 1
-			if len(v) >= vIndex {
-				value := v[vIndex:]
-				headers[v[:index]] = strings.TrimPrefix(value, " ")
-			}
+			getHeaderValue(v, headers)
 		}
 	}
 
@@ -207,6 +200,24 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 
 	return
 
+}
+
+func getHeaderValue(v string, headers map[string]string) {
+	index := strings.Index(v, ":")
+	if index < 0 {
+		return
+	}
+
+	vIndex := index + 1
+	if len(v) >= vIndex {
+		value := strings.TrimPrefix(v[vIndex:], " ")
+
+		if _, ok := headers[v[:index]]; ok {
+			headers[v[:index]] = fmt.Sprintf("%s; %s", headers[v[:index]], value)
+		} else {
+			headers[v[:index]] = value
+		}
+	}
 }
 
 // 打印
