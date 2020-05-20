@@ -858,7 +858,7 @@ VmSize: 27133804 kB
  原因是：主动断开的一方回复 ACK 消息可能丢失，TCP 是可靠的传输协议，在没有收到 ACK 消息的另一端会重试，重新发送FIN消息，所以主动关闭的一方会等待 2MSL 时间，防止对方重试，这就出现了大量 **TIME_WAIT** 状态（参考: 四次挥手的最后两次）
 
 TCP 握手：
-![TCP握手](https://img.mukewang.com/5ec504300001aa7b08301233.png)
+<img border="0" src="https://img.mukewang.com/5ec504300001aa7b08301233.png" width="830"/>
 
 ## 8、总结
 
