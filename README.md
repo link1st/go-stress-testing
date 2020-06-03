@@ -429,7 +429,7 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 
 ### 4.1 介绍
 
-- go-stress-testing 是go语言实现的简单压测工具，源码开源、支持二次开发，可以压测http、webSocket请求，使用协程模拟单个用户，可以更高效的利用CPU资源。
+- go-stress-testing 是go语言实现的简单压测工具，源码开源、支持二次开发，可以压测http、webSocket请求、私有rpc调用，使用协程模拟单个用户，可以更高效的利用CPU资源。
 
 - 项目地址 [https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
 
@@ -441,17 +441,21 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 ```
 Usage of ./go-stress-testing-mac:
   -c uint
-        并发数 (default 1)
+      并发数 (default 1)
   -d string
-        调试模式 (default "false")
+      调试模式 (default "false")
+  -data string
+      HTTP POST方式传送数据
   -n uint
-        请求总数 (default 1)
+      请求总数 (default 1)
   -p string
-        curl文件路径
+      curl文件路径
   -u string
-        请求地址
+      压测地址
   -v string
-        验证方法 http 支持:statusCode、json webSocket支持:json (default "statusCode")
+      验证方法 http 支持:statusCode、json webSocket支持:json
+  -H value
+      自定义头信息传递给服务器 示例:-header 'Content-Type: application/json'
 ```
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数
