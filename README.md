@@ -434,6 +434,7 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 ### 4.2 用法
 
 - [go-stress-testing](https://github.com/link1st/go-stress-testing/releases) 下载地址
+- clone 项目源码运行的时候，需要将项目 clone 到 **$GOPATH** 目录下
 - 支持参数:
 
 ```
