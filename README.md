@@ -585,7 +585,7 @@ func main() {
     runtime.GOMAXPROCS(runtime.NumCPU() - 1)
 
     hello := func(w http.ResponseWriter, req *http.Request) {
-        data := "Hello, World!"
+        data := "Hello, go-stress-testing! \n"
 
         w.Header().Add("Server", "golang")
         w.Write([]byte(data))
