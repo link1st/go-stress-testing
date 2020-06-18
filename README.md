@@ -897,3 +897,12 @@ TCP 握手：
 [https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
 
 github 搜:link1st 查看项目 go-stress-testing
+
+### 意见反馈
+
+- 在项目中遇到问题可以直接在这里找找答案或者提问 [issues](https://github.com/link1st/go-stress-testing/issues)
+- 也可以添加我的微信(申请信息填写:公司、姓名，我好备注下)，直接反馈给我
+<br/>
+<p align="center">
+     <img border="0" src="https://img.mukewang.com/5eb376b60001ddc208300832.png" alt="添加link1st的微信" width="200"/>
+</p>
