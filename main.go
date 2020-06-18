@@ -53,7 +53,7 @@ func main() {
 	flag.StringVar(&requestUrl, "u", "", "压测地址")
 	flag.StringVar(&path, "p", "", "curl文件路径")
 	flag.StringVar(&verify, "v", "", "验证方法 http 支持:statusCode、json webSocket支持:json")
-	flag.Var(&headers, "H", "自定义头信息传递给服务器 示例:-header 'Content-Type: application/json'")
+	flag.Var(&headers, "H", "自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'")
 	flag.StringVar(&body, "data", "", "HTTP POST方式传送数据")
 
 	// 解析参数

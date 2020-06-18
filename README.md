@@ -454,7 +454,7 @@ Usage of ./go-stress-testing-mac:
   -v string
       验证方法 http 支持:statusCode、json webSocket支持:json
   -H value
-      自定义头信息传递给服务器 示例:-header 'Content-Type: application/json'
+      自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'
 ```
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数
