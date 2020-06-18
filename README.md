@@ -159,9 +159,9 @@ go 实现的压测工具，每个用户用一个协程的方式模拟，最大�
 | 请求成功数(Request Success Number) | 在一次压测中，请求成功的数量    |
 | 请求失败数(Request Failures Number) | 在一次压测中，请求失败的数量    |
 | 错误率(Error Rate) | 在压测中，请求成功的数量与请求失败数量的比率  |
-| 最大响应时间(Max Response Time) | 在一次事务中，从发出请求或指令系统做出的反映(响应)的最大时间  |
-| 最少响应时间(Mininum Response Time) | 在一次事务中，从发出请求或指令系统做出的反映(响应)的最少时间  |
-| 平均响应时间(Average Response Time) | 在一次事务中，从发出请求或指令系统做出的反映(响应)的平均时间  |
+| 最大响应时间(Max Response Time) | 在一次压测中，从发出请求或指令系统做出的反映(响应)的最大时间  |
+| 最少响应时间(Mininum Response Time) | 在一次压测中，从发出请求或指令系统做出的反映(响应)的最少时间  |
+| 平均响应时间(Average Response Time) | 在一次压测中，从发出请求或指令系统做出的反映(响应)的平均时间  |
 
 #### 2.3.3 机器性能指标解释
 
@@ -606,7 +606,7 @@ func main() {
 - go_stress_testing 压测命令
 
 ```
-./go_stress_testing_linux -c 100 -n 10000 -u http://127.0.0.1:8088/
+./go-stress-testing-linux -c 100 -n 10000 -u http://127.0.0.1:8088/
 ```
 
 
