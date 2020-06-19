@@ -441,20 +441,20 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 Usage of ./go-stress-testing-mac:
   -c uint
       并发数 (default 1)
-  -d string
-      调试模式 (default "false")
-  -data string
-      HTTP POST方式传送数据
   -n uint
-      请求总数 (default 1)
-  -p string
-      curl文件路径
+      请求数(单个并发/协程) (default 1)
   -u string
       压测地址
-  -v string
-      验证方法 http 支持:statusCode、json webSocket支持:json
+  -d string
+      调试模式 (default "false")
   -H value
       自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'
+  -data string
+      HTTP POST方式传送数据
+  -v string
+      验证方法 http 支持:statusCode、json webSocket支持:json
+  -p string
+      curl文件路径
 ```
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数

@@ -38,7 +38,7 @@ func main() {
 
 	var (
 		concurrency uint64 // 并发数
-		totalNumber uint64 // 请求总数(单个并发)
+		totalNumber uint64 // 请求数(单个并发/协程)
 		debugStr    string // 是否是debug
 		requestUrl  string // 压测的url 目前支持，http/https ws/wss
 		path        string // curl文件路径 http接口压测，自定义参数设置
@@ -48,7 +48,7 @@ func main() {
 	)
 
 	flag.Uint64Var(&concurrency, "c", 1, "并发数")
-	flag.Uint64Var(&totalNumber, "n", 1, "请求总数")
+	flag.Uint64Var(&totalNumber, "n", 1, "请求数(单个并发/协程)")
 	flag.StringVar(&debugStr, "d", "false", "调试模式")
 	flag.StringVar(&requestUrl, "u", "", "压测地址")
 	flag.StringVar(&path, "p", "", "curl文件路径")
