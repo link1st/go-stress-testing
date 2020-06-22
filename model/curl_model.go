@@ -157,7 +157,7 @@ func (c *CURL) String() (url string) {
 // GetUrl
 func (c *CURL) GetUrl() (url string) {
 
-	keys := []string{"curl"}
+	keys := []string{"curl","--url"}
 	value := c.getDataValue(keys)
 	if len(value) <= 0 {
 
