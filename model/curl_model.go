@@ -121,10 +121,15 @@ func ParseTheFile(path string) (curl *CURL, err error) {
 
 		index = strings.Index(data, endSymbol)
 		if index <= -1 {
-			break
+			index = len(data)
+			// break
 		}
 		value = data[:index]
-		data = data[index+1:]
+		if len(data) >= index+1 {
+			data = data[index+1:]
+		} else {
+			data = ""
+		}
 
 		// 去除首尾空格
 		data = strings.TrimFunc(data, func(r rune) bool {
@@ -135,12 +140,17 @@ func ParseTheFile(path string) (curl *CURL, err error) {
 			return false
 		})
 
+		if key == "" {
+			continue
+		}
+
 		curl.Data[key] = append(curl.Data[key], value)
 
 		// break
 
 	}
 
+	// debug
 	// for key, value := range curl.Data {
 	// 	fmt.Println("key:", key, "value:", value)
 	// }
@@ -157,7 +167,7 @@ func (c *CURL) String() (url string) {
 // GetUrl
 func (c *CURL) GetUrl() (url string) {
 
-	keys := []string{"curl","--url"}
+	keys := []string{"curl", "--url"}
 	value := c.getDataValue(keys)
 	if len(value) <= 0 {
 
@@ -173,17 +183,14 @@ func (c *CURL) GetUrl() (url string) {
 func (c *CURL) GetMethod() (method string) {
 	method = "GET"
 
-	var (
-		postKeys = []string{"--d", "--data", "--data-binary $", "--data-binary"}
-	)
-	value := c.getDataValue(postKeys)
+	body := c.GetBody()
 
-	if len(value) >= 1 {
+	if len(body) > 0 {
 		return "POST"
 	}
 
 	keys := []string{"-X", "--request"}
-	value = c.getDataValue(keys)
+	value := c.getDataValue(keys)
 
 	if len(value) <= 0 {
 
@@ -220,7 +227,23 @@ func (c *CURL) GetHeadersStr() string {
 // 获取body
 func (c *CURL) GetBody() (body string) {
 
-	keys := []string{"--data", "-d", "--data-raw", "--data-binary"}
+	keys := []string{"--data", "-d", "--data-urlencode", "--data-raw", "--data-binary"}
+	value := c.getDataValue(keys)
+
+	if len(value) <= 0 {
+		body = c.getPostForm()
+
+		return
+	}
+
+	// body = strings.NewReader(value[0])
+	body = value[0]
+
+	return
+}
+
+func (c *CURL) getPostForm() (body string) {
+	keys := []string{"--form", "-F", "--form-string"}
 	value := c.getDataValue(keys)
 
 	if len(value) <= 0 {
@@ -228,8 +251,7 @@ func (c *CURL) GetBody() (body string) {
 		return
 	}
 
-	// body = strings.NewReader(value[0])
-	body = value[0]
+	body = strings.Join(value, "&")
 
 	return
 }
