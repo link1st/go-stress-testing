@@ -68,12 +68,10 @@ type VerifyWebSocket func(request *Request, seq string, msg []byte) (code int, i
 type Request struct {
 	Url             string            // Url
 	Form            string            // http/webSocket/tcp
-	Method          string            // 方法 get/post/put
+	Method          string            // 方法 GET/POST/PUT
 	Headers         map[string]string // Headers
 	Body            string            // body
 	Verify          string            // 验证的方法
-	VerifyHttp      VerifyHttp        // 验证的方法
-	VerifyWebSocket VerifyWebSocket   // 验证的方法
 	Timeout         time.Duration     // 请求超时时间
 	Debug           bool              // 是否开启Debug模式
 
@@ -85,6 +83,31 @@ func (r *Request) GetBody() (body io.Reader) {
 	body = strings.NewReader(r.Body)
 
 	return
+}
+
+func (r *Request) getVerifyKey() (key string) {
+	key = fmt.Sprintf("%s.%s", r.Form, r.Verify)
+
+	return
+}
+
+// 获取数据校验方法
+func (r *Request) GetVerifyHttp() VerifyHttp {
+	verify, ok := verifyMapHttp[r.getVerifyKey()]
+	if !ok {
+		panic("GetVerifyHttp 验证方法不存在:" + r.Verify)
+	}
+
+	return verify
+}
+
+func (r *Request) GetVerifyWebSocket() VerifyWebSocket {
+	verify, ok := verifyMapWebSocket[r.getVerifyKey()]
+	if !ok {
+		panic("GetVerifyWebSocket 验证方法不存在:" + r.Verify)
+	}
+
+	return verify
 }
 
 // NewRequest
@@ -146,8 +169,6 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 	}
 
 	var (
-		verifyHttp      VerifyHttp
-		verifyWebSocket VerifyWebSocket
 		ok              bool
 	)
 
@@ -159,7 +180,7 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		}
 
 		key := fmt.Sprintf("%s.%s", form, verify)
-		verifyHttp, ok = verifyMapHttp[key]
+		_, ok = verifyMapHttp[key]
 		if !ok {
 			err = errors.New("验证器不存在:" + key)
 
@@ -172,7 +193,7 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		}
 
 		key := fmt.Sprintf("%s.%s", form, verify)
-		verifyWebSocket, ok = verifyMapWebSocket[key]
+		_, ok = verifyMapWebSocket[key]
 		if !ok {
 			err = errors.New("验证器不存在:" + key)
 
@@ -192,8 +213,6 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		Headers:         headers,
 		Body:            body,
 		Verify:          verify,
-		VerifyHttp:      verifyHttp,
-		VerifyWebSocket: verifyWebSocket,
 		Timeout:         timeout,
 		Debug:           debug,
 	}
@@ -247,13 +266,12 @@ func (r *Request) IsParameterLegal() (err error) {
 	r.Verify = "json"
 
 	key := fmt.Sprintf("%s.%s", r.Form, r.Verify)
-	value, ok := verifyMapHttp[key]
+	_, ok := verifyMapHttp[key]
 	if !ok {
 
 		return errors.New("验证器不存在:" + key)
 	}
 
-	r.VerifyHttp = value
 
 	return
 }

@@ -9,11 +9,12 @@ package golink
 
 import (
 	"fmt"
+	"sync"
+	"time"
+
 	"go-stress-testing/heper"
 	"go-stress-testing/model"
 	"go-stress-testing/server/client"
-	"sync"
-	"time"
 )
 
 const (
@@ -100,7 +101,7 @@ func webSocketRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, 
 			fmt.Println("读取数据 失败~")
 		} else {
 			// fmt.Println(msg)
-			errCode, isSucceed = request.VerifyWebSocket(request, seq, msg)
+			errCode, isSucceed = request.GetVerifyWebSocket()(request, seq, msg)
 		}
 	}
 
