@@ -39,7 +39,10 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 		return
 	}
-
+	// 在req中设置Host，解决在header中设置Host不生效问题
+	if _, ok := headers["Host"]; ok {
+		req.Host = headers["Host"]
+	}
 	// 设置默认为utf-8编码
 	if _, ok := headers["Content-Type"]; !ok {
 		if headers == nil {
