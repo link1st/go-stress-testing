@@ -13,11 +13,6 @@ import (
 
 // 时间差，纳秒
 func DiffNano(startTime time.Time) (diff int64) {
-
-	startTimeStamp := startTime.UnixNano()
-	endTimeStamp := time.Now().UnixNano()
-
-	diff = endTimeStamp - startTimeStamp
-
+	diff = int64(time.Since(startTime))
 	return
 }
