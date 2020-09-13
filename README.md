@@ -611,6 +611,7 @@ func main() {
 
 
 - 压测结果
+- [压测结果 示例](https://github.com/link1st/go-stress-testing/issues/32)
 
 | 并发数  |  go_stress_testing QPS  |
 | :----: |  :----:  |
@@ -622,7 +623,6 @@ func main() {
 |   50   | 19922.56 |
 |   80   | 19155.33 |
 |   100  | 18336.46 |
-|   200  | 16813.86 |
 
 从压测的结果上看：效果还不错，压测QPS有接近2W
 
