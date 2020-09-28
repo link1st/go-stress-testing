@@ -9,10 +9,12 @@ package statistics
 
 import (
 	"fmt"
-	"go-stress-testing/model"
+	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	"go-stress-testing/model"
 )
 
 var (
@@ -191,6 +193,8 @@ func printMap(errCode map[int]int) (mapStr string) {
 	for key, value := range errCode {
 		mapArr = append(mapArr, fmt.Sprintf("%d:%d", key, value))
 	}
+
+	sort.Strings(mapArr)
 
 	mapStr = strings.Join(mapArr, ";")
 
