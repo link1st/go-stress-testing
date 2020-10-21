@@ -147,7 +147,7 @@ func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, su
 
 	// 平均时长 总耗时/总请求数/并发数 纳秒=>毫秒
 	if successNum != 0 && concurrent != 0 {
-		averageTime = float64(processingTime) / float64(successNum*1e6*concurrent)
+		averageTime = float64(processingTime) / float64(successNum*1e6)
 	}
 
 	// 纳秒=>毫秒
