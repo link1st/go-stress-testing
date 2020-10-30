@@ -66,14 +66,14 @@ type VerifyWebSocket func(request *Request, seq string, msg []byte) (code int, i
 
 // 请求结果
 type Request struct {
-	Url             string            // Url
-	Form            string            // http/webSocket/tcp
-	Method          string            // 方法 GET/POST/PUT
-	Headers         map[string]string // Headers
-	Body            string            // body
-	Verify          string            // 验证的方法
-	Timeout         time.Duration     // 请求超时时间
-	Debug           bool              // 是否开启Debug模式
+	Url     string            // Url
+	Form    string            // http/webSocket/tcp
+	Method  string            // 方法 GET/POST/PUT
+	Headers map[string]string // Headers
+	Body    string            // body
+	Verify  string            // 验证的方法
+	Timeout time.Duration     // 请求超时时间
+	Debug   bool              // 是否开启Debug模式
 
 	// 连接以后初始化事件
 	// 循环事件 切片 时间 动作
@@ -169,7 +169,7 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 	}
 
 	var (
-		ok              bool
+		ok bool
 	)
 
 	switch form {
@@ -207,14 +207,14 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 	}
 
 	request = &Request{
-		Url:             url,
-		Form:            form,
-		Method:          strings.ToUpper(method),
-		Headers:         headers,
-		Body:            body,
-		Verify:          verify,
-		Timeout:         timeout,
-		Debug:           debug,
+		Url:     url,
+		Form:    form,
+		Method:  strings.ToUpper(method),
+		Headers: headers,
+		Body:    body,
+		Verify:  verify,
+		Timeout: timeout,
+		Debug:   debug,
 	}
 
 	return
@@ -272,17 +272,17 @@ func (r *Request) IsParameterLegal() (err error) {
 		return errors.New("验证器不存在:" + key)
 	}
 
-
 	return
 }
 
 // 请求结果
 type RequestResults struct {
-	Id        string // 消息Id
-	ChanId    uint64 // 消息Id
-	Time      uint64 // 请求时间 纳秒
-	IsSucceed bool   // 是否请求成功
-	ErrCode   int    // 错误码
+	Id            string // 消息Id
+	ChanId        uint64 // 消息Id
+	Time          uint64 // 请求时间 纳秒
+	IsSucceed     bool   // 是否请求成功
+	ErrCode       int    // 错误码
+	ReceivedBytes int64
 }
 
 func (r *RequestResults) SetId(chanId uint64, number uint64) {
