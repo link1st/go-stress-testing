@@ -66,6 +66,7 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 		return
 	}
+	defer resp.Body.Close()
 
 	// bytes, err := json.Marshal(req)
 	// fmt.Printf("%#v \n", req)
