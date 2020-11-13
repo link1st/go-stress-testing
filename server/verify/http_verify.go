@@ -8,6 +8,7 @@
 package verify
 
 import (
+	"bytes"
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
@@ -29,9 +30,8 @@ func getZipData(response *http.Response) (body []byte, err error) {
 	default:
 		reader = response.Body
 	}
-
 	body, err = ioutil.ReadAll(reader)
-
+	response.Body = ioutil.NopCloser(bytes.NewReader(body))
 	return
 }
 

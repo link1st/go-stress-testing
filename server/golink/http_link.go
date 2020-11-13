@@ -8,6 +8,8 @@
 package golink
 
 import (
+	"bytes"
+	"io/ioutil"
 	"sync"
 
 	"go-stress-testing/model"
@@ -85,6 +87,7 @@ func send(request *model.Request) (bool, int, uint64, int64) {
 		contentLength = 0
 		for {
 			n, err := resp.Body.Read(buf)
+			resp.Body = ioutil.NopCloser(bytes.NewReader(buf))
 			contentLength += int64(n)
 			if err != nil {
 				break
