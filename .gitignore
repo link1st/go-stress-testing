@@ -20,3 +20,4 @@ go-stress-testing-win.exe
 model/modeltest/*
 model/modeltest*
 server.go
+vendor
