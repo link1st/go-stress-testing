@@ -319,7 +319,7 @@ pip3 install websocket-client
 编写压测脚本 **test.py**
 
 ```python
-from locust import HttpLocust, TaskSet, task
+from locust import HttpUser, TaskSet, task
 
 # 定义用户行为
 class UserBehavior(TaskSet):
@@ -328,9 +328,8 @@ class UserBehavior(TaskSet):
     def baidu_index(self):
         self.client.get("/")
 
-
-class WebsiteUser(HttpLocust):
-    task_set = UserBehavior # 指向一个定义的用户行为类
+class WebsiteUser(HttpUser):
+    task = [UserBehavior] # 指向一个定义的用户行为类
     min_wait = 3000 # 执行事务之间用户等待时间的下界（单位：毫秒）
     max_wait = 6000 # 执行事务之间用户等待时间的上界（单位：毫秒）
 ```
