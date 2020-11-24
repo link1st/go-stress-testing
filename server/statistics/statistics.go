@@ -184,11 +184,20 @@ func header() {
 
 // 打印表格
 func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat float64, chanIdLen int, receivedBytes int64) {
+	var (
+		speed int64
+	)
+	requestTimeFloat = 0.0
+	if requestTimeFloat > 0 {
+		speed = int64(float64(receivedBytes)/requestTimeFloat)
+	}else{
+		speed = 0
+	}
 	// 打印的时长都为毫秒
 	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%8s|%8s│%v",
 		requestTimeFloat, chanIdLen, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime,
 		p.Sprintf("%d", receivedBytes),
-		p.Sprintf("%d", int64(float64(receivedBytes)/requestTimeFloat)),
+		p.Sprintf("%d", speed),
 		printMap(errCode))
 	fmt.Println(result)
 
