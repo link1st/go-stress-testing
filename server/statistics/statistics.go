@@ -187,10 +187,10 @@ func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime,
 	var (
 		speed int64
 	)
-	requestTimeFloat = 0.0
+
 	if requestTimeFloat > 0 {
-		speed = int64(float64(receivedBytes)/requestTimeFloat)
-	}else{
+		speed = int64(float64(receivedBytes) / requestTimeFloat)
+	} else {
 		speed = 0
 	}
 	// 打印的时长都为毫秒
