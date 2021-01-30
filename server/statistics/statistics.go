@@ -207,7 +207,7 @@ func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime,
 	}
 
 	// 打印的时长都为毫秒
-	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%8s|%8s│%v",
+	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%8s│%8s│%v",
 		requestTimeFloat, chanIdLen, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime,
 		receivedBytesStr, speedStr,
 		printMap(errCode))
