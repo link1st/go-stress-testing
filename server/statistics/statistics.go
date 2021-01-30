@@ -198,7 +198,7 @@ func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime,
 		speedStr         string
 	)
 	// 判断获取下载字节长度是否是未知
-	if receivedBytes == -1 {
+	if receivedBytes <= 0 {
 		receivedBytesStr = ""
 		speedStr = ""
 	} else {
