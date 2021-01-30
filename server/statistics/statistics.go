@@ -193,11 +193,23 @@ func table(successNum, failureNum uint64, errCode map[int]int, qps, averageTime,
 	} else {
 		speed = 0
 	}
+	var (
+		receivedBytesStr string
+		speedStr         string
+	)
+	// 判断获取下载字节长度是否是未知
+	if receivedBytes == -1 {
+		receivedBytesStr = ""
+		speedStr = ""
+	} else {
+		receivedBytesStr = p.Sprintf("%d", receivedBytes)
+		speedStr = p.Sprintf("%d", speed)
+	}
+
 	// 打印的时长都为毫秒
 	result := fmt.Sprintf("%4.0fs│%7d│%7d│%7d│%8.2f│%8.2f│%8.2f│%8.2f│%8s|%8s│%v",
 		requestTimeFloat, chanIdLen, successNum, failureNum, qps, maxTimeFloat, minTimeFloat, averageTime,
-		p.Sprintf("%d", receivedBytes),
-		p.Sprintf("%d", speed),
+		receivedBytesStr, speedStr,
 		printMap(errCode))
 	fmt.Println(result)
 

@@ -8,15 +8,11 @@
 package golink
 
 import (
-	"bytes"
-	"io/ioutil"
 	"sync"
 
 	"go-stress-testing/model"
 	"go-stress-testing/server/client"
 )
-
-var buf = make([]byte, 1024*1024)
 
 // http go link
 func Http(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request) {
@@ -83,16 +79,7 @@ func send(request *model.Request) (bool, int, uint64, int64) {
 	if err != nil {
 		errCode = model.RequestErr // 请求错误
 	} else {
-
-		contentLength = 0
-		for {
-			n, err := resp.Body.Read(buf)
-			resp.Body = ioutil.NopCloser(bytes.NewReader(buf))
-			contentLength += int64(n)
-			if err != nil {
-				break
-			}
-		}
+		contentLength = resp.ContentLength
 
 		// 验证请求是否成功
 		errCode, isSucceed = newRequest.GetVerifyHttp()(newRequest, resp)
