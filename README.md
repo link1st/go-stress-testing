@@ -4,6 +4,8 @@
 
 - 单台机器对 HTTP 短连接 QPS 1W+ 的压测实战
 - 单台机器 100W 长连接的压测实战
+- 对 grpc 接口进行压测
+> 用户可以手动扩展支持 私有协议压测
 
 ## 目录
 - [1、项目说明](#1项目说明)
@@ -31,6 +33,7 @@
     - [4.2 用法](#42-用法)
     - [4.3 实现](#43-实现)
     - [4.4 go-stress-testing 对 Golang web 压测](#44-go-stress-testing-对-golang-web-压测)
+    - [4.5 grpc压测](#45-grpc压测)
 - [5、压测工具的比较](#5压测工具的比较)
     - [5.1 比较](#51-比较)
     - [5.2 如何选择压测工具](#52-如何选择压测工具)
@@ -624,6 +627,28 @@ func main() {
 |   100  | 18336.46 |
 
 从压测的结果上看：效果还不错，压测QPS有接近2W
+
+### 4.5 grpc压测
+- 介绍如何压测 grpc 接口
+> [添加对 grpc 接口压测 commit](https://github.com/link1st/go-stress-testing/commit/2b4b14aaf026d08276531cf76f42de90efd3bc61)
+- 1. 启动Server
+```shell script
+# 进入 grpc server 目录
+cd tests/grpc
+
+# 启动 grpc server
+go run main.go
+```
+
+- 2. 对 grpc server 协议进行压测
+```shell script
+# 回到项目根目录
+go run main.go -c 300 -n 1000 -u grpc://127.0.0.1:8099 -data world
+```
+
+- 如何扩展其它私有协议
+> 由于私有协议、grpc 协议 都涉及到代码的书写，所以需要 编写go 的代码才能完成
+> 参考 [添加对 grpc 接口压测 commit](https://github.com/link1st/go-stress-testing/commit/2b4b14aaf026d08276531cf76f42de90efd3bc61)
 
 ## 5、压测工具的比较
 ### 5.1 比较
