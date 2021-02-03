@@ -25,6 +25,7 @@ const (
 
 	FormTypeHttp      = "http"
 	FormTypeWebSocket = "webSocket"
+	FormTypeGRPC      = "grpc"
 )
 
 var (
@@ -157,6 +158,8 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		form = FormTypeHttp
 	} else if strings.HasPrefix(url, "ws://") || strings.HasPrefix(url, "wss://") {
 		form = FormTypeWebSocket
+	} else if strings.HasPrefix(url, "grpc://") || strings.HasPrefix(url, "rpc://") {
+		form = FormTypeGRPC
 	} else {
 		form = FormTypeHttp
 		url = fmt.Sprintf("http://%s", url)

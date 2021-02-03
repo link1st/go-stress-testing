@@ -90,6 +90,15 @@ func Dispose(concurrency, totalNumber uint64, request *model.Request) {
 				panic(data)
 			}
 
+		case model.FormTypeGRPC:
+			// 连接以后再启动协程
+			ws := client.NewGrpcSocket(request.Url)
+			err := ws.Link()
+			if err != nil {
+				fmt.Println("连接失败:", i, err)
+				continue
+			}
+			go golink.Grpc(i, ch, totalNumber, &wg, request, ws)
 		default:
 			// 类型不支持
 			wg.Done()
