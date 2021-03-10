@@ -42,6 +42,7 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 		return
 	}
+	req.Close = true
 	// 在req中设置Host，解决在header中设置Host不生效问题
 	if _, ok := headers["Host"]; ok {
 		req.Host = headers["Host"]
