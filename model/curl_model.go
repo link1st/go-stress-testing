@@ -186,12 +186,17 @@ func (c *CURL) GetMethod() (method string) {
 	keys := []string{"-X", "--request"}
 	value := c.getDataValue(keys)
 	if len(value) <= 0 {
-		return
+		return c.defaultMethod()
 	}
 	method = strings.ToUpper(value[0])
 	if helper.InArrayStr(method, []string{"GET", "POST", "PUT", "DELETE"}) {
 		return method
 	}
+	return c.defaultMethod()
+}
+
+// defaultMethod 获取默认方法
+func (c *CURL) defaultMethod() (method string) {
 	method = "GET"
 	body := c.GetBody()
 	if len(body) > 0 {
@@ -253,4 +258,5 @@ func (c *CURL) getPostForm() (body string) {
 
 	return
 }
+
 
