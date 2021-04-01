@@ -9,12 +9,13 @@ package client
 
 import (
 	"crypto/tls"
-	"go-stress-testing/heper"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"go-stress-testing/helper"
 )
 
 var logErr = log.New(os.Stderr, "", 0)
@@ -61,7 +62,7 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 	startTime := time.Now()
 	resp, err = client.Do(req)
-	requestTime = uint64(heper.DiffNano(startTime))
+	requestTime = uint64(helper.DiffNano(startTime))
 	if err != nil {
 		logErr.Println("请求失败:", err)
 
@@ -73,3 +74,4 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 	return
 }
+

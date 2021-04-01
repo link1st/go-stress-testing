@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"go-stress-testing/heper"
+	"go-stress-testing/helper"
 	"go-stress-testing/model"
 	"go-stress-testing/server/client"
 )
@@ -105,7 +105,7 @@ func webSocketRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, 
 		}
 	}
 
-	requestTime := uint64(heper.DiffNano(startTime))
+	requestTime := uint64(helper.DiffNano(startTime))
 
 	requestResults := &model.RequestResults{
 		Time:      requestTime,
@@ -118,3 +118,4 @@ func webSocketRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, 
 	ch <- requestResults
 
 }
+

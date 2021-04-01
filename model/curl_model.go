@@ -13,6 +13,8 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"go-stress-testing/helper"
 )
 
 // curl参数解析
@@ -181,24 +183,20 @@ func (c *CURL) GetUrl() (url string) {
 
 // GetMethod
 func (c *CURL) GetMethod() (method string) {
+	keys := []string{"-X", "--request"}
+	value := c.getDataValue(keys)
+	if len(value) <= 0 {
+		return
+	}
+	method = strings.ToUpper(value[0])
+	if helper.InArrayStr(method, []string{"GET", "POST", "PUT", "DELETE"}) {
+		return method
+	}
 	method = "GET"
-
 	body := c.GetBody()
-
 	if len(body) > 0 {
 		return "POST"
 	}
-
-	keys := []string{"-X", "--request"}
-	value := c.getDataValue(keys)
-
-	if len(value) <= 0 {
-
-		return
-	}
-
-	method = strings.ToUpper(value[0])
-
 	return
 }
 
@@ -255,3 +253,4 @@ func (c *CURL) getPostForm() (body string) {
 
 	return
 }
+

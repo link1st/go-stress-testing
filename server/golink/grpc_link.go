@@ -9,17 +9,19 @@ package golink
 
 import (
 	"context"
-	pb "go-stress-testing/proto"
 	"sync"
 	"time"
 
-	"go-stress-testing/heper"
+	"go-stress-testing/helper"
+	pb "go-stress-testing/proto"
+
 	"go-stress-testing/model"
 	"go-stress-testing/server/client"
 )
 
 // Grpc grpc 接口请求
-func Grpc(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request, ws *client.GrpcSocket) {
+func Grpc(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
+	request *model.Request, ws *client.GrpcSocket) {
 
 	defer func() {
 		wg.Done()
@@ -34,7 +36,8 @@ func Grpc(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg
 }
 
 // 请求
-func grpcRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, request *model.Request, ws *client.GrpcSocket) {
+func grpcRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, request *model.Request,
+	ws *client.GrpcSocket) {
 	var (
 		startTime = time.Now()
 		isSucceed = false
@@ -67,7 +70,7 @@ func grpcRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, reque
 			}
 		}
 	}
-	requestTime := uint64(heper.DiffNano(startTime))
+	requestTime := uint64(helper.DiffNano(startTime))
 	requestResults := &model.RequestResults{
 		Time:      requestTime,
 		IsSucceed: isSucceed,
@@ -77,3 +80,4 @@ func grpcRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, reque
 
 	ch <- requestResults
 }
+
