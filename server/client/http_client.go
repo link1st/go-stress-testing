@@ -1,10 +1,4 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2019-08-15
-* Time: 21:03
- */
-
+// Package client http 客户端
 package client
 
 import (
@@ -18,29 +12,27 @@ import (
 	"go-stress-testing/helper"
 )
 
+// logErr err
 var logErr = log.New(os.Stderr, "", 0)
 
-// HTTP 请求
+// HTTPRequest HTTP 请求
 // method 方法 GET POST
 // url 请求的url
 // body 请求的body
 // headers 请求头信息
 // timeout 请求超时时间
-func HttpRequest(method, url string, body io.Reader, headers map[string]string, timeout time.Duration) (resp *http.Response, requestTime uint64, err error) {
-
+func HTTPRequest(method, url string, body io.Reader, headers map[string]string,
+	timeout time.Duration) (resp *http.Response, requestTime uint64, err error) {
 	// 跳过证书验证
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-
 	client := &http.Client{
 		Transport: tr,
 		Timeout:   timeout,
 	}
-
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-
 		return
 	}
 	req.Close = true
@@ -55,11 +47,9 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 		}
 		headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
 	}
-
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
-
 	startTime := time.Now()
 	resp, err = client.Do(req)
 	requestTime = uint64(helper.DiffNano(startTime))
@@ -68,10 +58,5 @@ func HttpRequest(method, url string, body io.Reader, headers map[string]string, 
 
 		return
 	}
-
-	// bytes, err := json.Marshal(req)
-	// fmt.Printf("%#v \n", req)
-
 	return
 }
-

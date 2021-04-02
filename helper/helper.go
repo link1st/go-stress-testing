@@ -1,10 +1,4 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2019-08-21
-* Time: 15:40
- */
-
+// Package helper 帮助函数，时间、数组的通用处理
 package helper
 
 import (
@@ -27,4 +21,3 @@ func InArrayStr(str string, arr []string) (inArray bool) {
 	}
 	return
 }
-
