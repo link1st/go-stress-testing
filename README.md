@@ -569,8 +569,7 @@ go version: go1.12.9 linux/amd64
 
 - go server
 
-```golang
-package main
+```golangpackage main
 
 import (
     "log"

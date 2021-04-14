@@ -1,19 +1,15 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2021/2/3
-* Time: 23:44
- */
-
+// Package main grpc server
 package main
 
 import (
 	"context"
 	"fmt"
-	pb "go-stress-testing/proto"
-	"google.golang.org/grpc"
 	"log"
 	"net"
+
+	"google.golang.org/grpc"
+
+	pb "go-stress-testing/proto"
 )
 
 const (
