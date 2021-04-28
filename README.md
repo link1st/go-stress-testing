@@ -766,8 +766,6 @@ core 是限制内核文件的大小，这里设置为 unlimited
 # 添加以下参数
 root soft nofile 1040000
 root hard nofile 1040000
-
-root soft nofile 1040000
 root hard nproc 1040000
 
 root soft core unlimited
@@ -775,8 +773,6 @@ root hard core unlimited
 
 * soft nofile 1040000
 * hard nofile 1040000
-
-* soft nofile 1040000
 * hard nproc 1040000
 
 * soft core unlimited
