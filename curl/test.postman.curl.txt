@@ -1,0 +1,4 @@
+curl -X GET \
+  'https://www.baidu.com/sugrec?prod=pc_his&from=pc_web&json=1&sid=1464_21098_31424_31341_31464_31229_30823_31163_31475&hisdata=&req=2&csor=0' \
+  -H 'Postman-Token: c9b71950-61fd-43be-a38a-6596de238f0f' \
+  -H 'cache-control: no-cache'
