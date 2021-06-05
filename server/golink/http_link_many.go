@@ -1,10 +1,4 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2020/7/31
-* Time: 8:36 下午
- */
-
+// Package golink 连接
 package golink
 
 import (
@@ -13,11 +7,12 @@ import (
 	"go-stress-testing/model"
 )
 
-// 接口分步压测
+// ReqListMany 接口分步压测
 type ReqListMany struct {
 	list []*model.Request
 }
 
+// getCount 获取连接
 func (r *ReqListMany) getCount() int {
 	return len(r.list)
 }
@@ -26,18 +21,16 @@ var (
 	clientList *ReqListMany
 )
 
-// 接口分步压测示例
+// init 接口分步压测示例
 func init() {
-
 	clientList = &ReqListMany{}
-
 	// TODO::接口分步压测示例
 	// 需要压测的接口参数
 	clients := make([]*model.Request, 0)
 
 	// 压测第一步
 	clients = append(clients, &model.Request{
-		Url:    "https://page.aliyun.com/delivery/plan/list", // 请求url
+		URL:    "https://page.aliyun.com/delivery/plan/list", // 请求url
 		Form:   "http",                                       // 请求方式 示例参数:http/webSocket/tcp
 		Method: "POST",                                       // 请求方法 示例参数:GET/POST/PUT
 		Headers: map[string]string{
@@ -52,7 +45,7 @@ func init() {
 
 	// 压测第二步
 	clients = append(clients, &model.Request{
-		Url:    "https://page.aliyun.com/delivery/plan/list", // 请求url
+		URL:    "https://page.aliyun.com/delivery/plan/list", // 请求url
 		Form:   "http",                                       // 请求方式 示例参数:http/webSocket/tcp
 		Method: "POST",                                       // 请求方法 示例参数:GET/POST/PUT
 		Headers: map[string]string{
@@ -64,19 +57,15 @@ func init() {
 		Timeout: 30 * time.Second,                                                                                                                                                    // 是否开启Debug模式
 		Debug:   false,                                                                                                                                                               // 是否开启Debug模式
 	})
-
 	clientList.list = clients
-
-	// TODO::注释下面一行代码
+	// TODO::分步压测时，注释下面一行代码
 	clientList.list = nil
 }
 
+// getRequestList 获取请求列表
 func getRequestList(request *model.Request) []*model.Request {
-
 	if len(clientList.list) <= 0 {
-
 		return []*model.Request{request}
 	}
-
 	return clientList.list
 }

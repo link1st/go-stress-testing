@@ -1,4 +1,4 @@
-package longclinet
+package httplongclinet
 
 import (
 	"crypto/tls"

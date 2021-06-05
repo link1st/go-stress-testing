@@ -1,10 +1,4 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2020/7/31
-* Time: 8:36 下午
- */
-
+// Package golink 连接
 package golink
 
 import (
@@ -14,17 +8,19 @@ import (
 	"go-stress-testing/model"
 )
 
-// 接口加权压测
+// ReqListWeigh 接口加权压测
 type ReqListWeigh struct {
 	list       []Req
 	weighCount uint32 // 总权重
 }
 
+// Req req
 type Req struct {
 	req     *model.Request // 请求信息
 	weights uint32         // 权重，数字越大访问频率越高
 }
 
+// setWeighCount 设置权重
 func (r *ReqListWeigh) setWeighCount() {
 	r.weighCount = 0
 	for _, value := range r.list {
@@ -39,12 +35,11 @@ var (
 
 // 多接口压测示例
 func init() {
-
 	// TODO::压测多个接口示例
 	// 需要压测的接口参数
 	clients := make([]Req, 0)
 	clients = append(clients, Req{req: &model.Request{
-		Url:    "https://page.aliyun.com/delivery/plan/list", // 请求url
+		URL:    "https://page.aliyun.com/delivery/plan/list", // 请求url
 		Form:   "http",                                       // 请求方式 示例参数:http/webSocket/tcp
 		Method: "POST",                                       // 请求方法 示例参数:GET/POST/PUT
 		Headers: map[string]string{
@@ -58,7 +53,7 @@ func init() {
 	}, weights: 2})
 
 	clients = append(clients, Req{req: &model.Request{
-		Url:    "https://page.aliyun.com/delivery/plan/list", // 请求url
+		URL:    "https://page.aliyun.com/delivery/plan/list", // 请求url
 		Form:   "http",                                       // 请求方式 示例参数:http/webSocket/tcp
 		Method: "POST",                                       // 请求方法 示例参数:GET/POST/PUT
 		Headers: map[string]string{
@@ -72,7 +67,6 @@ func init() {
 	}, weights: 1})
 
 	r = rand.New(rand.NewSource(time.Now().Unix()))
-
 	clientWeigh = &ReqListWeigh{
 		list: clients,
 	}
@@ -83,19 +77,15 @@ func init() {
 	clientWeigh.setWeighCount()
 }
 
+// getRequest 获取请求
 func getRequest(request *model.Request) *model.Request {
-
 	if clientWeigh == nil || clientWeigh.weighCount <= 0 {
-
 		return request
 	}
-
 	n := uint32(r.Int31n(int32(clientWeigh.weighCount)))
-
 	var (
 		count uint32
 	)
-
 	for _, value := range clientWeigh.list {
 		if count >= n {
 			// value.req.Print()
@@ -103,8 +93,5 @@ func getRequest(request *model.Request) *model.Request {
 		}
 		count = count + value.weights
 	}
-
 	panic("getRequest err")
-
-	return nil
 }

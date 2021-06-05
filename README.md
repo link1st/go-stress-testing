@@ -4,8 +4,8 @@
 
 - 单台机器对 HTTP 短连接 QPS 1W+ 的压测实战
 - 单台机器 100W 长连接的压测实战
-- 支持http1.1和2.0长连接
 - 对 grpc 接口进行压测
+- 支持http1.1和2.0长连接
 > 简单扩展即可支持 私有协议
 
 ## 目录
@@ -442,27 +442,27 @@ PTS（Performance Testing Service）是面向所有技术背景人员的云化�
 
 ```
 Usage of ./go-stress-testing-mac:
-  -H value
-    	自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'
   -c uint
-    	并发数 (default 1)
+      并发数 (default 1)
+  -n uint
+      请求数(单个并发/协程) (default 1)
+  -u string
+      压测地址
   -d string
-    	调试模式 (default "false")
-  -data string
-    	HTTP POST方式传送数据
+      调试模式 (default "false")
   -http2
     	是否开http2.0
   -k	是否开启长连接
   -m int
     	单个host最大连接数 (default 1)
-  -n uint
-    	请求数(单个并发/协程) (default 1)
-  -p string
-    	curl文件路径
-  -u string
-    	压测地址
+  -H value
+      自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'
+  -data string
+      HTTP POST方式传送数据
   -v string
-    	验证方法 http 支持:statusCode、json webSocket支持:json
+      验证方法 http 支持:statusCode、json webSocket支持:json
+  -p string
+      curl文件路径
 ```
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数
@@ -575,8 +575,7 @@ go version: go1.12.9 linux/amd64
 
 - go server
 
-```golang
-package main
+```golangpackage main
 
 import (
     "log"
@@ -773,18 +772,16 @@ core 是限制内核文件的大小，这里设置为 unlimited
 # 添加以下参数
 root soft nofile 1040000
 root hard nofile 1040000
-
-root soft nofile 1040000
+root soft nproc 1040000
 root hard nproc 1040000
-
-root soft core unlimited
-root hard core unlimited
 
 * soft nofile 1040000
 * hard nofile 1040000
-
-* soft nofile 1040000
+* soft nproc 1040000
 * hard nproc 1040000
+
+root soft core unlimited
+root hard core unlimited
 
 * soft core unlimited
 * hard core unlimited
@@ -947,7 +944,7 @@ TCP 握手：
 [https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
 
 github 搜:link1st 查看项目 go-stress-testing
-<!---
+
 ### 意见反馈
 
 - 在项目中遇到问题可以直接在这里找找答案或者提问 [issues](https://github.com/link1st/go-stress-testing/issues)
@@ -956,4 +953,3 @@ github 搜:link1st 查看项目 go-stress-testing
 <p align="center">
      <img border="0" src="https://img.mukewang.com/5eb376b60001ddc208300832.png" alt="添加link1st的微信" width="200"/>
 </p>
---->

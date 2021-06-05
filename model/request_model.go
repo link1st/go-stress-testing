@@ -1,10 +1,4 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2019-08-15
-* Time: 18:19
- */
-
+// Package model 请求数据模型package model
 package model
 
 import (
@@ -17,57 +11,69 @@ import (
 	"time"
 )
 
+// 返回 code 码
 const (
-	HttpOk         = 200 // 请求成功
-	RequestTimeout = 506 // 请求超时
-	RequestErr     = 509 // 请求错误
-	ParseError     = 510 // 解析错误
-
-	FormTypeHttp      = "http"
-	FormTypeWebSocket = "webSocket"
-	FormTypeGRPC      = "grpc"
+	// HTTPOk 请求成功
+	HTTPOk = 200
+	// RequestErr 请求错误
+	RequestErr = 509
+	// ParseError 解析错误
+	ParseError = 510 // 解析错误
 )
 
-var (
-	// 校验函数
-	verifyMapHttp      = make(map[string]VerifyHttp)
-	verifyMapHttpMutex sync.RWMutex
+// 支持协议
+const (
+	// FormTypeHTTP http 协议
+	FormTypeHTTP = "http"
+	// FormTypeWebSocket webSocket 协议
+	FormTypeWebSocket = "webSocket"
+	// FormTypeGRPC grpc 协议
+	FormTypeGRPC = "grpc"
+)
 
-	verifyMapWebSocket      = make(map[string]VerifyWebSocket)
+// 校验函数
+var (
+	// verifyMapHTTP http 校验函数
+	verifyMapHTTP = make(map[string]VerifyHTTP)
+	// verifyMapHTTPMutex http 并发锁
+	verifyMapHTTPMutex sync.RWMutex
+	// verifyMapWebSocket webSocket 校验函数
+	verifyMapWebSocket = make(map[string]VerifyWebSocket)
+	// verifyMapWebSocketMutex webSocket 并发锁
 	verifyMapWebSocketMutex sync.RWMutex
 )
 
-// 注册http校验函数
-func RegisterVerifyHttp(verify string, verifyFunc VerifyHttp) {
-	verifyMapHttpMutex.Lock()
-	defer verifyMapHttpMutex.Unlock()
-
-	key := fmt.Sprintf("%s.%s", FormTypeHttp, verify)
-	verifyMapHttp[key] = verifyFunc
+// RegisterVerifyHTTP 注册 http 校验函数
+func RegisterVerifyHTTP(verify string, verifyFunc VerifyHTTP) {
+	verifyMapHTTPMutex.Lock()
+	defer verifyMapHTTPMutex.Unlock()
+	key := fmt.Sprintf("%s.%s", FormTypeHTTP, verify)
+	verifyMapHTTP[key] = verifyFunc
 }
 
-// 注册webSocket校验函数
+// RegisterVerifyWebSocket 注册 webSocket 校验函数
 func RegisterVerifyWebSocket(verify string, verifyFunc VerifyWebSocket) {
 	verifyMapWebSocketMutex.Lock()
 	defer verifyMapWebSocketMutex.Unlock()
-
 	key := fmt.Sprintf("%s.%s", FormTypeWebSocket, verify)
 	verifyMapWebSocket[key] = verifyFunc
 }
 
-// 验证器
+// Verify 验证器
 type Verify interface {
 	GetCode() int    // 有一个方法，返回code为200为成功
 	GetResult() bool // 返回是否成功
 }
 
-// 验证方法
-type VerifyHttp func(request *Request, response *http.Response) (code int, isSucceed bool)
+// VerifyHTTP http 验证
+type VerifyHTTP func(request *Request, response *http.Response) (code int, isSucceed bool)
+
+// VerifyWebSocket webSocket 验证
 type VerifyWebSocket func(request *Request, seq string, msg []byte) (code int, isSucceed bool)
 
-// 请求结果
+// Request 请求数据
 type Request struct {
-	Url       string            // Url
+	URL       string            // URL
 	Form      string            // http/webSocket/tcp
 	Method    string            // 方法 GET/POST/PUT
 	Headers   map[string]string // Headers
@@ -78,118 +84,97 @@ type Request struct {
 	MaxCon    int               //每个连接的请求数
 	Http2     bool              //是否使用http2.0
 	Keepalive bool              //是否开启长连接
-
-	// 连接以后初始化事件
-	// 循环事件 切片 时间 动作
 }
 
+// GetBody 获取请求数据
 func (r *Request) GetBody() (body io.Reader) {
-	body = strings.NewReader(r.Body)
-
-	return
+	return strings.NewReader(r.Body)
 }
 
+// getVerifyKey 获取校验 key
 func (r *Request) getVerifyKey() (key string) {
-	key = fmt.Sprintf("%s.%s", r.Form, r.Verify)
-
-	return
+	return fmt.Sprintf("%s.%s", r.Form, r.Verify)
 }
 
-// 获取数据校验方法
-func (r *Request) GetVerifyHttp() VerifyHttp {
-	verify, ok := verifyMapHttp[r.getVerifyKey()]
+// GetVerifyHTTP 获取数据校验方法
+func (r *Request) GetVerifyHTTP() VerifyHTTP {
+	verify, ok := verifyMapHTTP[r.getVerifyKey()]
 	if !ok {
-		panic("GetVerifyHttp 验证方法不存在:" + r.Verify)
+		panic("GetVerifyHTTP 验证方法不存在:" + r.Verify)
 	}
-
 	return verify
 }
 
+// GetVerifyWebSocket 获取数据校验方法
 func (r *Request) GetVerifyWebSocket() VerifyWebSocket {
 	verify, ok := verifyMapWebSocket[r.getVerifyKey()]
 	if !ok {
 		panic("GetVerifyWebSocket 验证方法不存在:" + r.Verify)
 	}
-
 	return verify
 }
 
-// NewRequest
+// NewRequest 生成请求结构体
 // url 压测的url
 // verify 验证方法 在server/verify中 http 支持:statusCode、json webSocket支持:json
 // timeout 请求超时时间
 // debug 是否开启debug
 // path curl文件路径 http接口压测，自定义参数设置
-func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string, reqHeaders []string, reqBody string, maxCon int, http2 bool, keepalive bool) (request *Request, err error) {
-
+func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string, reqHeaders []string,
+	reqBody string, maxCon int, http2 bool, keepalive bool) (request *Request, err error) {
 	var (
 		method  = "GET"
 		headers = make(map[string]string)
 		body    string
 	)
-
 	if path != "" {
-		curl, err := ParseTheFile(path)
+		var curl *CURL
+		curl, err = ParseTheFile(path)
 		if err != nil {
-
 			return nil, err
 		}
-
 		if url == "" {
-			url = curl.GetUrl()
+			url = curl.GetURL()
 		}
-
 		method = curl.GetMethod()
 		headers = curl.GetHeaders()
 		body = curl.GetBody()
 	} else {
-
 		if reqBody != "" {
 			method = "POST"
 			body = reqBody
-
 			headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
 		}
-
 		for _, v := range reqHeaders {
 			getHeaderValue(v, headers)
 		}
 	}
-
 	form := ""
 	if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
-		form = FormTypeHttp
+		form = FormTypeHTTP
 	} else if strings.HasPrefix(url, "ws://") || strings.HasPrefix(url, "wss://") {
 		form = FormTypeWebSocket
 	} else if strings.HasPrefix(url, "grpc://") || strings.HasPrefix(url, "rpc://") {
 		form = FormTypeGRPC
 	} else {
-		form = FormTypeHttp
+		form = FormTypeHTTP
 		url = fmt.Sprintf("http://%s", url)
 	}
-
 	if form == "" {
-		err = errors.New(fmt.Sprintf("url:%s 不合法,必须是完整http、webSocket连接", url))
-
+		err = fmt.Errorf("url:%s 不合法,必须是完整http、webSocket连接", url)
 		return
 	}
-
-	var (
-		ok bool
-	)
-
+	var ok bool
 	switch form {
-	case FormTypeHttp:
+	case FormTypeHTTP:
 		// verify
 		if verify == "" {
 			verify = "statusCode"
 		}
-
 		key := fmt.Sprintf("%s.%s", form, verify)
-		_, ok = verifyMapHttp[key]
+		_, ok = verifyMapHTTP[key]
 		if !ok {
 			err = errors.New("验证器不存在:" + key)
-
 			return
 		}
 	case FormTypeWebSocket:
@@ -197,23 +182,18 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		if verify == "" {
 			verify = "json"
 		}
-
 		key := fmt.Sprintf("%s.%s", form, verify)
 		_, ok = verifyMapWebSocket[key]
 		if !ok {
 			err = errors.New("验证器不存在:" + key)
-
 			return
 		}
-
 	}
-
 	if timeout == 0 {
 		timeout = 30 * time.Second
 	}
-
 	request = &Request{
-		Url:       url,
+		URL:       url,
 		Form:      form,
 		Method:    strings.ToUpper(method),
 		Headers:   headers,
@@ -226,19 +206,17 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		Keepalive: keepalive,
 	}
 	return
-
 }
 
+// getHeaderValue 获取 header
 func getHeaderValue(v string, headers map[string]string) {
 	index := strings.Index(v, ":")
 	if index < 0 {
 		return
 	}
-
 	vIndex := index + 1
 	if len(v) >= vIndex {
 		value := strings.TrimPrefix(v[vIndex:], " ")
-
 		if _, ok := headers[v[:index]]; ok {
 			headers[v[:index]] = fmt.Sprintf("%s; %s", headers[v[:index]], value)
 		} else {
@@ -247,56 +225,51 @@ func getHeaderValue(v string, headers map[string]string) {
 	}
 }
 
-// 打印
+// Print 格式化打印
 func (r *Request) Print() {
 	if r == nil {
-
 		return
 	}
-
-	result := fmt.Sprintf("request:\n form:%s \n url:%s \n method:%s \n headers:%v \n", r.Form, r.Url, r.Method, r.Headers)
+	result := fmt.Sprintf("request:\n form:%s \n url:%s \n method:%s \n headers:%v \n", r.Form, r.URL, r.Method,
+		r.Headers)
 	result = fmt.Sprintf("%s data:%v \n", result, r.Body)
 	result = fmt.Sprintf("%s verify:%s \n timeout:%s \n debug:%v \n", result, r.Verify, r.Timeout, r.Debug)
 	result = fmt.Sprintf("%s http2.0：%v \n keepalive：%v \nmaxCon:%v ", result, r.Http2, r.Keepalive, r.MaxCon)
 	fmt.Println(result)
-
 	return
 }
 
+// GetDebug 获取 debug 参数
 func (r *Request) GetDebug() bool {
-
 	return r.Debug
 }
 
+// IsParameterLegal 参数是否合法
 func (r *Request) IsParameterLegal() (err error) {
-
 	r.Form = "http"
 	// statusCode json
 	r.Verify = "json"
-
 	key := fmt.Sprintf("%s.%s", r.Form, r.Verify)
-	_, ok := verifyMapHttp[key]
+	_, ok := verifyMapHTTP[key]
 	if !ok {
-
 		return errors.New("验证器不存在:" + key)
 	}
-
 	return
 }
 
-// 请求结果
+// RequestResults 请求结果
 type RequestResults struct {
-	Id            string // 消息Id
-	ChanId        uint64 // 消息Id
+	ID            string // 消息ID
+	ChanID        uint64 // 消息ID
 	Time          uint64 // 请求时间 纳秒
 	IsSucceed     bool   // 是否请求成功
 	ErrCode       int    // 错误码
 	ReceivedBytes int64
 }
 
-func (r *RequestResults) SetId(chanId uint64, number uint64) {
-	id := fmt.Sprintf("%d_%d", chanId, number)
-
-	r.Id = id
-	r.ChanId = chanId
+// SetID 设置请求唯一ID
+func (r *RequestResults) SetID(chanID uint64, number uint64) {
+	id := fmt.Sprintf("%d_%d", chanID, number)
+	r.ID = id
+	r.ChanID = chanID
 }

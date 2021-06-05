@@ -1,46 +1,41 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2019-08-21
-* Time: 15:43
- */
-
+// Package golink 连接
 package golink
 
 import (
 	"context"
-	pb "go-stress-testing/proto"
 	"sync"
 	"time"
 
-	"go-stress-testing/heper"
+	"go-stress-testing/helper"
+	pb "go-stress-testing/proto"
+
 	"go-stress-testing/model"
 	"go-stress-testing/server/client"
 )
 
 // Grpc grpc 接口请求
-func Grpc(chanId uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup, request *model.Request, ws *client.GrpcSocket) {
-
+func Grpc(chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
+	request *model.Request, ws *client.GrpcSocket) {
 	defer func() {
 		wg.Done()
 	}()
 	defer func() {
-		ws.Close()
+		_ = ws.Close()
 	}()
 	for i := uint64(0); i < totalNumber; i++ {
-		grpcRequest(chanId, ch, i, request, ws)
+		grpcRequest(chanID, ch, i, request, ws)
 	}
 	return
 }
 
-// 请求
-func grpcRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, request *model.Request, ws *client.GrpcSocket) {
+// grpcRequest 请求
+func grpcRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, request *model.Request,
+	ws *client.GrpcSocket) {
 	var (
 		startTime = time.Now()
 		isSucceed = false
-		errCode   = model.HttpOk
+		errCode   = model.HTTPOk
 	)
-
 	// 需要发送的数据
 	conn := ws.GetConn()
 	if conn == nil {
@@ -67,13 +62,12 @@ func grpcRequest(chanId uint64, ch chan<- *model.RequestResults, i uint64, reque
 			}
 		}
 	}
-	requestTime := uint64(heper.DiffNano(startTime))
+	requestTime := uint64(helper.DiffNano(startTime))
 	requestResults := &model.RequestResults{
 		Time:      requestTime,
 		IsSucceed: isSucceed,
 		ErrCode:   errCode,
 	}
-	requestResults.SetId(chanId, i)
-
+	requestResults.SetID(chanID, i)
 	ch <- requestResults
 }

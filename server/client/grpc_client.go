@@ -1,29 +1,24 @@
-/**
-* Created by GoLand.
-* User: link1st
-* Date: 2019-08-15
-* Time: 21:03
- */
-
+// Package client grpc 客户端
 package client
 
 import (
 	"context"
 	"fmt"
-	"google.golang.org/grpc"
 	"strings"
 	"time"
+
+	"google.golang.org/grpc"
 )
 
+// GrpcSocket grpc
 type GrpcSocket struct {
 	conn    *grpc.ClientConn
 	address string
 }
 
+// NewGrpcSocket new
 func NewGrpcSocket(address string) (s *GrpcSocket) {
-	var (
-		newAddr string
-	)
+	var newAddr string
 	arr := strings.Split(address, "//")
 	if len(arr) >= 2 {
 		newAddr = arr[1]
@@ -34,11 +29,12 @@ func NewGrpcSocket(address string) (s *GrpcSocket) {
 	return
 }
 
+// getAddress 获取地址
 func (g *GrpcSocket) getAddress() (address string) {
 	return g.address
 }
 
-// 关闭
+// Close 关闭
 func (g *GrpcSocket) Close() (err error) {
 	if g == nil {
 		return
@@ -46,21 +42,22 @@ func (g *GrpcSocket) Close() (err error) {
 	if g.conn == nil {
 		return
 	}
-	g.conn.Close()
-	return
+	return g.conn.Close()
 }
 
 // Link 建立连接
 func (g *GrpcSocket) Link() (err error) {
-	ctx, _ := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 	conn, err := grpc.DialContext(ctx, g.address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		return fmt.Errorf("GetConn: 连接失败 address:%s %w", g.address, err)
+		return fmt.Errorf("getConn: 连接失败 address:%s %w", g.address, err)
 	}
 	g.conn = conn
 	return
 }
 
+// GetConn 获取连接
 func (g *GrpcSocket) GetConn() (conn *grpc.ClientConn) {
 	return g.conn
 }
