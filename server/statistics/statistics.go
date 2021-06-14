@@ -19,8 +19,7 @@ var (
 	// 输出统计数据的时间
 	exportStatisticsTime = 1 * time.Second
 	p                    = message.NewPrinter(language.English)
-	RequestTimeList      []uint64  //所有请求响应时间
-	QpsList              []float64 //所有qps
+	RequestTimeList      []uint64 //所有请求响应时间
 )
 
 // ReceivingResults 接收结果并处理
@@ -109,11 +108,8 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	// fmt.Println("处理协程数量:", concurrent, "程序处理总时长:", fmt.Sprintf("%.3f", float64(processingTime/concurrent)/1e9), "秒")
 	fmt.Println("请求总数（并发数*请求数 -c * -n）:", successNum+failureNum, "总请求时间:",
 		fmt.Sprintf("%.3f", float64(requestTime)/1e9),
-		"秒", "successNum:", successNum, "failureNum:", failureNum, "最慢响应时间:", fmt.Sprintf("%.3f", float64(all[len(all)-1:][0]/1e6)),
-		"最小响应时间:", fmt.Sprintf("%.3f", float64(all[0]/1e6)))
+		"秒", "successNum:", successNum, "failureNum:", failureNum)
 
-	fmt.Println("tp50:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.5)]/1e6)))
-	fmt.Println("tp75:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.75)]/1e6)))
 	fmt.Println("tp90:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.90)]/1e6)))
 	fmt.Println("tp95:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.95)]/1e6)))
 	fmt.Println("tp99:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.99)]/1e6)))

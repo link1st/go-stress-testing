@@ -916,40 +916,6 @@ TCP 握手：
 
 ## 8、总结
 
-到这里压测总算完成，本次压测花费16元巨款。
-
 单台机器支持100W连接是实测是满足的，但是实际业务比较复杂，还是需要持续优化~
 
 本文通过介绍什么是压测，在什么情况下需要压测，通过单台机器100W长连接的压测实战了解Linux内核的参数的调优。如果觉得现有的压测工具不适用，可以自己实现或者是改造成属于自己的自己的工具。
-
-
-## 9、参考文献
-
-[性能测试工具](https://testerhome.com/topics/17068)
-
-[性能测试常见名词解释](https://blog.csdn.net/r455678/article/details/53063989)
-
-[性能测试名词解释](https://codeigniter.org.cn/forums/blog-39678-2456.html)
-
-[PV、TPS、QPS是怎么计算出来的？](https://www.zhihu.com/question/21556347)
-
-[超实用压力测试工具－ab工具](https://www.jianshu.com/p/43d04d8baaf7)
-
-[Locust 介绍](http://www.testclass.net/locust/introduce)
-
-[Jmeter性能测试 入门](https://www.cnblogs.com/TankXiao/p/4045439.html)
-
-[基于websocket单台机器支持百万连接分布式聊天(IM)系统](https://github.com/link1st/gowebsocket)
-
-[https://github.com/link1st/go-stress-testing](https://github.com/link1st/go-stress-testing)
-
-github 搜:link1st 查看项目 go-stress-testing
-
-### 意见反馈
-
-- 在项目中遇到问题可以直接在这里找找答案或者提问 [issues](https://github.com/link1st/go-stress-testing/issues)
-- 也可以添加我的微信(申请信息填写:公司、姓名，我好备注下)，直接反馈给我
-<br/>
-<p align="center">
-     <img border="0" src="https://img.mukewang.com/5eb376b60001ddc208300832.png" alt="添加link1st的微信" width="200"/>
-</p>

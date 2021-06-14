@@ -81,9 +81,9 @@ type Request struct {
 	Verify    string            // 验证的方法
 	Timeout   time.Duration     // 请求超时时间
 	Debug     bool              // 是否开启Debug模式
-	MaxCon    int               //每个连接的请求数
-	Http2     bool              //是否使用http2.0
-	Keepalive bool              //是否开启长连接
+	MaxCon    int               // 每个连接的请求数
+	HTTP2     bool              // 是否使用http2.0
+	Keepalive bool              // 是否开启长连接
 }
 
 // GetBody 获取请求数据

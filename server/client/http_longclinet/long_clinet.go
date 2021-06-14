@@ -19,7 +19,7 @@ var (
 func CreateLangHttpClient(request *model.Request) {
 	once.Do(func() {
 		tr := &http.Transport{}
-		if request.Http2 {
+		if request.HTTP2 {
 			//使用真实证书 验证证书 模拟真实请求
 			tr = &http.Transport{
 				DialContext: (&net.Dialer{

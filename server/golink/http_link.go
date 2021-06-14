@@ -61,11 +61,8 @@ func send(request *model.Request) (bool, int, uint64, int64) {
 	)
 	newRequest := getRequest(request)
 
-	if request.Keepalive {
-		resp, requestTime, err = client.LangHttpRequset(newRequest)
-	} else {
-		resp, requestTime, err = client.HTTPRequest(newRequest)
-	}
+	resp, requestTime, err = client.HTTPRequest(newRequest)
+
 	if err != nil {
 		errCode = model.RequestErr // 请求错误
 	} else {
