@@ -3,6 +3,7 @@ package golink
 
 import (
 	"fmt"
+	"go-stress-testing/server/statistics"
 	"sync"
 	"time"
 
@@ -88,6 +89,7 @@ func webSocketRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, 
 		}
 	}
 	requestTime := uint64(helper.DiffNano(startTime))
+	statistics.RequestTimeList = append(statistics.RequestTimeList, requestTime)
 	requestResults := &model.RequestResults{
 		Time:      requestTime,
 		IsSucceed: isSucceed,

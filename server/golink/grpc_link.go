@@ -3,6 +3,7 @@ package golink
 
 import (
 	"context"
+	"go-stress-testing/server/statistics"
 	"sync"
 	"time"
 
@@ -63,6 +64,7 @@ func grpcRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, reque
 		}
 	}
 	requestTime := uint64(helper.DiffNano(startTime))
+	statistics.RequestTimeList = append(statistics.RequestTimeList, requestTime)
 	requestResults := &model.RequestResults{
 		Time:      requestTime,
 		IsSucceed: isSucceed,
