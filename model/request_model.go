@@ -234,7 +234,7 @@ func (r *Request) Print() {
 		r.Headers)
 	result = fmt.Sprintf("%s data:%v \n", result, r.Body)
 	result = fmt.Sprintf("%s verify:%s \n timeout:%s \n debug:%v \n", result, r.Verify, r.Timeout, r.Debug)
-	result = fmt.Sprintf("%s http2.0：%v \n keepalive：%v \nmaxCon:%v ", result, r.HTTP2, r.Keepalive, r.MaxCon)
+	result = fmt.Sprintf("%s http2.0：%v \n keepalive：%v \n maxCon:%v ", result, r.HTTP2, r.Keepalive, r.MaxCon)
 	fmt.Println(result)
 	return
 }
