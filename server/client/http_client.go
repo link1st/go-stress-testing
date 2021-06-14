@@ -35,7 +35,7 @@ func HTTPRequest(request *model.Request) (resp *http.Response, requestTime uint6
 	if err != nil {
 		return
 	}
-	req.Close = true
+
 	// 在req中设置Host，解决在header中设置Host不生效问题
 	if _, ok := headers["Host"]; ok {
 		req.Host = headers["Host"]
@@ -50,10 +50,21 @@ func HTTPRequest(request *model.Request) (resp *http.Response, requestTime uint6
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
-	client := &http.Client{}
+	var client *http.Client
 	if request.Keepalive == true {
 		client = httplongclinet.LangHttpClient
+		startTime := time.Now()
+		resp, err = client.Do(req)
+		requestTime = uint64(helper.DiffNano(startTime))
+		statistics.RequestTimeList = append(statistics.RequestTimeList, requestTime)
+		if err != nil {
+			logErr.Println("请求失败:", err)
+
+			return
+		}
+		return
 	} else {
+		req.Close = true
 		tr := &http.Transport{}
 		if request.HTTP2 {
 			//使用真实证书 验证证书 模拟真实请求
