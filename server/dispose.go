@@ -3,6 +3,7 @@ package server
 
 import (
 	"fmt"
+	httplongclinet "go-stress-testing/server/client/http_longclinet"
 	"sync"
 	"time"
 
@@ -38,6 +39,11 @@ func Dispose(concurrency, totalNumber uint64, request *model.Request) {
 	)
 	wgReceiving.Add(1)
 	go statistics.ReceivingResults(concurrency, ch, &wgReceiving)
+
+	if request.Keepalive {
+		httplongclinet.CreateLangHttpClient(request)
+	}
+
 	for i := uint64(0); i < concurrency; i++ {
 		wg.Add(1)
 		switch request.Form {

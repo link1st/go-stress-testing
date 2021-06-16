@@ -73,14 +73,17 @@ type VerifyWebSocket func(request *Request, seq string, msg []byte) (code int, i
 
 // Request 请求数据
 type Request struct {
-	URL     string            // URL
-	Form    string            // http/webSocket/tcp
-	Method  string            // 方法 GET/POST/PUT
-	Headers map[string]string // Headers
-	Body    string            // body
-	Verify  string            // 验证的方法
-	Timeout time.Duration     // 请求超时时间
-	Debug   bool              // 是否开启Debug模式
+	URL       string            // URL
+	Form      string            // http/webSocket/tcp
+	Method    string            // 方法 GET/POST/PUT
+	Headers   map[string]string // Headers
+	Body      string            // body
+	Verify    string            // 验证的方法
+	Timeout   time.Duration     // 请求超时时间
+	Debug     bool              // 是否开启Debug模式
+	MaxCon    int               // 每个连接的请求数
+	HTTP2     bool              // 是否使用http2.0
+	Keepalive bool              // 是否开启长连接
 }
 
 // GetBody 获取请求数据
@@ -118,7 +121,7 @@ func (r *Request) GetVerifyWebSocket() VerifyWebSocket {
 // debug 是否开启debug
 // path curl文件路径 http接口压测，自定义参数设置
 func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string, reqHeaders []string,
-	reqBody string) (request *Request, err error) {
+	reqBody string, maxCon int, http2 bool, keepalive bool) (request *Request, err error) {
 	var (
 		method  = "GET"
 		headers = make(map[string]string)
@@ -190,14 +193,17 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		timeout = 30 * time.Second
 	}
 	request = &Request{
-		URL:     url,
-		Form:    form,
-		Method:  strings.ToUpper(method),
-		Headers: headers,
-		Body:    body,
-		Verify:  verify,
-		Timeout: timeout,
-		Debug:   debug,
+		URL:       url,
+		Form:      form,
+		Method:    strings.ToUpper(method),
+		Headers:   headers,
+		Body:      body,
+		Verify:    verify,
+		Timeout:   timeout,
+		Debug:     debug,
+		MaxCon:    maxCon,
+		HTTP2:     http2,
+		Keepalive: keepalive,
 	}
 	return
 }
@@ -228,6 +234,7 @@ func (r *Request) Print() {
 		r.Headers)
 	result = fmt.Sprintf("%s data:%v \n", result, r.Body)
 	result = fmt.Sprintf("%s verify:%s \n timeout:%s \n debug:%v \n", result, r.Verify, r.Timeout, r.Debug)
+	result = fmt.Sprintf("%s http2.0：%v \n keepalive：%v \n maxCon:%v ", result, r.HTTP2, r.Keepalive, r.MaxCon)
 	fmt.Println(result)
 	return
 }

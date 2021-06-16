@@ -3,6 +3,7 @@ package statistics
 
 import (
 	"fmt"
+	"go-stress-testing/tools"
 	"sort"
 	"strings"
 	"sync"
@@ -18,6 +19,7 @@ var (
 	// 输出统计数据的时间
 	exportStatisticsTime = 1 * time.Second
 	p                    = message.NewPrinter(language.English)
+	RequestTimeList      []uint64 //所有请求响应时间
 )
 
 // ReceivingResults 接收结果并处理
@@ -95,6 +97,11 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	requestTime = endTime - statTime
 	calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIDLen, errCode,
 		receivedBytes)
+	//排序后计算 tp50 75 90 95 99
+	all := tools.MyUint64List{}
+	all = RequestTimeList
+	sort.Sort(all)
+
 	fmt.Printf("\n\n")
 	fmt.Println("*************************  结果 stat  ****************************")
 	fmt.Println("处理协程数量:", concurrent)
@@ -102,6 +109,10 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	fmt.Println("请求总数（并发数*请求数 -c * -n）:", successNum+failureNum, "总请求时间:",
 		fmt.Sprintf("%.3f", float64(requestTime)/1e9),
 		"秒", "successNum:", successNum, "failureNum:", failureNum)
+
+	fmt.Println("tp90:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.90)]/1e6)))
+	fmt.Println("tp95:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.95)]/1e6)))
+	fmt.Println("tp99:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.99)]/1e6)))
 	fmt.Println("*************************  结果 end   ****************************")
 	fmt.Printf("\n\n")
 }

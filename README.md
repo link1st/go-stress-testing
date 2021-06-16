@@ -5,6 +5,7 @@
 - 单台机器对 HTTP 短连接 QPS 1W+ 的压测实战
 - 单台机器 100W 长连接的压测实战
 - 对 grpc 接口进行压测
+- 支持http1.1和2.0长连接
 > 简单扩展即可支持 私有协议
 
 ## 目录
@@ -449,6 +450,11 @@ Usage of ./go-stress-testing-mac:
       压测地址
   -d string
       调试模式 (default "false")
+  -http2
+    	是否开http2.0
+  -k	是否开启长连接
+  -m int
+    	单个host最大连接数 (default 1)
   -H value
       自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'
   -data string
@@ -909,13 +915,11 @@ TCP 握手：
 <img border="0" src="https://img.mukewang.com/5ec504300001aa7b08301233.png" width="830"/>
 
 ## 8、总结
-
 到这里压测总算完成，本次压测花费16元巨款。
 
 单台机器支持100W连接是实测是满足的，但是实际业务比较复杂，还是需要持续优化~
 
 本文通过介绍什么是压测，在什么情况下需要压测，通过单台机器100W长连接的压测实战了解Linux内核的参数的调优。如果觉得现有的压测工具不适用，可以自己实现或者是改造成属于自己的自己的工具。
-
 
 ## 9、参考文献
 

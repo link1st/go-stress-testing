@@ -2,6 +2,7 @@
 package golink
 
 import (
+	"net/http"
 	"sync"
 
 	"go-stress-testing/model"
@@ -54,10 +55,14 @@ func send(request *model.Request) (bool, int, uint64, int64) {
 		isSucceed     = false
 		errCode       = model.HTTPOk
 		contentLength = int64(0)
+		err           error
+		resp          *http.Response
+		requestTime   uint64
 	)
 	newRequest := getRequest(request)
-	resp, requestTime, err := client.HTTPRequest(newRequest.Method, newRequest.URL, newRequest.GetBody(),
-		newRequest.Headers, newRequest.Timeout)
+
+	resp, requestTime, err = client.HTTPRequest(newRequest)
+
 	if err != nil {
 		errCode = model.RequestErr // 请求错误
 	} else {

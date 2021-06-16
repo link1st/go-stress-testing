@@ -44,6 +44,7 @@ func HTTPStatusCode(request *model.Request, response *http.Response) (code int, 
 		body, err := getZipData(response)
 		fmt.Printf("请求结果 httpCode:%d body:%s err:%v \n", response.StatusCode, string(body), err)
 	}
+	io.Copy(ioutil.Discard, response.Body)
 	return
 }
 
@@ -88,5 +89,6 @@ func HTTPJson(request *model.Request, response *http.Response) (code int, isSucc
 			fmt.Printf("请求结果 httpCode:%d body:%s err:%v \n", response.StatusCode, string(body), err)
 		}
 	}
+	io.Copy(ioutil.Discard, response.Body)
 	return
 }
