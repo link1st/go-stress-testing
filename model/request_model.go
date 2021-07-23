@@ -144,7 +144,9 @@ func NewRequest(url string, verify string, code int, timeout time.Duration, debu
 		if reqBody != "" {
 			method = "POST"
 			body = reqBody
-			headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
+			if _, ok := headers["Content-Type"]; !ok {
+				headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
+			}
 		}
 		for _, v := range reqHeaders {
 			getHeaderValue(v, headers)
