@@ -84,6 +84,7 @@ type Request struct {
 	MaxCon    int               // 每个连接的请求数
 	HTTP2     bool              // 是否使用http2.0
 	Keepalive bool              // 是否开启长连接
+	Code      int               //验证的状态码
 }
 
 // GetBody 获取请求数据
@@ -120,7 +121,7 @@ func (r *Request) GetVerifyWebSocket() VerifyWebSocket {
 // timeout 请求超时时间
 // debug 是否开启debug
 // path curl文件路径 http接口压测，自定义参数设置
-func NewRequest(url string, verify string, timeout time.Duration, debug bool, path string, reqHeaders []string,
+func NewRequest(url string, verify string, code int, timeout time.Duration, debug bool, path string, reqHeaders []string,
 	reqBody string, maxCon int, http2 bool, keepalive bool) (request *Request, err error) {
 	var (
 		method  = "GET"
@@ -204,6 +205,7 @@ func NewRequest(url string, verify string, timeout time.Duration, debug bool, pa
 		MaxCon:    maxCon,
 		HTTP2:     http2,
 		Keepalive: keepalive,
+		Code:      code,
 	}
 	return
 }

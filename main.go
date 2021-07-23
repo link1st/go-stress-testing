@@ -36,6 +36,7 @@ var (
 	headers     array             // 自定义头信息传递给服务器
 	body        = ""              // HTTP POST方式传送数据
 	maxCon      = 1               // 单个连接最大请求数
+	code        = 200             //成功状态码
 	http2       = false           // 是否开http2.0
 	keepalive   = false           // 是否开启长连接
 )
@@ -50,6 +51,7 @@ func init() {
 	flag.Var(&headers, "H", "自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'")
 	flag.StringVar(&body, "data", body, "HTTP POST方式传送数据")
 	flag.IntVar(&maxCon, "m", maxCon, "单个host最大连接数")
+	flag.IntVar(&code, "code", code, "请求成功的状态码")
 	flag.BoolVar(&http2, "http2", http2, "是否开http2.0")
 	flag.BoolVar(&keepalive, "k", keepalive, "是否开启长连接")
 	// 解析参数
@@ -69,7 +71,7 @@ func main() {
 		return
 	}
 	debug := strings.ToLower(debugStr) == "true"
-	request, err := model.NewRequest(requestURL, verify, 0, debug, path, headers, body, maxCon, http2, keepalive)
+	request, err := model.NewRequest(requestURL, verify, code, 0, debug, path, headers, body, maxCon, http2, keepalive)
 	if err != nil {
 		fmt.Printf("参数不合法 %v \n", err)
 		return

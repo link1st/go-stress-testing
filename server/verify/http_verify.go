@@ -36,7 +36,7 @@ func HTTPStatusCode(request *model.Request, response *http.Response) (code int, 
 		_ = response.Body.Close()
 	}()
 	code = response.StatusCode
-	if code == http.StatusOK {
+	if code == request.Code {
 		isSucceed = true
 	}
 	// 开启调试模式
@@ -79,7 +79,7 @@ func HTTPJson(request *model.Request, response *http.Response) (code int, isSucc
 			} else {
 				code = responseJSON.Code
 				// body 中code返回200为返回数据成功
-				if responseJSON.Code == 200 {
+				if responseJSON.Code == request.Code {
 					isSucceed = true
 				}
 			}
