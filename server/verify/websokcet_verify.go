@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"go-stress-testing/model"
+	"github.com/link1st/go-stress-testing/model"
 )
 
 // WebSocketResponseJSON 返回数据结构体，返回值为json

@@ -2,12 +2,13 @@ package httplongclinet
 
 import (
 	"crypto/tls"
-	"go-stress-testing/model"
-	"golang.org/x/net/http2"
 	"net"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/link1st/go-stress-testing/model"
+	"golang.org/x/net/http2"
 )
 
 var (

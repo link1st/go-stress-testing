@@ -9,7 +9,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "go-stress-testing/proto"
+	pb "github.com/link1st/go-stress-testing/proto"
 )
 
 const (

@@ -1,4 +1,4 @@
-module go-stress-testing
+module github.com/link1st/go-stress-testing
 
 go 1.14
 
