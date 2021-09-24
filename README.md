@@ -516,7 +516,7 @@ curl是Linux在命令行下的工作的文件传输工具，是一款很强大�
 ![chrome cURL](https://img.mukewang.com/5d60eddd0001f4b016661114.png)
 
 **II:** postman 生成 curl 命令
-![postman cURL](https://img.mukewang.com/5ed79b590001837120581530.png)
+![postman cURL](https://ccblog.org.cn/go-stress-testing/go-stress-02.png)
 
 生成内容粘贴到项目目录下的**curl/baidu.curl.txt**文件中，执行下面命令就可以从curl.txt文件中读取需要压测的内容进行压测了
 
