@@ -3,16 +3,17 @@ package client
 
 import (
 	"crypto/tls"
-	"go-stress-testing/model"
-	httplongclinet "go-stress-testing/server/client/http_longclinet"
-	"go-stress-testing/server/statistics"
-	"golang.org/x/net/http2"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"go-stress-testing/helper"
+	"github.com/link1st/go-stress-testing/model"
+	httplongclinet "github.com/link1st/go-stress-testing/server/client/http_longclinet"
+	"github.com/link1st/go-stress-testing/server/statistics"
+	"golang.org/x/net/http2"
+
+	"github.com/link1st/go-stress-testing/helper"
 )
 
 // logErr err

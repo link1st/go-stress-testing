@@ -3,13 +3,14 @@ package golink
 
 import (
 	"fmt"
-	"go-stress-testing/server/statistics"
 	"sync"
 	"time"
 
-	"go-stress-testing/helper"
-	"go-stress-testing/model"
-	"go-stress-testing/server/client"
+	"github.com/link1st/go-stress-testing/server/statistics"
+
+	"github.com/link1st/go-stress-testing/helper"
+	"github.com/link1st/go-stress-testing/model"
+	"github.com/link1st/go-stress-testing/server/client"
 )
 
 const (

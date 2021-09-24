@@ -3,16 +3,17 @@ package statistics
 
 import (
 	"fmt"
-	"go-stress-testing/tools"
 	"sort"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/link1st/go-stress-testing/tools"
+
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 
-	"go-stress-testing/model"
+	"github.com/link1st/go-stress-testing/model"
 )
 
 var (

@@ -3,15 +3,16 @@ package golink
 
 import (
 	"context"
-	"go-stress-testing/server/statistics"
 	"sync"
 	"time"
 
-	"go-stress-testing/helper"
-	pb "go-stress-testing/proto"
+	"github.com/link1st/go-stress-testing/server/statistics"
 
-	"go-stress-testing/model"
-	"go-stress-testing/server/client"
+	"github.com/link1st/go-stress-testing/helper"
+	pb "github.com/link1st/go-stress-testing/proto"
+
+	"github.com/link1st/go-stress-testing/model"
+	"github.com/link1st/go-stress-testing/server/client"
 )
 
 // Grpc grpc 接口请求
