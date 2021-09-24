@@ -571,7 +571,7 @@ CPU: 4核 (Intel Xeon(Cascade Lake) Platinum 8269  2.5 GHz/3.2 GHz)
 
 go version: go1.12.9 linux/amd64
 
-![go-stress-testing01](https://img.mukewang.com/5d64a48e0001bb8421170573.png)
+![go-stress-testing01](https://github.com/link1st/go-stress-testing/blob/master/img/go-stress-03.png)
 
 - go server
 
