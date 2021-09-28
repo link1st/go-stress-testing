@@ -20,7 +20,7 @@ var (
 	// 输出统计数据的时间
 	exportStatisticsTime = 1 * time.Second
 	p                    = message.NewPrinter(language.English)
-	RequestTimeList      []uint64 //所有请求响应时间
+	requestTimeList      []uint64 // 所有请求响应时间
 )
 
 // ReceivingResults 接收结果并处理
@@ -42,10 +42,11 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 		chanIDLen      int    // 并发数
 		chanIDs        = make(map[uint64]bool)
 		receivedBytes  int64
+		mutex          = sync.RWMutex{}
 	)
 	statTime := uint64(time.Now().UnixNano())
 	// 错误码/错误个数
-	var errCode = make(map[int]int)
+	var errCode = &sync.Map{}
 	// 定时输出一次计算结果
 	ticker := time.NewTicker(exportStatisticsTime)
 	go func() {
@@ -53,9 +54,10 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 			select {
 			case <-ticker.C:
 				endTime := uint64(time.Now().UnixNano())
-				requestTime = endTime - statTime
-				go calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum,
+				mutex.Lock()
+				go calculateData(concurrent, processingTime, endTime-statTime, maxTime, minTime, successNum, failureNum,
 					chanIDLen, errCode, receivedBytes)
+				mutex.Unlock()
 			case <-stopChan:
 				// 处理完成
 				return
@@ -64,6 +66,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	}()
 	header()
 	for data := range ch {
+		mutex.Lock()
 		// fmt.Println("处理一条数据", data.ID, data.Time, data.IsSucceed, data.ErrCode)
 		processingTime = processingTime + data.Time
 		if maxTime <= data.Time {
@@ -81,16 +84,19 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 			failureNum = failureNum + 1
 		}
 		// 统计错误码
-		if value, ok := errCode[data.ErrCode]; ok {
-			errCode[data.ErrCode] = value + 1
+		if value, ok := errCode.Load(data.ErrCode); ok {
+			valueInt, _ := value.(int)
+			errCode.Store(data.ErrCode, valueInt+1)
 		} else {
-			errCode[data.ErrCode] = 1
+			errCode.Store(data.ErrCode, 1)
 		}
 		receivedBytes += data.ReceivedBytes
 		if _, ok := chanIDs[data.ChanID]; !ok {
 			chanIDs[data.ChanID] = true
 			chanIDLen = len(chanIDs)
 		}
+		requestTimeList = append(requestTimeList, data.Time)
+		mutex.Unlock()
 	}
 	// 数据全部接受完成，停止定时输出统计数据
 	stopChan <- true
@@ -98,9 +104,9 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	requestTime = endTime - statTime
 	calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIDLen, errCode,
 		receivedBytes)
-	//排序后计算 tp50 75 90 95 99
+	// 排序后计算 tp50 75 90 95 99
 	all := tools.MyUint64List{}
-	all = RequestTimeList
+	all = requestTimeList
 	sort.Sort(all)
 
 	fmt.Printf("\n\n")
@@ -120,7 +126,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 
 // calculateData 计算数据
 func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum uint64,
-	chanIDLen int, errCode map[int]int, receivedBytes int64) {
+	chanIDLen int, errCode *sync.Map, receivedBytes int64) {
 	if processingTime == 0 {
 		processingTime = 1
 	}
@@ -159,7 +165,7 @@ func header() {
 }
 
 // table 打印表格
-func table(successNum, failureNum uint64, errCode map[int]int,
+func table(successNum, failureNum uint64, errCode *sync.Map,
 	qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat float64, chanIDLen int, receivedBytes int64) {
 	var (
 		speed int64
@@ -191,13 +197,14 @@ func table(successNum, failureNum uint64, errCode map[int]int,
 }
 
 // printMap 输出错误码、次数 节约字符(终端一行字符大小有限)
-func printMap(errCode map[int]int) (mapStr string) {
+func printMap(errCode *sync.Map) (mapStr string) {
 	var (
 		mapArr []string
 	)
-	for key, value := range errCode {
-		mapArr = append(mapArr, fmt.Sprintf("%d:%d", key, value))
-	}
+	errCode.Range(func(key, value interface{}) bool {
+		mapArr = append(mapArr, fmt.Sprintf("%v:%v", key, value))
+		return true
+	})
 	sort.Strings(mapArr)
 	mapStr = strings.Join(mapArr, ";")
 	return

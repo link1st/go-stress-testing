@@ -10,7 +10,6 @@ import (
 
 	"github.com/link1st/go-stress-testing/model"
 	httplongclinet "github.com/link1st/go-stress-testing/server/client/http_longclinet"
-	"github.com/link1st/go-stress-testing/server/statistics"
 	"golang.org/x/net/http2"
 
 	"github.com/link1st/go-stress-testing/helper"
@@ -57,7 +56,6 @@ func HTTPRequest(request *model.Request) (resp *http.Response, requestTime uint6
 		startTime := time.Now()
 		resp, err = client.Do(req)
 		requestTime = uint64(helper.DiffNano(startTime))
-		statistics.RequestTimeList = append(statistics.RequestTimeList, requestTime)
 		if err != nil {
 			logErr.Println("请求失败:", err)
 
@@ -68,7 +66,7 @@ func HTTPRequest(request *model.Request) (resp *http.Response, requestTime uint6
 		req.Close = true
 		tr := &http.Transport{}
 		if request.HTTP2 {
-			//使用真实证书 验证证书 模拟真实请求
+			// 使用真实证书 验证证书 模拟真实请求
 			tr = &http.Transport{
 				TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
 			}
@@ -91,7 +89,6 @@ func HTTPRequest(request *model.Request) (resp *http.Response, requestTime uint6
 	startTime := time.Now()
 	resp, err = client.Do(req)
 	requestTime = uint64(helper.DiffNano(startTime))
-	statistics.RequestTimeList = append(statistics.RequestTimeList, requestTime)
 	if err != nil {
 		logErr.Println("请求失败:", err)
 
