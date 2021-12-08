@@ -104,10 +104,6 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	requestTime = endTime - statTime
 	calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIDLen, errCode,
 		receivedBytes)
-	// 排序后计算 tp50 75 90 95 99
-	all := tools.MyUint64List{}
-	all = requestTimeList
-	sort.Sort(all)
 
 	fmt.Printf("\n\n")
 	fmt.Println("*************************  结果 stat  ****************************")
@@ -116,12 +112,22 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	fmt.Println("请求总数（并发数*请求数 -c * -n）:", successNum+failureNum, "总请求时间:",
 		fmt.Sprintf("%.3f", float64(requestTime)/1e9),
 		"秒", "successNum:", successNum, "failureNum:", failureNum)
+	printTop(requestTimeList)
+	fmt.Println("*************************  结果 end   ****************************")
+	fmt.Printf("\n\n")
+}
 
+// printTop 排序后计算 top 90 95 99
+func printTop(requestTimeList []uint64) {
+	if requestTimeList == nil {
+		return
+	}
+	all := tools.MyUint64List{}
+	all = requestTimeList
+	sort.Sort(all)
 	fmt.Println("tp90:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.90)]/1e6)))
 	fmt.Println("tp95:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.95)]/1e6)))
 	fmt.Println("tp99:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.99)]/1e6)))
-	fmt.Println("*************************  结果 end   ****************************")
-	fmt.Printf("\n\n")
 }
 
 // calculateData 计算数据
