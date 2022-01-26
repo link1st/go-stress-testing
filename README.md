@@ -353,7 +353,7 @@ Hatch rate (users spawned/second) 每秒钟增加用户数
 点击 "Start swarming" 进入压测页面
 
 
-![locust 首页](https://img.mukewang.com/5d5e4f81000179cd25541372.png)
+![locust 首页](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/locust%20%E9%A6%96%E9%A1%B5.png)
 
 
 压测界面右上角有:被压测的地址、当前状态、RPS、失败率、开始或重启按钮
@@ -380,7 +380,7 @@ Hatch rate (users spawned/second) 每秒钟增加用户数
 
 - `Current RPS` 代表吞吐量(Requests Per Second的缩写)，指的是某个并发用户数下单位时间内处理的请求数。等效于QPS，其实可以看作同一个统计方式，只是叫法不同而已。
 
-![locust 压测页面](https://img.mukewang.com/5d5e4fad000177e125501368.png)
+![locust 压测页面](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/locust%20%E5%8E%8B%E6%B5%8B%E9%A1%B5%E9%9D%A2.png)
 
 ### 3.3 JMeter
 
@@ -513,10 +513,10 @@ curl是Linux在命令行下的工作的文件传输工具，是一款很强大�
 
 
 **I:** chrome 浏览器生成 curl文件，打开开发者模式(快捷键F12)，如图所示，生成 curl 在终端执行命令
-![chrome cURL](https://img.mukewang.com/5d60eddd0001f4b016661114.png)
+![chrome cURL](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/copy%20cURL.png)
 
 **II:** postman 生成 curl 命令
-![postman cURL](https://ccblog.org.cn/go-stress-testing/go-stress-02.png)
+![postman cURL](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/postman%20cURL.png)
 
 生成内容粘贴到项目目录下的**curl/baidu.curl.txt**文件中，执行下面命令就可以从curl.txt文件中读取需要压测的内容进行压测了
 
@@ -571,7 +571,7 @@ CPU: 4核 (Intel Xeon(Cascade Lake) Platinum 8269  2.5 GHz/3.2 GHz)
 
 go version: go1.12.9 linux/amd64
 
-![go-stress-testing01](https://github.com/link1st/go-stress-testing/blob/master/img/go-stress-03.png)
+![go-stress-testing01](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/go-stress-testing01.png)
 
 - go server
 
@@ -730,7 +730,7 @@ CPU: 2核
 系统: CentOS 7.6
 
 
-![webSocket压测服务器](https://img.mukewang.com/5d64ce2d000126cd19970588.png)
+![webSocket压测服务器](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/webSocket%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A8.png)
 
 被压测服务:
 
@@ -741,7 +741,7 @@ CPU: 4核
 硬盘: 20G SSD
 系统: CentOS 7.6
 
-![webSocket被压测服务器](https://img.mukewang.com/5d64cdfd00013d9a19890606.png)
+![webSocket被压测服务器](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/webSocket%E8%A2%AB%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A8.png)
 
 
 ### 6.2 内核优化
@@ -839,7 +839,7 @@ net.ipv4.tcp_wmem = 4096 4096 16777216
 
 3. 登录上16台压测服务器，这里我提前把需要优化的系统做成了镜像，申请机器的时候就可以直接使用这个镜像(参数已经调好)
 
-![压测服务器16台准备](https://ask.qcloudimg.com/http-save/5223005/glwexcc6a3.jpeg?imageView2/2/w/1620)
+![压测服务器16台准备](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A816%E5%8F%B0%E5%87%86%E5%A4%87.png)
 
 4. 启动压测
 
@@ -873,11 +873,11 @@ nload   # 查看网络流量情况
 
 查看goWebSocket连接数统计，可以看到 **clientsLen**连接数为100W，**goroutine**数量2000008个，每个连接两个goroutine加上项目启动默认的8个。这里可以看到连接数满足了100W
 
-![查看goWebSocket连接数统计](https://img.mukewang.com/5d64ca86000119ad10080892.png)
+![查看goWebSocket连接数统计](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/%E6%9F%A5%E7%9C%8BgoWebSocket%E8%BF%9E%E6%8E%A5%E6%95%B0%E7%BB%9F%E8%AE%A1.png)
 
 从压测服务上查看连接数是否达到了要求，压测完成的统计数据并发数为62500，是每个客户端连接的数量,总连接数： `62500*16=100W`，
 
-![压测服务16台 压测完成](https://img.mukewang.com/5d64ca1d00015a1412630962.png)
+![压测服务16台 压测完成](https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A116%E5%8F%B0%20%E5%8E%8B%E6%B5%8B%E5%AE%8C%E6%88%90.png)
 
 - 记录内存使用情况，分别记录了1W到100W连接数内存使用情况
 
@@ -947,7 +947,17 @@ github 搜:link1st 查看项目 go-stress-testing
 
 - 在项目中遇到问题可以直接在这里找找答案或者提问 [issues](https://github.com/link1st/go-stress-testing/issues)
 - 也可以添加我的微信(申请信息填写:公司、姓名，我好备注下)，直接反馈给我
-<br/>
+  <br/>
 <p align="center">
-     <img border="0" src="https://img.mukewang.com/5eb376b60001ddc208300832.png" alt="添加link1st的微信" width="200"/>
+     <img border="0" src="https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/%E5%BE%AE%E4%BF%A1%E4%BA%8C%E7%BB%B4%E7%A0%81.jpeg" alt="添加link1st的微信" width="200"/>
+</p>
+
+### 赞助商
+
+- 感谢[JetBrains](https://www.jetbrains.com/?from=gowebsocket)对本项目的支持！
+  <br/>
+<p align="center">
+    <a href="https://www.jetbrains.com/?from=gowebsocket">
+        <img border="0" src="https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/jetbrains_logo.png" width="200"/>
+    </a>
 </p>
