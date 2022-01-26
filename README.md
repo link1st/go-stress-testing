@@ -912,7 +912,7 @@ VmSize: 27133804 kB
  原因是：主动断开的一方回复 ACK 消息可能丢失，TCP 是可靠的传输协议，在没有收到 ACK 消息的另一端会重试，重新发送FIN消息，所以主动关闭的一方会等待 2MSL 时间，防止对方重试，这就出现了大量 **TIME_WAIT** 状态（参考: 四次挥手的最后两次）
 
 TCP 握手：
-<img border="0" src="https://github.com/link1st/go-stress-testing/blob/master/img/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E3%80%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" width="830"/>
+<img border="0" src="https://link1st-github-img.oss-cn-beijing.aliyuncs.com/img/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E3%80%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" width="830"/>
 
 ## 8、总结
 到这里压测总算完成，本次压测花费16元巨款。
