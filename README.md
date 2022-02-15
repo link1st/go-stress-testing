@@ -353,7 +353,7 @@ Hatch rate (users spawned/second) 每秒钟增加用户数
 点击 "Start swarming" 进入压测页面
 
 
-![locust 首页](http://cdn.img.91vh.com/img/locust%20%E9%A6%96%E9%A1%B5.png)
+![locust 首页](http://img.91vh.com/img/locust%20%E9%A6%96%E9%A1%B5.png)
 
 
 压测界面右上角有:被压测的地址、当前状态、RPS、失败率、开始或重启按钮
@@ -380,7 +380,7 @@ Hatch rate (users spawned/second) 每秒钟增加用户数
 
 - `Current RPS` 代表吞吐量(Requests Per Second的缩写)，指的是某个并发用户数下单位时间内处理的请求数。等效于QPS，其实可以看作同一个统计方式，只是叫法不同而已。
 
-![locust 压测页面](http://cdn.img.91vh.com/img/locust%20%E5%8E%8B%E6%B5%8B%E9%A1%B5%E9%9D%A2.png)
+![locust 压测页面](http://img.91vh.com/img/locust%20%E5%8E%8B%E6%B5%8B%E9%A1%B5%E9%9D%A2.png)
 
 ### 3.3 JMeter
 
@@ -513,10 +513,10 @@ curl是Linux在命令行下的工作的文件传输工具，是一款很强大�
 
 
 **I:** chrome 浏览器生成 curl文件，打开开发者模式(快捷键F12)，如图所示，生成 curl 在终端执行命令
-![chrome cURL](http://cdn.img.91vh.com/img/copy%20cURL.png)
+![chrome cURL](http://img.91vh.com/img/copy%20cURL.png)
 
 **II:** postman 生成 curl 命令
-![postman cURL](http://cdn.img.91vh.com/img/postman%20cURL.png)
+![postman cURL](http://img.91vh.com/img/postman%20cURL.png)
 
 生成内容粘贴到项目目录下的**curl/baidu.curl.txt**文件中，执行下面命令就可以从curl.txt文件中读取需要压测的内容进行压测了
 
@@ -571,7 +571,7 @@ CPU: 4核 (Intel Xeon(Cascade Lake) Platinum 8269  2.5 GHz/3.2 GHz)
 
 go version: go1.12.9 linux/amd64
 
-![go-stress-testing01](http://cdn.img.91vh.com/img/go-stress-testing01.png)
+![go-stress-testing01](http://img.91vh.com/img/go-stress-testing01.png)
 
 - go server
 
@@ -730,7 +730,7 @@ CPU: 2核
 系统: CentOS 7.6
 
 
-![webSocket压测服务器](http://cdn.img.91vh.com/img/webSocket%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A8.png)
+![webSocket压测服务器](http://img.91vh.com/img/webSocket%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A8.png)
 
 被压测服务:
 
@@ -741,7 +741,7 @@ CPU: 4核
 硬盘: 20G SSD
 系统: CentOS 7.6
 
-![webSocket被压测服务器](http://cdn.img.91vh.com/img/webSocket%E8%A2%AB%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A8.png)
+![webSocket被压测服务器](http://img.91vh.com/img/webSocket%E8%A2%AB%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A8.png)
 
 
 ### 6.2 内核优化
@@ -839,7 +839,7 @@ net.ipv4.tcp_wmem = 4096 4096 16777216
 
 3. 登录上16台压测服务器，这里我提前把需要优化的系统做成了镜像，申请机器的时候就可以直接使用这个镜像(参数已经调好)
 
-![压测服务器16台准备](http://cdn.img.91vh.com/img/%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A816%E5%8F%B0%E5%87%86%E5%A4%87.png)
+![压测服务器16台准备](http://img.91vh.com/img/%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A1%E5%99%A816%E5%8F%B0%E5%87%86%E5%A4%87.png)
 
 4. 启动压测
 
@@ -873,11 +873,11 @@ nload   # 查看网络流量情况
 
 查看goWebSocket连接数统计，可以看到 **clientsLen**连接数为100W，**goroutine**数量2000008个，每个连接两个goroutine加上项目启动默认的8个。这里可以看到连接数满足了100W
 
-![查看goWebSocket连接数统计](http://cdn.img.91vh.com/img/%E6%9F%A5%E7%9C%8BgoWebSocket%E8%BF%9E%E6%8E%A5%E6%95%B0%E7%BB%9F%E8%AE%A1.png)
+![查看goWebSocket连接数统计](http://img.91vh.com/img/%E6%9F%A5%E7%9C%8BgoWebSocket%E8%BF%9E%E6%8E%A5%E6%95%B0%E7%BB%9F%E8%AE%A1.png)
 
 从压测服务上查看连接数是否达到了要求，压测完成的统计数据并发数为62500，是每个客户端连接的数量,总连接数： `62500*16=100W`，
 
-![压测服务16台 压测完成](http://cdn.img.91vh.com/img/%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A116%E5%8F%B0%20%E5%8E%8B%E6%B5%8B%E5%AE%8C%E6%88%90.png)
+![压测服务16台 压测完成](http://img.91vh.com/img/%E5%8E%8B%E6%B5%8B%E6%9C%8D%E5%8A%A116%E5%8F%B0%20%E5%8E%8B%E6%B5%8B%E5%AE%8C%E6%88%90.png)
 
 - 记录内存使用情况，分别记录了1W到100W连接数内存使用情况
 
@@ -912,7 +912,7 @@ VmSize: 27133804 kB
  原因是：主动断开的一方回复 ACK 消息可能丢失，TCP 是可靠的传输协议，在没有收到 ACK 消息的另一端会重试，重新发送FIN消息，所以主动关闭的一方会等待 2MSL 时间，防止对方重试，这就出现了大量 **TIME_WAIT** 状态（参考: 四次挥手的最后两次）
 
 TCP 握手：
-<img border="0" src="http://cdn.img.91vh.com/img/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E3%80%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" width="830"/>
+<img border="0" src="http://img.91vh.com/img/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E3%80%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" width="830"/>
 
 ## 8、总结
 到这里压测总算完成，本次压测花费16元巨款。
@@ -949,7 +949,7 @@ github 搜:link1st 查看项目 go-stress-testing
 - 也可以添加我的微信(申请信息填写:公司、姓名，我好备注下)，直接反馈给我
   <br/>
 <p align="center">
-     <img border="0" src="http://cdn.img.91vh.com/img/%E5%BE%AE%E4%BF%A1%E4%BA%8C%E7%BB%B4%E7%A0%81.jpeg" alt="添加link1st的微信" width="200"/>
+     <img border="0" src="http://img.91vh.com/img/%E5%BE%AE%E4%BF%A1%E4%BA%8C%E7%BB%B4%E7%A0%81.jpeg" alt="添加link1st的微信" width="200"/>
 </p>
 
 ### 赞助商
@@ -958,6 +958,6 @@ github 搜:link1st 查看项目 go-stress-testing
   <br/>
 <p align="center">
     <a href="https://www.jetbrains.com/?from=gowebsocket">
-        <img border="0" src="http://cdn.img.91vh.com/img/jetbrains_logo.png" width="200"/>
+        <img border="0" src="http://img.91vh.com/img/jetbrains_logo.png" width="200"/>
     </a>
 </p>
