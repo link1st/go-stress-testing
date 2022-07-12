@@ -55,7 +55,7 @@ func init() {
 	flag.IntVar(&code, "code", code, "请求成功的状态码")
 	flag.BoolVar(&http2, "http2", http2, "是否开http2.0")
 	flag.BoolVar(&keepalive, "k", keepalive, "是否开启长连接")
-	flag.IntVar(&cpuNumber, "k", cpuNumber, "CUP 核数，默认为一核")
+	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
 	// 解析参数
 	flag.Parse()
 }
