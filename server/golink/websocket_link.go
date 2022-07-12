@@ -2,6 +2,7 @@
 package golink
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -26,8 +27,8 @@ func init() {
 }
 
 // WebSocket webSocket go link
-func WebSocket(chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
-	request *model.Request, ws *client.WebSocket) {
+func WebSocket(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64,
+	wg *sync.WaitGroup, request *model.Request, ws *client.WebSocket) {
 	defer func() {
 		wg.Done()
 	}()

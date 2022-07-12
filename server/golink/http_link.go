@@ -2,6 +2,8 @@
 package golink
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"sync"
 
@@ -10,13 +12,18 @@ import (
 )
 
 // HTTP 请求
-func HTTP(chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
+func HTTP(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
 	request *model.Request) {
 	defer func() {
 		wg.Done()
 	}()
 	// fmt.Printf("启动协程 编号:%05d \n", chanID)
 	for i := uint64(0); i < totalNumber; i++ {
+		if ctx.Err() != nil {
+			fmt.Printf("ctx.Err err: %v \n", ctx.Err())
+			break
+		}
+
 		list := getRequestList(request)
 		isSucceed, errCode, requestTime, contentLength := sendList(list)
 		requestResults := &model.RequestResults{

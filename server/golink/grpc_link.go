@@ -14,7 +14,7 @@ import (
 )
 
 // Grpc grpc 接口请求
-func Grpc(chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
+func Grpc(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
 	request *model.Request, ws *client.GrpcSocket) {
 	defer func() {
 		wg.Done()
