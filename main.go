@@ -36,9 +36,10 @@ var (
 	headers     array             // 自定义头信息传递给服务器
 	body        = ""              // HTTP POST方式传送数据
 	maxCon      = 1               // 单个连接最大请求数
-	code        = 200             //成功状态码
+	code        = 200             // 成功状态码
 	http2       = false           // 是否开http2.0
 	keepalive   = false           // 是否开启长连接
+	cpuNumber   = 1               // CUP 核数，默认为一核，一般场景下单核已经够用了
 )
 
 func init() {
@@ -54,6 +55,7 @@ func init() {
 	flag.IntVar(&code, "code", code, "请求成功的状态码")
 	flag.BoolVar(&http2, "http2", http2, "是否开http2.0")
 	flag.BoolVar(&keepalive, "k", keepalive, "是否开启长连接")
+	flag.IntVar(&cpuNumber, "k", cpuNumber, "CUP 核数，默认为一核")
 	// 解析参数
 	flag.Parse()
 }
@@ -62,7 +64,7 @@ func init() {
 // 编译可执行文件
 //go:generate go build main.go
 func main() {
-	runtime.GOMAXPROCS(1)
+	runtime.GOMAXPROCS(cpuNumber)
 	if concurrency == 0 || totalNumber == 0 || (requestURL == "" && path == "") {
 		fmt.Printf("示例: go run main.go -c 1 -n 1 -u https://www.baidu.com/ \n")
 		fmt.Printf("压测地址或curl路径必填 \n")
