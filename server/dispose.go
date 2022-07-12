@@ -2,6 +2,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -31,7 +32,7 @@ func init() {
 }
 
 // Dispose 处理函数
-func Dispose(concurrency, totalNumber uint64, request *model.Request) {
+func Dispose(ctx context.Context, concurrency, totalNumber uint64, request *model.Request) {
 	// 设置接收数据缓存
 	ch := make(chan *model.RequestResults, 1000)
 	var (
@@ -49,7 +50,7 @@ func Dispose(concurrency, totalNumber uint64, request *model.Request) {
 		wg.Add(1)
 		switch request.Form {
 		case model.FormTypeHTTP:
-			go golink.HTTP(i, ch, totalNumber, &wg, request)
+			go golink.HTTP(ctx, i, ch, totalNumber, &wg, request)
 		case model.FormTypeWebSocket:
 			switch connectionMode {
 			case 1:
@@ -60,7 +61,7 @@ func Dispose(concurrency, totalNumber uint64, request *model.Request) {
 					fmt.Println("连接失败:", i, err)
 					continue
 				}
-				go golink.WebSocket(i, ch, totalNumber, &wg, request, ws)
+				go golink.WebSocket(ctx, i, ch, totalNumber, &wg, request, ws)
 			case 2:
 				// 并发建立长链接
 				go func(i uint64) {
@@ -71,7 +72,7 @@ func Dispose(concurrency, totalNumber uint64, request *model.Request) {
 						fmt.Println("连接失败:", i, err)
 						return
 					}
-					golink.WebSocket(i, ch, totalNumber, &wg, request, ws)
+					golink.WebSocket(ctx, i, ch, totalNumber, &wg, request, ws)
 				}(i)
 				// 注意:时间间隔太短会出现连接失败的报错 默认连接时长:20毫秒(公网连接)
 				time.Sleep(5 * time.Millisecond)
@@ -87,7 +88,7 @@ func Dispose(concurrency, totalNumber uint64, request *model.Request) {
 				fmt.Println("连接失败:", i, err)
 				continue
 			}
-			go golink.Grpc(i, ch, totalNumber, &wg, request, ws)
+			go golink.Grpc(ctx, i, ch, totalNumber, &wg, request, ws)
 		default:
 			// 类型不支持
 			wg.Done()
