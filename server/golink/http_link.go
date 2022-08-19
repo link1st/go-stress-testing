@@ -25,7 +25,7 @@ func HTTP(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, t
 		}
 
 		list := getRequestList(request)
-		isSucceed, errCode, requestTime, contentLength := sendList(list)
+		isSucceed, errCode, requestTime, contentLength := sendList(chanID, list)
 		requestResults := &model.RequestResults{
 			Time:          requestTime,
 			IsSucceed:     isSucceed,
@@ -40,10 +40,11 @@ func HTTP(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, t
 }
 
 // sendList 多个接口分步压测
-func sendList(requestList []*model.Request) (isSucceed bool, errCode int, requestTime uint64, contentLength int64) {
+func sendList(chanID uint64, requestList []*model.Request) (isSucceed bool, errCode int, requestTime uint64,
+	contentLength int64) {
 	errCode = model.HTTPOk
 	for _, request := range requestList {
-		succeed, code, u, length := send(request)
+		succeed, code, u, length := send(chanID, request)
 		isSucceed = succeed
 		errCode = code
 		requestTime = requestTime + u
@@ -56,7 +57,7 @@ func sendList(requestList []*model.Request) (isSucceed bool, errCode int, reques
 }
 
 // send 发送一次请求
-func send(request *model.Request) (bool, int, uint64, int64) {
+func send(chanID uint64, request *model.Request) (bool, int, uint64, int64) {
 	var (
 		// startTime = time.Now()
 		isSucceed     = false
@@ -68,7 +69,7 @@ func send(request *model.Request) (bool, int, uint64, int64) {
 	)
 	newRequest := getRequest(request)
 
-	resp, requestTime, err = client.HTTPRequest(newRequest)
+	resp, requestTime, err = client.HTTPRequest(chanID, newRequest)
 
 	if err != nil {
 		errCode = model.RequestErr // 请求错误
