@@ -66,6 +66,7 @@ func init() {
 
 // main go 实现的压测工具
 // 编译可执行文件
+//
 //go:generate go build main.go
 func main() {
 	runtime.GOMAXPROCS(cpuNumber)

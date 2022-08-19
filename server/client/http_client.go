@@ -24,7 +24,7 @@ var logErr = log.New(os.Stderr, "", 0)
 // body 请求的body
 // headers 请求头信息
 // timeout 请求超时时间
-func HTTPRequest(request *model.Request) (resp *http.Response, requestTime uint64, err error) {
+func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, requestTime uint64, err error) {
 	method := request.Method
 	url := request.URL
 	body := request.GetBody()
@@ -51,8 +51,8 @@ func HTTPRequest(request *model.Request) (resp *http.Response, requestTime uint6
 		req.Header.Set(key, value)
 	}
 	var client *http.Client
-	if request.Keepalive == true {
-		client = httplongclinet.LangHttpClient
+	if request.Keepalive {
+		client = httplongclinet.NewClient(chanID, request)
 		startTime := time.Now()
 		resp, err = client.Do(req)
 		requestTime = uint64(helper.DiffNano(startTime))

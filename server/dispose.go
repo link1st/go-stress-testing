@@ -7,8 +7,6 @@ import (
 	"sync"
 	"time"
 
-	httplongclinet "github.com/link1st/go-stress-testing/server/client/http_longclinet"
-
 	"github.com/link1st/go-stress-testing/model"
 	"github.com/link1st/go-stress-testing/server/client"
 	"github.com/link1st/go-stress-testing/server/golink"
@@ -41,10 +39,6 @@ func Dispose(ctx context.Context, concurrency, totalNumber uint64, request *mode
 	)
 	wgReceiving.Add(1)
 	go statistics.ReceivingResults(concurrency, ch, &wgReceiving)
-
-	if request.Keepalive {
-		httplongclinet.CreateLangHttpClient(request)
-	}
 
 	for i := uint64(0); i < concurrency; i++ {
 		wg.Add(1)
