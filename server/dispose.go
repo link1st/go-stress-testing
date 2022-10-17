@@ -83,6 +83,10 @@ func Dispose(ctx context.Context, concurrency, totalNumber uint64, request *mode
 				continue
 			}
 			go golink.Grpc(ctx, i, ch, totalNumber, &wg, request, ws)
+		case model.FormTypeRadius:
+			// Radius use udp, does not a connection
+			go golink.Radius(ctx, i, ch, totalNumber, &wg, request)
+
 		default:
 			// 类型不支持
 			wg.Done()
