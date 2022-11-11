@@ -59,7 +59,7 @@ func init() {
 	flag.BoolVar(&http2, "http2", http2, "是否开http2.0")
 	flag.BoolVar(&keepalive, "k", keepalive, "是否开启长连接")
 	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
-	flag.Int64Var(&timeout, "timeout", timeout, "超时时间 单位 秒,默认不设置")
+	flag.Int64Var(&timeout, "timeout", timeout, "超时时间，单位秒，默认30s")
 	// 解析参数
 	flag.Parse()
 }
@@ -78,7 +78,7 @@ func main() {
 		return
 	}
 	debug := strings.ToLower(debugStr) == "true"
-	request, err := model.NewRequest(requestURL, verify, code, 0, debug, path, headers, body, maxCon, http2, keepalive)
+	request, err := model.NewRequest(requestURL, verify, code, time.Duration(timeout), debug, path, headers, body, maxCon, http2, keepalive)
 	if err != nil {
 		fmt.Printf("参数不合法 %v \n", err)
 		return

@@ -68,6 +68,7 @@ go 实现的压测工具，每个用户用一个协程的方式模拟，最大�
 
 `-u` 需要压测的地址
 
+`-timeout` 超时时间，单位秒,默认为30秒
 ```shell
 
 # 运行 以mac为示例
@@ -463,6 +464,8 @@ Usage of ./go-stress-testing-mac:
       验证方法 http 支持:statusCode、json webSocket支持:json
   -p string
       curl文件路径
+  -timeout int
+      超时时间，单位秒，默认30s
 ```
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数
