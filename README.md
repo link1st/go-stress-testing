@@ -914,6 +914,12 @@ VmSize: 27133804 kB
 TCP 握手：
 <img border="0" src="http://img.91vh.com/img/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E3%80%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" width="830"/>
 
+- **Q:** 没有go环境无法使用最新功能
+
+ A： 可以使用Dockerfile构建一个容器镜像，假设容器镜像名称为gostress:1111，docker build -t gostress:1111 .
+     启动一个名称为go-stress的容器docker run -d --name=go-stress gostress:1111
+	 开始压测 docker exec -it go-stress -c 10 -n 10 -u www.baidu.com
+
 ## 8、总结
 到这里压测总算完成，本次压测花费16元巨款。
 
