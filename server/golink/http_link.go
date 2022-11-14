@@ -2,8 +2,11 @@
 package golink
 
 import (
+	"compress/gzip"
 	"context"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"sync"
 
@@ -74,9 +77,29 @@ func send(chanID uint64, request *model.Request) (bool, int, uint64, int64) {
 	if err != nil {
 		errCode = model.RequestErr // 请求错误
 	} else {
-		contentLength = resp.ContentLength
+		// 此处原方式获取的数据长度可能是 -1，换成如下方式获取可获取到正确的长度
+		contentLength, err = getBodyLength(resp)
+		if err != nil {
+			contentLength = resp.ContentLength
+		}
 		// 验证请求是否成功
 		errCode, isSucceed = newRequest.GetVerifyHTTP()(newRequest, resp)
 	}
 	return isSucceed, errCode, requestTime, contentLength
+}
+
+// getBodyLength 获取响应数据长度
+func getBodyLength(response *http.Response) (length int64, err error) {
+	var reader io.ReadCloser
+	switch response.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err = gzip.NewReader(response.Body)
+		defer func() {
+			_ = reader.Close()
+		}()
+	default:
+		reader = response.Body
+	}
+	body, err := ioutil.ReadAll(reader)
+	return int64(len(body)), err
 }
