@@ -28,7 +28,8 @@ const (
 	// FormTypeWebSocket webSocket 协议
 	FormTypeWebSocket = "webSocket"
 	// FormTypeGRPC grpc 协议
-	FormTypeGRPC = "grpc"
+	FormTypeGRPC   = "grpc"
+	FormTypeRadius = "radius"
 )
 
 // 校验函数
@@ -160,6 +161,9 @@ func NewRequest(url string, verify string, code int, timeout time.Duration, debu
 		form = FormTypeWebSocket
 	} else if strings.HasPrefix(url, "grpc://") || strings.HasPrefix(url, "rpc://") {
 		form = FormTypeGRPC
+	} else if strings.HasPrefix(url, "radius://") {
+		form = FormTypeRadius
+		url = url[9:]
 	} else {
 		form = FormTypeHTTP
 		url = fmt.Sprintf("http://%s", url)
