@@ -49,7 +49,7 @@ func init() {
 	flag.Uint64Var(&concurrency, "c", concurrency, "并发数")
 	flag.Uint64Var(&totalNumber, "n", totalNumber, "请求数(单个并发/协程)")
 	flag.StringVar(&debugStr, "d", debugStr, "调试模式")
-	flag.StringVar(&requestURL, "u", requestURL, "压测地址")
+    flag.StringVar(&requestURL, "u", requestURL, "压测地址。\nhttp://www.baidu.com\nhttps://www.baidu.com\nradius://192.168.10.110:1812\ngrpc://\nws://")
 	flag.StringVar(&path, "p", path, "curl文件路径")
 	flag.StringVar(&verify, "v", verify, "验证方法 http 支持:statusCode、json webSocket支持:json")
 	flag.Var(&headers, "H", "自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'")
