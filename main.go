@@ -49,7 +49,7 @@ func init() {
 	flag.Uint64Var(&concurrency, "c", concurrency, "并发数")
 	flag.Uint64Var(&totalNumber, "n", totalNumber, "请求数(单个并发/协程)")
 	flag.StringVar(&debugStr, "d", debugStr, "调试模式")
-    flag.StringVar(&requestURL, "u", requestURL, `压测地址。
+	flag.StringVar(&requestURL, "u", requestURL, `压测地址。
 http://www.baidu.com
 https://www.baidu.com
 radius://192.168.10.110:1812

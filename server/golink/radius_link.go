@@ -20,11 +20,12 @@ import (
 
 const STRING_AUTH string = "auth"
 const STRING_ACCT string = "acct"
-var STAGE uint64  = 0
+
+var STAGE uint64 = 0
 var DefaultClient = &radius.Client{
-	Retry:           time.Second,
-	MaxPacketErrors: 10,
-    InsecureSkipVerify: true,
+	Retry:              time.Second,
+	MaxPacketErrors:    10,
+	InsecureSkipVerify: true,
 }
 
 // Grpc grpc 接口请求
@@ -34,22 +35,22 @@ func Radius(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults,
 		wg.Done()
 	}()
 	if request.Headers["type"] == "acct" {
-        if STAGE == 0 {
-            STAGE, _ = strconv.ParseUint(request.Headers["stage"], 10, 64)
-        }
-		if totalNumber % STAGE != 0 {
+		if STAGE == 0 {
+			STAGE, _ = strconv.ParseUint(request.Headers["stage"], 10, 64)
+		}
+		if totalNumber%STAGE != 0 {
 			fmt.Println(fmt.Errorf("ERROR:  Radius Account must by of mutiple of stage"))
 			return
 		}
 		for i := uint64(0); i < totalNumber/STAGE; i++ {
-			acctRequest(chanID, ch, i + totalNumber/STAGE * 0, request, rfc2866.AcctStatusType_Value_Start)
+			acctRequest(chanID, ch, i+totalNumber/STAGE*0, request, rfc2866.AcctStatusType_Value_Start)
 		}
 		for i := uint64(0); i < totalNumber/STAGE; i++ {
-			acctRequest(chanID, ch, i + totalNumber/STAGE * 1, request, rfc2866.AcctStatusType_Value_InterimUpdate)
+			acctRequest(chanID, ch, i+totalNumber/STAGE*1, request, rfc2866.AcctStatusType_Value_InterimUpdate)
 		}
 		if STAGE == 3 {
 			for i := uint64(0); i < totalNumber/STAGE; i++ {
-				acctRequest(chanID, ch, i + totalNumber/STAGE * 2, request, rfc2866.AcctStatusType_Value_Stop)
+				acctRequest(chanID, ch, i+totalNumber/STAGE*2, request, rfc2866.AcctStatusType_Value_Stop)
 			}
 		}
 
@@ -150,7 +151,7 @@ func acctRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, reque
 
 	_, err := DefaultClient.Exchange(context.Background(), packet, host)
 	if err != nil {
-        fmt.Println(err)
+		fmt.Println(err)
 		errCode = model.RequestErr
 	} else {
 		isSucceed = true
