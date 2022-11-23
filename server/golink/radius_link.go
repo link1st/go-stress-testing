@@ -2,7 +2,7 @@ package golink
 
 import (
 	"context"
-	"strings"
+	"fmt"
 	"sync"
 	"time"
 
@@ -12,6 +12,10 @@ import (
 
 	"github.com/link1st/go-stress-testing/model"
 )
+
+const STRING_AUTH string = "auth"
+const STRING_ACCT string = "acct"
+
 
 // Grpc grpc 接口请求
 func Radius(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
@@ -25,25 +29,26 @@ func Radius(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults,
 	return
 }
 
-// grpcRequest 请求
+// radius authRequest 请求
 func authRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, request *model.Request) {
 	var (
 		startTime = time.Now()
 		isSucceed = false
 		errCode   = int(radius.CodeAccessAccept)
 	)
-	// 需要发送的数据
-	// fmt.Printf("rsp:%+v", rsp)
-	packet := radius.New(radius.CodeAccessRequest, []byte(`cisco`))
-	index := strings.Index(request.URL, "@")
-	username := "tim"
+	username := request.Headers["username"]
+    password := request.Headers["password"]
+    secret := request.Headers["secret"]
+    if username == "" {
+        username = "tim"
+    }
+    if password == "" {
+        password = "12345678"
+    }
+	packet := radius.New(radius.CodeAccessRequest, []byte(secret))
 	host := request.URL
-	if index != -1 {
-		username = username + "@" + request.URL[index+1:]
-		host = request.URL[:index]
-	}
 	rfc2865.UserName_SetString(packet, username)
-	rfc2865.UserPassword_SetString(packet, "12345678")
+	rfc2865.UserPassword_SetString(packet, password)
 	rfc2865.NASPortType_Set(packet, rfc2865.NASPortType_Value_Ethernet)
 	rfc2865.ServiceType_Set(packet, rfc2865.ServiceType_Value_FramedUser)
 	rfc2865.NASIdentifier_Set(packet, []byte(`benchmark`))
