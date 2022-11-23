@@ -49,7 +49,19 @@ func init() {
 	flag.Uint64Var(&concurrency, "c", concurrency, "并发数")
 	flag.Uint64Var(&totalNumber, "n", totalNumber, "请求数(单个并发/协程)")
 	flag.StringVar(&debugStr, "d", debugStr, "调试模式")
-    flag.StringVar(&requestURL, "u", requestURL, "压测地址。\nhttp://www.baidu.com\nhttps://www.baidu.com\nradius://192.168.10.110:1812\ngrpc://\nws://")
+    flag.StringVar(&requestURL, "u", requestURL, `压测地址。
+http://www.baidu.com
+https://www.baidu.com
+radius://192.168.10.110:1812
+    可以利用 Header 指定参数，当前支持的参数有：
+    - type     值是 auth 或 acct 表示认证或计费
+    - username 认证请求报文中的用户名，计费的时候不需要
+    - password 认证请求中的密码，计费的时候不需要
+    - secret   BRAS/Radius 共享密钥
+    - stage    计费报文发送环节，当前值可以是 2 或 3.  3 表示会发送计费开始、计费更新、计费结束。2 则不会发计费结束报文。
+    ./go-stress-testing -u radius://192.168.10.110:1813 -H 'type:acct' -H 'secret: freeradius' -H 'stage: 3' -c 1 -n 30
+grpc://
+ws://`)
 	flag.StringVar(&path, "p", path, "curl文件路径")
 	flag.StringVar(&verify, "v", verify, "验证方法 http 支持:statusCode、json webSocket支持:json")
 	flag.Var(&headers, "H", "自定义头信息传递给服务器 示例:-H 'Content-Type: application/json'")
