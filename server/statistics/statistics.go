@@ -55,7 +55,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 			case <-ticker.C:
 				endTime := uint64(time.Now().UnixNano())
 				mutex.Lock()
-				go calculateData(concurrent, processingTime, endTime-statTime, maxTime, minTime, successNum, failureNum,
+				go calculateData(processingTime, endTime-statTime, maxTime, minTime, successNum, failureNum,
 					chanIDLen, errCode, receivedBytes)
 				mutex.Unlock()
 			case <-stopChan:
@@ -102,7 +102,7 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 	stopChan <- true
 	endTime := uint64(time.Now().UnixNano())
 	requestTime = endTime - statTime
-	calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIDLen, errCode,
+	calculateData(processingTime, requestTime, maxTime, minTime, successNum, failureNum, chanIDLen, errCode,
 		receivedBytes)
 
 	fmt.Printf("\n\n")
@@ -131,7 +131,7 @@ func printTop(requestTimeList []uint64) {
 }
 
 // calculateData 计算数据
-func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, successNum, failureNum uint64,
+func calculateData(processingTime, requestTime, maxTime, minTime, successNum, failureNum uint64,
 	chanIDLen int, errCode *sync.Map, receivedBytes int64) {
 	if processingTime == 0 {
 		processingTime = 1
@@ -143,12 +143,12 @@ func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, su
 		minTimeFloat     float64
 		requestTimeFloat float64
 	)
-	// 平均 QPS 成功数*总协程数/总耗时 (每秒)
-	if processingTime != 0 {
-		qps = float64(successNum*1e9*concurrent) / float64(processingTime)
+	// 平均 QPS 总请求成功数/总耗时 (每秒)
+	if requestTime != 0 {
+		qps = float64(successNum*1e9) / float64(requestTime)
 	}
-	// 平均时长 总耗时/总请求数/并发数 纳秒=>毫秒
-	if successNum != 0 && concurrent != 0 {
+	// 平均时长 总耗时/总请求数 纳秒=>毫秒
+	if successNum != 0 {
 		averageTime = float64(processingTime) / float64(successNum*1e6)
 	}
 	// 纳秒=>毫秒
