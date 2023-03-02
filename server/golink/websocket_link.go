@@ -39,7 +39,8 @@ func WebSocket(ctx context.Context, chanID uint64, ch chan<- *model.RequestResul
 	var (
 		i uint64
 	)
-	// 暂停60秒
+	// 暂停一段时间，是服务端建立完通讯以后有一些异步事件需要处理
+	// 避免建立完成以后就发送数据，服务端就报错可能
 	t := time.NewTimer(firstTime)
 	for {
 		select {
