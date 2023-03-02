@@ -39,8 +39,8 @@ func WebSocket(ctx context.Context, chanID uint64, ch chan<- *model.RequestResul
 	var (
 		i uint64
 	)
-	// 暂停一段时间，是服务端建立完通讯以后有一些异步事件需要处理
-	// 避免建立完成以后就发送数据，服务端就报错可能
+	// 本项目以压测最大连接数为目的，启用定时器是为了连接保活
+	// 不需要一直发送消息，如果需要压测 QPS 为目的，则需要取消定时器功能
 	t := time.NewTimer(firstTime)
 	for {
 		select {
