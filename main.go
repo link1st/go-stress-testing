@@ -57,6 +57,7 @@ radius://192.168.10.110:1812
     - type     值是 auth 或 acct 表示认证或计费
     - username 认证请求报文中的用户名，计费的时候不需要
     - password 认证请求中的密码，计费的时候不需要
+    - nasip    Radius报文中的 NAS-IP-Address 属性
     - secret   BRAS/Radius 共享密钥
     - stage    计费报文发送环节，当前值可以是 2 或 3.  3 表示会发送计费开始、计费更新、计费结束。2 则不会发计费结束报文。
     ./go-stress-testing -u radius://192.168.10.110:1813 -H 'type:acct' -H 'secret: freeradius' -H 'stage: 3' -c 1 -n 30

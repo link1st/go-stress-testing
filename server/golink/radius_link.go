@@ -86,7 +86,7 @@ func authRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, reque
 	rfc2865.ServiceType_Set(packet, rfc2865.ServiceType_Value_FramedUser)
 	rfc2865.NASIdentifier_Set(packet, []byte(`benchmark`))
 	rfc2865.CallingStationID_Set(packet, []byte("ac:60:89:70:29:9d"))
-	rfc2865.NASIPAddress_Set(packet, []byte("192.168.10.255"))
+	rfc2865.NASIPAddress_Set(packet, []byte(request.Headers["nasip"]))
 	rfc2865.NASPort_Set(packet, rfc2865.NASPort(rand.Uint32()))
 	rsp, err := DefaultClient.Exchange(context.Background(), packet, host)
 	if err != nil {
