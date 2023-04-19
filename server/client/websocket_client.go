@@ -20,7 +20,7 @@ type WebSocket struct {
 	URLLink    string
 	URL        *url.URL
 	IsSsl      bool
-	HttpHeader map[string]string
+	HTTPHeader map[string]string
 }
 
 // NewWebSocket new
@@ -38,7 +38,7 @@ func NewWebSocket(urlLink string) (ws *WebSocket) {
 		URLLink:    urlLink,
 		URL:        u,
 		IsSsl:      isSsl,
-		HttpHeader: make(map[string]string),
+		HTTPHeader: make(map[string]string),
 	}
 	return
 }
@@ -49,7 +49,7 @@ func (w *WebSocket) getLink() (link string) {
 }
 
 func (w *WebSocket) SetHeader(head map[string]string) {
-	w.HttpHeader = head
+	w.HTTPHeader = head
 }
 
 // getOrigin 获取源连接
@@ -75,15 +75,14 @@ func (w *WebSocket) Close() (err error) {
 
 // Dial opens a new client connection to a WebSocket.
 // 复写 websocket库的 Dial 方法 ,增加 httpheader 设置功能
-func Dial(url_, protocol, origin string, httpHeader map[string]string) (ws *websocket.Conn, err error) {
-	config, err := websocket.NewConfig(url_, origin)
-	config.Header = map[string][]string{}
-	//
-	for x := range httpHeader {
-		config.Header.Set(x, httpHeader[x])
-	}
+func Dial(url, protocol, origin string, httpHeader map[string]string) (ws *websocket.Conn, err error) {
+	config, err := websocket.NewConfig(url, origin)
 	if err != nil {
 		return nil, err
+	}
+	config.Header = map[string][]string{}
+	for x := range httpHeader {
+		config.Header.Set(x, httpHeader[x])
 	}
 	if protocol != "" {
 		config.Protocol = []string{protocol}
@@ -98,7 +97,7 @@ func (w *WebSocket) GetConn() (err error) {
 		i    int
 	)
 	for i = 0; i < connRetry; i++ {
-		conn, err = Dial(w.getLink(), "", w.getOrigin(), w.HttpHeader)
+		conn, err = Dial(w.getLink(), "", w.getOrigin(), w.HTTPHeader)
 		if err != nil {
 			fmt.Println("GetConn 建立连接失败 in...", i, err)
 			continue
