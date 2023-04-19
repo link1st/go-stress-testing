@@ -50,6 +50,7 @@ func Dispose(ctx context.Context, concurrency, totalNumber uint64, request *mode
 			case 1:
 				// 连接以后再启动协程
 				ws := client.NewWebSocket(request.URL)
+				ws.SetHeader(request.Headers)
 				err := ws.GetConn()
 				if err != nil {
 					fmt.Println("连接失败:", i, err)
@@ -61,6 +62,7 @@ func Dispose(ctx context.Context, concurrency, totalNumber uint64, request *mode
 				go func(i uint64) {
 					// 连接以后再启动协程
 					ws := client.NewWebSocket(request.URL)
+					ws.SetHeader(request.Headers)
 					err := ws.GetConn()
 					if err != nil {
 						fmt.Println("连接失败:", i, err)
