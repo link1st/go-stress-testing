@@ -67,7 +67,7 @@ type Verify interface {
 }
 
 // VerifyHTTP http 验证
-type VerifyHTTP func(request *Request, response *http.Response) (code int, isSucceed bool)
+type VerifyHTTP func(request *Request, response *http.Response, body []byte) (code int, isSucceed bool)
 
 // VerifyWebSocket webSocket 验证
 type VerifyWebSocket func(request *Request, seq string, msg []byte) (code int, isSucceed bool)

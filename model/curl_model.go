@@ -4,7 +4,7 @@ package model
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 
@@ -50,7 +50,7 @@ func ParseTheFile(path string) (curl *CURL, err error) {
 	defer func() {
 		_ = file.Close()
 	}()
-	dataBytes, err := ioutil.ReadAll(file)
+	dataBytes, err := io.ReadAll(file)
 	if err != nil {
 		err = errors.New("读取文件失败:" + err.Error())
 		return

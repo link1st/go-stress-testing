@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"sync"
 
@@ -65,6 +64,7 @@ func send(chanID uint64, request *model.Request) (bool, int, uint64, int64) {
 		// startTime = time.Now()
 		isSucceed     = false
 		errCode       = model.HTTPOk
+		body          []byte
 		contentLength = int64(0)
 		err           error
 		resp          *http.Response
@@ -73,23 +73,26 @@ func send(chanID uint64, request *model.Request) (bool, int, uint64, int64) {
 	newRequest := getRequest(request)
 
 	resp, requestTime, err = client.HTTPRequest(chanID, newRequest)
-
 	if err != nil {
 		errCode = model.RequestErr // 请求错误
 	} else {
-		// 此处原方式获取的数据长度可能是 -1，换成如下方式获取可获取到正确的长度
-		contentLength, err = getBodyLength(resp)
+		body, err = getBody(resp)
 		if err != nil {
-			contentLength = resp.ContentLength
+			errCode = model.ParseError
+		} else {
+			contentLength = int64(len(body))
+			// 验证请求是否成功
+			errCode, isSucceed = newRequest.GetVerifyHTTP()(newRequest, resp, body)
 		}
-		// 验证请求是否成功
-		errCode, isSucceed = newRequest.GetVerifyHTTP()(newRequest, resp)
 	}
 	return isSucceed, errCode, requestTime, contentLength
 }
 
-// getBodyLength 获取响应数据长度
-func getBodyLength(response *http.Response) (length int64, err error) {
+// getBody 获取响应数据
+func getBody(response *http.Response) (body []byte, err error) {
+	defer func() {
+		_ = response.Body.Close()
+	}()
 	var reader io.ReadCloser
 	switch response.Header.Get("Content-Encoding") {
 	case "gzip":
@@ -100,6 +103,9 @@ func getBodyLength(response *http.Response) (length int64, err error) {
 	default:
 		reader = response.Body
 	}
-	body, err := ioutil.ReadAll(reader)
-	return int64(len(body)), err
+	body, err = io.ReadAll(reader)
+	defer func() {
+		_ = response.Body.Close()
+	}()
+	return body, err
 }
