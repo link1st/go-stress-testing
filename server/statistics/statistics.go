@@ -27,9 +27,7 @@ var (
 // 统计的时间都是纳秒，显示的时间 都是毫秒
 // concurrent 并发数
 func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sync.WaitGroup) {
-	defer func() {
-		wg.Done()
-	}()
+	defer wg.Done()
 	var stopChan = make(chan bool)
 	// 时间
 	var (
