@@ -171,7 +171,7 @@ go 实现的压测工具，每个用户用一个协程的方式模拟，最大�
 
 | 机器性能 |   解释  |
 | :----   | :---- |
-| CUP利用率(CPU Usage)       |  CUP 利用率分用户态、系统态和空闲态，CPU利用率是指:CPU执行非系统空闲进程的时间与CPU总执行时间的比率      |
+| CPU利用率(CPU Usage)       |  CPU 利用率分用户态、系统态和空闲态，CPU利用率是指:CPU执行非系统空闲进程的时间与CPU总执行时间的比率      |
 | 内存使用率(Memory usage)    |  内存使用率指的是此进程所开销的内存。      |
 | IO(Disk input/ output)    |  磁盘的读写包速率       |
 | 网卡负载(Network Load)      |  网卡的进出带宽,包量       |
@@ -857,7 +857,7 @@ net.ipv4.tcp_wmem = 4096 4096 16777216
 
 ```
 # linux 命令
-ps      # 查看进程内存、cup使用情况
+ps      # 查看进程内存、CPU使用情况
 iostat  # 查看系统IO情况
 nload   # 查看网络流量情况
 /proc/pid/status # 查看进程状态
