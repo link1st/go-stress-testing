@@ -1,0 +1,24 @@
+
+# -*- text -*-
+# Copyright (C) 2022 The FreeRADIUS Server project and contributors
+# This work is licensed under CC-BY version 4.0 https://creativecommons.org/licenses/by/4.0
+# Version $Id: d2fc35ca82c9d767d8d2d239d8f4e3c572f70b8a $
+#
+#	3GPP attribute as specified in TS 29.061
+#
+#	https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=1596
+#
+#	$Id: d2fc35ca82c9d767d8d2d239d8f4e3c572f70b8a $
+#
+VENDOR		3GPP				10415
+
+BEGIN-VENDOR	3GPP
+
+#
+#	Most of the 'string' attributes are UTF-8 encoded text.
+#	Maybe we want a UTF-8 'type' in the server...
+#
+ATTRIBUTE	IMSI					1	string
+ATTRIBUTE	IMEISV					20	string
+
+END-VENDOR	3GPP

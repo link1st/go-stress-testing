@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/link1st/go-stress-testing/dict"
 	"github.com/link1st/go-stress-testing/helper"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
@@ -88,6 +89,19 @@ func authRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, reque
 	rfc2865.CallingStationID_Set(packet, []byte("ac:60:89:70:29:9d"))
 	rfc2865.NASIPAddress_Set(packet, []byte(request.Headers["nasip"]))
 	rfc2865.NASPort_Set(packet, rfc2865.NASPort(rand.Uint32()))
+	if len(request.Headers["imsi"]) > 0 {
+		dict.IMSI_Set(packet, []byte(request.Headers["imsi"]))
+		dict.UserIMSI_Set(packet, []byte(request.Headers["imsi"]))
+	}
+	if len(request.Headers["imei"]) > 0 {
+		dict.IMEISV_Set(packet, []byte(request.Headers["imei"]))
+	}
+	if len(request.Headers["mdn"]) > 0 {
+		rfc2865.CallingStationID_Set(packet, []byte(request.Headers["mdn"]))
+	}
+	if len(request.Headers["apn"]) > 0 {
+		rfc2865.CalledStationID_Set(packet, []byte(request.Headers["apn"]))
+	}
 	rsp, err := DefaultClient.Exchange(context.Background(), packet, host)
 	if err != nil {
 		errCode = model.RequestErr
