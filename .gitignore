@@ -14,10 +14,7 @@
 main
 main_linux
 main_win.exe
-go-stress-testing-mac
-go-stress-testing-linux
-go-stress-testing-win.exe
-go-stress-testing-linux-arm64
+go-stress-testing-*
 model/modeltest/*
 model/modeltest*
 server.go
