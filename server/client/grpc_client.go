@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // GrpcSocket grpc
@@ -49,7 +50,7 @@ func (g *GrpcSocket) Close() (err error) {
 func (g *GrpcSocket) Link() (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	conn, err := grpc.DialContext(ctx, g.address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.DialContext(ctx, g.address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return fmt.Errorf("getConn: 连接失败 address:%s %w", g.address, err)
 	}

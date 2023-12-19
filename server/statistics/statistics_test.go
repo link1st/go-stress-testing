@@ -1,10 +1,4 @@
-/**
-* Package statistics
-*
-* User: link1st
-* Date: 2020/9/28
-* Time: 14:02
- */
+// Package statistics 统计数据
 package statistics
 
 import (

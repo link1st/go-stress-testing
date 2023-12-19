@@ -2,32 +2,12 @@
 package verify
 
 import (
-	"bytes"
-	"compress/gzip"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/link1st/go-stress-testing/model"
 )
-
-// getZipData 处理gzip压缩
-func getZipData(response *http.Response) (body []byte, err error) {
-	var reader io.ReadCloser
-	switch response.Header.Get("Content-Encoding") {
-	case "gzip":
-		reader, err = gzip.NewReader(response.Body)
-		defer func() {
-			_ = reader.Close()
-		}()
-	default:
-		reader = response.Body
-	}
-	body, err = io.ReadAll(reader)
-	response.Body = io.NopCloser(bytes.NewReader(body))
-	return
-}
 
 // HTTPStatusCode 通过 HTTP 状态码判断是否请求成功
 func HTTPStatusCode(request *model.Request, response *http.Response, body []byte) (code int, isSucceed bool) {

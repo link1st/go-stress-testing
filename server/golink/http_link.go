@@ -46,7 +46,7 @@ func sendList(chanID uint64, requestList []*model.Request) (isSucceed bool, errC
 	contentLength int64) {
 	errCode = model.HTTPOk
 	for _, request := range requestList {
-	    temp := request
+		temp := request
 		succeed, code, u, length := send(chanID, temp)
 		isSucceed = succeed
 		errCode = code

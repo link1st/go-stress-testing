@@ -27,7 +27,7 @@ func init() {
 }
 
 // WebSocket webSocket go link
-func WebSocket(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64,
+func WebSocket(_ context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64,
 	wg *sync.WaitGroup, request *model.Request, ws *client.WebSocket) {
 	defer func() {
 		wg.Done()

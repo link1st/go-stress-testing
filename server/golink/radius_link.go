@@ -13,8 +13,8 @@ import (
 	"github.com/link1st/go-stress-testing/model"
 )
 
-// Grpc grpc 接口请求
-func Radius(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
+// Radius grpc 接口请求
+func Radius(_ context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64, wg *sync.WaitGroup,
 	request *model.Request) {
 	defer func() {
 		wg.Done()
@@ -42,11 +42,11 @@ func authRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, reque
 		username = username + "@" + request.URL[index+1:]
 		host = request.URL[:index]
 	}
-	rfc2865.UserName_SetString(packet, username)
-	rfc2865.UserPassword_SetString(packet, "12345678")
-	rfc2865.NASPortType_Set(packet, rfc2865.NASPortType_Value_Ethernet)
-	rfc2865.ServiceType_Set(packet, rfc2865.ServiceType_Value_FramedUser)
-	rfc2865.NASIdentifier_Set(packet, []byte(`benchmark`))
+	_ = rfc2865.UserName_SetString(packet, username)
+	_ = rfc2865.UserPassword_SetString(packet, "12345678")
+	_ = rfc2865.NASPortType_Set(packet, rfc2865.NASPortType_Value_Ethernet)
+	_ = rfc2865.ServiceType_Set(packet, rfc2865.ServiceType_Value_FramedUser)
+	_ = rfc2865.NASIdentifier_Set(packet, []byte(`benchmark`))
 	rsp, err := radius.Exchange(context.Background(), packet, host)
 	if err != nil {
 		errCode = model.RequestErr
