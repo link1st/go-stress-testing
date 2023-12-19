@@ -34,7 +34,7 @@ func (s *server) HelloWorld(_ context.Context, req *pb.Request) (rsp *pb.Respons
 
 // main 主函数
 func main() {
-	fmt.Println("trpc server 启动中...")
+	fmt.Println("rpc server 启动中...")
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
