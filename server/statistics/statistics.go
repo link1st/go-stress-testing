@@ -145,7 +145,7 @@ func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, su
 	)
 	// 平均 QPS 成功数*总协程数/总耗时 (每秒)
 	if processingTime != 0 {
-		qps = float64(successNum*1e9*concurrent) / float64(processingTime)
+		qps = float64(successNum*concurrent) * (1e9 / float64(processingTime))
 	}
 	// 平均时长 总耗时/总请求数/并发数 纳秒=>毫秒
 	if successNum != 0 && concurrent != 0 {
