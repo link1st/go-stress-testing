@@ -6,9 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/link1st/go-stress-testing/helper"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
+
+	"github.com/link1st/go-stress-testing/helper"
 
 	"github.com/link1st/go-stress-testing/model"
 )
@@ -33,7 +34,6 @@ func authRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, reque
 		errCode   = int(radius.CodeAccessAccept)
 	)
 	// 需要发送的数据
-	// fmt.Printf("rsp:%+v", rsp)
 	packet := radius.New(radius.CodeAccessRequest, []byte(`cisco`))
 	index := strings.Index(request.URL, "@")
 	username := "tim"

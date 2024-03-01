@@ -62,7 +62,6 @@ func sendList(chanID uint64, requestList []*model.Request) (isSucceed bool, errC
 // send 发送一次请求
 func send(chanID uint64, request *model.Request) (bool, int, uint64, int64) {
 	var (
-		// startTime = time.Now()
 		isSucceed     = false
 		errCode       = model.HTTPOk
 		body          []byte

@@ -56,7 +56,7 @@ func init() {
 	flag.StringVar(&body, "data", body, "HTTP POST方式传送数据")
 	flag.IntVar(&maxCon, "m", maxCon, "单个host最大连接数")
 	flag.IntVar(&code, "code", code, "请求成功的状态码")
-	flag.BoolVar(&http2, "http2", http2, "是否开http2.0")
+	flag.BoolVar(&http2, "http2", http2, "是否开 http2.0")
 	flag.BoolVar(&keepalive, "k", keepalive, "是否开启长连接")
 	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
 	flag.Int64Var(&timeout, "timeout", timeout, "超时时间 单位 秒,默认不设置")

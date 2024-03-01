@@ -20,7 +20,6 @@ const (
 
 // init 注册验证器
 func init() {
-
 	// http
 	model.RegisterVerifyHTTP("statusCode", verify.HTTPStatusCode)
 	model.RegisterVerifyHTTP("json", verify.HTTPJson)

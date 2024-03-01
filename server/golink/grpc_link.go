@@ -50,7 +50,6 @@ func grpcRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, reque
 			}
 		)
 		rsp, err := c.HelloWorld(ctx, req)
-		// fmt.Printf("rsp:%+v", rsp)
 		if err != nil {
 			errCode = model.RequestErr
 		} else {
