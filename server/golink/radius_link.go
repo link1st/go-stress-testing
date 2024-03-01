@@ -10,7 +10,6 @@ import (
 	"layeh.com/radius/rfc2865"
 
 	"github.com/link1st/go-stress-testing/helper"
-
 	"github.com/link1st/go-stress-testing/model"
 )
 
