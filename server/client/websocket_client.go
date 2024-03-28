@@ -48,6 +48,7 @@ func (w *WebSocket) getLink() (link string) {
 	return w.URLLink
 }
 
+// SetHeader 设置 header
 func (w *WebSocket) SetHeader(head map[string]string) {
 	w.HTTPHeader = head
 }

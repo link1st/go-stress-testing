@@ -1,3 +1,4 @@
+// Package golink Radius
 package golink
 
 import (

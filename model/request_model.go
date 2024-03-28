@@ -123,8 +123,7 @@ func (r *Request) GetVerifyWebSocket() VerifyWebSocket {
 // debug 是否开启debug
 // path curl文件路径 http接口压测，自定义参数设置
 func NewRequest(url string, verify string, code int, timeout time.Duration, debug bool, path string,
-	reqHeaders []string,
-	reqBody string, maxCon int, http2 bool, keepalive bool) (request *Request, err error) {
+	reqHeaders []string, reqBody string, maxCon int, http2 bool, keepalive bool) (request *Request, err error) {
 	var (
 		method  = "GET"
 		headers = make(map[string]string)
@@ -154,20 +153,8 @@ func NewRequest(url string, verify string, code int, timeout time.Duration, debu
 			headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
 		}
 	}
-	form := ""
-	if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
-		form = FormTypeHTTP
-	} else if strings.HasPrefix(url, "ws://") || strings.HasPrefix(url, "wss://") {
-		form = FormTypeWebSocket
-	} else if strings.HasPrefix(url, "grpc://") || strings.HasPrefix(url, "rpc://") {
-		form = FormTypeGRPC
-	} else if strings.HasPrefix(url, "radius://") {
-		form = FormTypeRadius
-		url = url[9:]
-	} else {
-		form = FormTypeHTTP
-		url = fmt.Sprintf("http://%s", url)
-	}
+	var form string
+	form, url = getForm(url)
 	if form == "" {
 		err = fmt.Errorf("url:%s 不合法,必须是完整http、webSocket连接", url)
 		return
@@ -215,6 +202,24 @@ func NewRequest(url string, verify string, code int, timeout time.Duration, debu
 		Code:      code,
 	}
 	return
+}
+
+func getForm(url string) (string, string) {
+	form := ""
+	if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
+		form = FormTypeHTTP
+	} else if strings.HasPrefix(url, "ws://") || strings.HasPrefix(url, "wss://") {
+		form = FormTypeWebSocket
+	} else if strings.HasPrefix(url, "grpc://") || strings.HasPrefix(url, "rpc://") {
+		form = FormTypeGRPC
+	} else if strings.HasPrefix(url, "radius://") {
+		form = FormTypeRadius
+		url = url[9:]
+	} else {
+		form = FormTypeHTTP
+		url = fmt.Sprintf("http://%s", url)
+	}
+	return form, url
 }
 
 // getHeaderValue 获取 header

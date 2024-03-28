@@ -8,10 +8,11 @@ import (
 	"os"
 	"time"
 
+	"golang.org/x/net/http2"
+
 	"github.com/link1st/go-stress-testing/helper"
 	"github.com/link1st/go-stress-testing/model"
 	httplongclinet "github.com/link1st/go-stress-testing/server/client/http_longclinet"
-	"golang.org/x/net/http2"
 )
 
 // logErr err
@@ -61,30 +62,27 @@ func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, re
 			return
 		}
 		return
-	} else {
-		req.Close = true
-		tr := &http.Transport{}
-		if request.HTTP2 {
-			// 使用真实证书 验证证书 模拟真实请求
-			tr = &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
-			}
-			if err = http2.ConfigureTransport(tr); err != nil {
-				return
-			}
-		} else {
-			// 跳过证书验证
-			tr = &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			}
+	}
+	req.Close = true
+	tr := &http.Transport{}
+	if request.HTTP2 {
+		// 使用真实证书 验证证书 模拟真实请求
+		tr = &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
 		}
-
-		client = &http.Client{
-			Transport: tr,
-			Timeout:   timeout,
+		if err = http2.ConfigureTransport(tr); err != nil {
+			return
+		}
+	} else {
+		// 跳过证书验证
+		tr = &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
 	}
-
+	client = &http.Client{
+		Transport: tr,
+		Timeout:   timeout,
+	}
 	startTime := time.Now()
 	resp, err = client.Do(req)
 	requestTime = uint64(helper.DiffNano(startTime))

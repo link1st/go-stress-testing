@@ -1,3 +1,4 @@
+// Package httplongclinet Keepalive
 package httplongclinet
 
 import (
@@ -7,8 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/link1st/go-stress-testing/model"
 	"golang.org/x/net/http2"
+
+	"github.com/link1st/go-stress-testing/model"
 )
 
 var (
@@ -34,13 +36,13 @@ func getClient(i uint64) *http.Client {
 func setClient(i uint64, request *model.Request) *http.Client {
 	mutex.Lock()
 	defer mutex.Unlock()
-	client := createLangHttpClient(request)
+	client := createLangHTTPClient(request)
 	clients[i] = client
 	return client
 }
 
-// createLangHttpClient 初始化长连接客户端参数
-func createLangHttpClient(request *model.Request) *http.Client {
+// createLangHTTPClient 初始化长连接客户端参数
+func createLangHTTPClient(request *model.Request) *http.Client {
 	tr := &http.Transport{}
 	if request.HTTP2 {
 		// 使用真实证书 验证证书 模拟真实请求
