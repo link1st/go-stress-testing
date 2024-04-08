@@ -77,12 +77,7 @@ func ParseTheFile(path string) (curl *CURL, err error) {
 			key = strings.Trim(key, "'")
 			curl.Data["curl"] = []string{key}
 			// 去除首尾空格
-			data = strings.TrimFunc(data, func(r rune) bool {
-				if r == ' ' || r == '\\' || r == '\n' {
-					return true
-				}
-				return false
-			})
+			data = removeSpaces(data)
 			continue
 		}
 		if strings.HasPrefix(data, "-") {
@@ -107,18 +102,23 @@ func ParseTheFile(path string) (curl *CURL, err error) {
 			data = ""
 		}
 		// 去除首尾空格
-		data = strings.TrimFunc(data, func(r rune) bool {
-			if r == ' ' || r == '\\' || r == '\n' {
-				return true
-			}
-			return false
-		})
+		data = removeSpaces(data)
 		if key == "" {
 			continue
 		}
 		curl.Data[key] = append(curl.Data[key], value)
 	}
 	return
+}
+
+func removeSpaces(data string) string {
+	data = strings.TrimFunc(data, func(r rune) bool {
+		if r == ' ' || r == '\\' || r == '\n' {
+			return true
+		}
+		return false
+	})
+	return data
 }
 
 // String string

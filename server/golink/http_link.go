@@ -63,7 +63,7 @@ func sendList(chanID uint64, requestList []*model.Request) (isSucceed bool, errC
 func send(chanID uint64, request *model.Request) (bool, int, uint64, int64) {
 	var (
 		isSucceed     = false
-		errCode       = model.HTTPOk
+		errCode       int
 		body          []byte
 		contentLength = int64(0)
 		err           error

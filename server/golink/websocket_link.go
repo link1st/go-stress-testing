@@ -72,7 +72,7 @@ func webSocketRequest(chanID uint64, ch chan<- *model.RequestResults, i uint64, 
 	var (
 		startTime = time.Now()
 		isSucceed = false
-		errCode   = model.HTTPOk
+		errCode   int
 		msg       []byte
 	)
 	// 需要发送的数据

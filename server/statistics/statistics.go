@@ -122,7 +122,7 @@ func printTop(requestTimeList []uint64) {
 	if requestTimeList == nil {
 		return
 	}
-	all := tools.Uint64List{}
+	var all tools.Uint64List
 	all = requestTimeList
 	sort.Sort(all)
 	fmt.Println("tp90:", fmt.Sprintf("%.3f", float64(all[int(float64(len(all))*0.90)]/1e6)))

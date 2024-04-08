@@ -64,7 +64,9 @@ func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, re
 		return
 	}
 	req.Close = true
-	tr := &http.Transport{}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	if request.HTTP2 {
 		// 使用真实证书 验证证书 模拟真实请求
 		tr = &http.Transport{
@@ -72,11 +74,6 @@ func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, re
 		}
 		if err = http2.ConfigureTransport(tr); err != nil {
 			return
-		}
-	} else {
-		// 跳过证书验证
-		tr = &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
 	}
 	client = &http.Client{
