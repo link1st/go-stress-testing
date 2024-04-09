@@ -9,7 +9,6 @@
 ![Forks](https://img.shields.io/github/forks/link1st/go-stress-testing)
 [![Stargazers over time](https://starchart.cc/link1st/go-stress-testing.svg?variant=adaptive)](https://starchart.cc/link1st/go-stress-testing)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/link1st/go-stress-testing)](https://goreportcard.com/report/github.com/link1st/go-stress-testing)
 
 本文介绍压测是什么，解释压测的专属名词，教大家如何压测。介绍市面上的常见压测工具(ab、locust、Jmeter、go实现的压测工具、云压测)，对比这些压测工具，教大家如何选择一款适合自己的压测工具，本文还有两个压测实战项目：
 
