@@ -1,5 +1,6 @@
 # go实现的压测工具【单台机器100w连接压测实战】
 
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/link1st/go-stress-testing)](https://pkg.go.dev/github.com/link1st/go-stress-testing)
 [![Release](https://img.shields.io/github/v/release/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/link1st/go-stress-testing)](https://goreportcard.com/report/github.com/link1st/go-stress-testing)
 [![OpenIssue](https://img.shields.io/github/issues/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/issues)
@@ -7,7 +8,6 @@
 ![Stars](https://img.shields.io/github/stars/link1st/go-stress-testing)
 ![Forks](https://img.shields.io/github/forks/link1st/go-stress-testing)
 [![Stargazers over time](https://starchart.cc/link1st/go-stress-testing.svg?variant=adaptive)](https://starchart.cc/link1st/go-stress-testing)
-
 
 本文介绍压测是什么，解释压测的专属名词，教大家如何压测。介绍市面上的常见压测工具(ab、locust、Jmeter、go实现的压测工具、云压测)，对比这些压测工具，教大家如何选择一款适合自己的压测工具，本文还有两个压测实战项目：
 
