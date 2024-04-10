@@ -1,6 +1,7 @@
 # go实现的压测工具【单台机器100w连接压测实战】
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/link1st/go-stress-testing)](https://pkg.go.dev/github.com/link1st/go-stress-testing)
+[![License](https://img.shields.io/github/license/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/v/release/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/link1st/go-stress-testing)](https://goreportcard.com/report/github.com/link1st/go-stress-testing)
 [![OpenIssue](https://img.shields.io/github/issues/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/issues)
