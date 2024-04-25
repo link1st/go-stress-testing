@@ -4,7 +4,6 @@ package golink
 import (
 	"compress/gzip"
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"sync"
@@ -22,7 +21,7 @@ func HTTP(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, t
 	// fmt.Printf("启动协程 编号:%05d \n", chanID)
 	for i := uint64(0); i < totalNumber; i++ {
 		if ctx.Err() != nil {
-			fmt.Printf("ctx.Err err: %v \n", ctx.Err())
+			// fmt.Printf("ctx.Err err: %v \n", ctx.Err())
 			break
 		}
 

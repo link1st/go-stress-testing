@@ -5,8 +5,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
 	"runtime"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/link1st/go-stress-testing/model"
@@ -21,7 +24,7 @@ func (a *array) String() string {
 	return fmt.Sprint(*a)
 }
 
-// Set set
+// Set arr set
 func (a *array) Set(s string) error {
 	*a = append(*a, s)
 
@@ -97,6 +100,15 @@ func main() {
 			fmt.Printf(" deadline %s", deadline)
 		}
 	}
+
+	// 处理 ctrl+c 信号
+	ctx, cancelFunc := context.WithCancel(ctx)
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, syscall.SIGINT)
+		<-c
+		cancelFunc()
+	}()
 	server.Dispose(ctx, concurrency, totalNumber, request)
 	return
 }
