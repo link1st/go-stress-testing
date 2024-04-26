@@ -2,7 +2,6 @@
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/link1st/go-stress-testing)](https://pkg.go.dev/github.com/link1st/go-stress-testing)
 [![Release](https://img.shields.io/github/v/release/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/releases)
-[![License](https://img.shields.io/github/license/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/link1st/go-stress-testing)](https://goreportcard.com/report/github.com/link1st/go-stress-testing)
 [![OpenIssue](https://img.shields.io/github/issues/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/issues)
 [![ClosedIssue](https://img.shields.io/github/issues-closed/link1st/go-stress-testing)](https://github.com/link1st/go-stress-testing/issues?q=is%3Aissue+is%3Aclosed)
