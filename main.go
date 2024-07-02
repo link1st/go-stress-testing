@@ -46,6 +46,7 @@ var (
 	keepalive          = false   // 是否开启长连接
 	cpuNumber          = 1       // CUP 核数，默认为一核，一般场景下单核已经够用了
 	timeout     int64  = 0       // 超时时间，默认不设置
+	redirect           = true    // 是否重定向
 )
 
 func init() {
@@ -63,6 +64,7 @@ func init() {
 	flag.BoolVar(&keepalive, "k", keepalive, "是否开启长连接")
 	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
 	flag.Int64Var(&timeout, "timeout", timeout, "超时时间 单位 秒,默认不设置")
+	flag.BoolVar(&redirect, "redirect", redirect, "是否重定向")
 	// 解析参数
 	flag.Parse()
 }
@@ -81,7 +83,7 @@ func main() {
 		return
 	}
 	debug := strings.ToLower(debugStr) == "true"
-	request, err := model.NewRequest(requestURL, verify, code, 0, debug, path, headers, body, maxCon, http2, keepalive)
+	request, err := model.NewRequest(requestURL, verify, code, 0, debug, path, headers, body, maxCon, http2, keepalive, redirect)
 	if err != nil {
 		fmt.Printf("参数不合法 %v \n", err)
 		return
