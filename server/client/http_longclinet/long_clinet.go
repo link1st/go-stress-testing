@@ -67,7 +67,16 @@ func createLangHTTPClient(request *model.Request) *http.Client {
 		}
 		_ = http2.ConfigureTransport(tr)
 	}
-	return &http.Client{
+
+	client := &http.Client{
 		Transport: tr,
 	}
+
+	if !request.Redirect {
+		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}
+	}
+
+	return client
 }

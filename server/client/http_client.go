@@ -80,6 +80,12 @@ func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, re
 		Transport: tr,
 		Timeout:   timeout,
 	}
+	if !request.Redirect {
+		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}
+	}
+
 	startTime := time.Now()
 	resp, err = client.Do(req)
 	requestTime = uint64(helper.DiffNano(startTime))
