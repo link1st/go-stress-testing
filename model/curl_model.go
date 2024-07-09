@@ -5,8 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net/http"
 	"os"
 	"strings"
+
+	"github.com/mattn/go-shellwords"
 
 	"github.com/link1st/go-stress-testing/helper"
 )
@@ -55,60 +58,50 @@ func ParseTheFile(path string) (curl *CURL, err error) {
 		err = errors.New("读取文件失败:" + err.Error())
 		return
 	}
-	data := string(dataBytes)
-	for len(data) > 0 {
-		if strings.HasPrefix(data, "curl") {
-			data = data[5:]
-		}
-		data = strings.TrimSpace(data)
-		var (
-			key   string
-			value string
-		)
-		index := strings.Index(data, " ")
-		if index <= 0 {
-			break
-		}
-		key = strings.TrimSpace(data[:index])
-		data = data[index+1:]
-		data = strings.TrimSpace(data)
-		// url
-		if !strings.HasPrefix(key, "-") {
-			key = strings.Trim(key, "'")
-			curl.Data["curl"] = []string{key}
-			// 去除首尾空格
-			data = removeSpaces(data)
+	args, err := shellwords.Parse(string(dataBytes))
+	if err != nil {
+		err = errors.New("解析文件失败:" + err.Error())
+		return
+	}
+	args = argsTrim(args)
+	var key string
+	for _, arg := range args {
+		arg = removeSpaces(arg)
+		if arg == "" {
 			continue
 		}
-		if strings.HasPrefix(data, "-") {
+		if isURL(arg) {
+			curl.Data[keyCurl] = append(curl.Data[keyCurl], arg)
+			key = ""
 			continue
 		}
-		var (
-			endSymbol = " "
-		)
-		if strings.HasPrefix(data, "'") {
-			endSymbol = "'"
-			data = data[1:]
-		}
-		index = strings.Index(data, endSymbol)
-		if index <= -1 {
-			index = len(data)
-			// break
-		}
-		value = data[:index]
-		if len(data) >= index+1 {
-			data = data[index+1:]
-		} else {
-			data = ""
-		}
-		// 去除首尾空格
-		data = removeSpaces(data)
-		if key == "" {
+		if isKey(arg) {
+			key = arg
 			continue
 		}
-		curl.Data[key] = append(curl.Data[key], value)
+		curl.Data[key] = append(curl.Data[key], arg)
 	}
 	return
+}
+
+func argsTrim(args []string) []string {
+	result := make([]string, 0)
+	for _, arg := range args {
+		arg = strings.TrimSpace(arg)
+		if arg == "\n" {
+			continue
+		}
+		if strings.Contains(arg, "\n") {
+			arg = strings.ReplaceAll(arg, "\n", "")
+		}
+		if strings.Index(arg, "-X") == 0 {
+			result = append(result, arg[0:2])
+			result = append(result, arg[2:])
+		} else {
+			result = append(result, arg)
+		}
+	}
+	return result
 }
 
 func removeSpaces(data string) string {
@@ -121,15 +114,27 @@ func removeSpaces(data string) string {
 	return data
 }
 
+func isKey(data string) bool {
+	return strings.HasPrefix(data, "-") || strings.HasPrefix(data, keyCurl)
+}
+
+func isURL(data string) bool {
+	return strings.HasPrefix(data, "http://") || strings.HasPrefix(data, "https://")
+}
+
 // String string
 func (c *CURL) String() (url string) {
 	curlByte, _ := json.Marshal(c)
 	return string(curlByte)
 }
 
+const (
+	keyCurl = "curl"
+)
+
 // GetURL 获取url
 func (c *CURL) GetURL() (url string) {
-	keys := []string{"curl", "--url", "--location"}
+	keys := []string{keyCurl, "--url", "--location"}
 	value := c.getDataValue(keys)
 	if len(value) <= 0 {
 		return
@@ -146,7 +151,7 @@ func (c *CURL) GetMethod() (method string) {
 		return c.defaultMethod()
 	}
 	method = strings.ToUpper(value[0])
-	if helper.InArrayStr(method, []string{"GET", "POST", "PUT", "DELETE"}) {
+	if helper.InArrayStr(method, []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}) {
 		return method
 	}
 	return c.defaultMethod()
@@ -154,17 +159,17 @@ func (c *CURL) GetMethod() (method string) {
 
 // defaultMethod 获取默认方法
 func (c *CURL) defaultMethod() (method string) {
-	method = "GET"
+	method = http.MethodGet
 	body := c.GetBody()
 	if len(body) > 0 {
-		return "POST"
+		return http.MethodPost
 	}
 	return
 }
 
 // GetHeaders 获取请求头
 func (c *CURL) GetHeaders() (headers map[string]string) {
-	headers = make(map[string]string, 0)
+	headers = make(map[string]string)
 	keys := []string{"-H", "--header"}
 	value := c.getDataValue(keys)
 	for _, v := range value {

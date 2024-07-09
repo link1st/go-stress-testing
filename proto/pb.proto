@@ -1,5 +1,5 @@
 syntax = "proto3";
-package protobuf;
+option go_package = "github.com/link1st/go-stress-testing/proto";
 
 // ApiServer api 接口
 service ApiServer {
