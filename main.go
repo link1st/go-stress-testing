@@ -45,7 +45,8 @@ var (
 	http2              = false   // 是否开http2.0
 	keepalive          = false   // 是否开启长连接
 	cpuNumber          = 1       // CUP 核数，默认为一核，一般场景下单核已经够用了
-	timeout     int64  = 0       // 超时时间，默认不设置
+	timeout     int64  = 0       // 接口超时时间
+	appTimeout  int64  = 0       // 压测程序最大执行时间，默认不设置
 	redirect           = true    // 是否重定向
 )
 
@@ -62,8 +63,9 @@ func init() {
 	flag.IntVar(&code, "code", code, "请求成功的状态码")
 	flag.BoolVar(&http2, "http2", http2, "是否开 http2.0")
 	flag.BoolVar(&keepalive, "k", keepalive, "是否开启长连接")
+	flag.Int64Var(&timeout, "t", timeout, "接口超时时间 单位 秒，默认为 30s")
 	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
-	flag.Int64Var(&timeout, "timeout", timeout, "超时时间 单位 秒,默认不设置")
+	flag.Int64Var(&appTimeout, "timeout", appTimeout, "压测程序最大执行时间 单位 秒,默认一直压测")
 	flag.BoolVar(&redirect, "redirect", redirect, "是否重定向")
 	// 解析参数
 	flag.Parse()
@@ -83,8 +85,8 @@ func main() {
 		return
 	}
 	debug := strings.ToLower(debugStr) == "true"
-	request, err := model.NewRequest(requestURL, verify, code, 0, debug, path, headers, body, maxCon, http2, keepalive,
-		redirect)
+	request, err := model.NewRequest(requestURL, verify, code, time.Duration(timeout)*time.Second, debug, path, headers,
+		body, maxCon, http2, keepalive, redirect)
 	if err != nil {
 		fmt.Printf("参数不合法 %v \n", err)
 		return
@@ -94,9 +96,9 @@ func main() {
 
 	// 开始处理
 	ctx := context.Background()
-	if timeout > 0 {
+	if appTimeout > 0 {
 		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
+		ctx, cancel = context.WithTimeout(ctx, time.Duration(appTimeout)*time.Second)
 		defer cancel()
 		deadline, ok := ctx.Deadline()
 		if ok {
