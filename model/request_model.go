@@ -94,6 +94,15 @@ func (r *Request) GetBody() (body io.Reader) {
 	return strings.NewReader(r.Body)
 }
 
+// CopyHeaders copy Headers
+func (r *Request) CopyHeaders() map[string]string {
+	var result = make(map[string]string, len(r.Headers))
+	for k, v := range r.Headers {
+		result[k] = v
+	}
+	return result
+}
+
 // getVerifyKey 获取校验 key
 func (r *Request) getVerifyKey() (key string) {
 	return fmt.Sprintf("%s.%s", r.Form, r.Verify)

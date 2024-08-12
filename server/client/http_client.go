@@ -29,7 +29,7 @@ func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, re
 	url := request.URL
 	body := request.GetBody()
 	timeout := request.Timeout
-	headers := request.Headers
+	headers := request.CopyHeaders()
 
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
