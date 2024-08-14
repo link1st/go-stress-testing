@@ -2,6 +2,7 @@
 package statistics
 
 import (
+	"context"
 	"fmt"
 	"sort"
 	"strings"
@@ -26,7 +27,7 @@ var (
 // ReceivingResults 接收结果并处理
 // 统计的时间都是纳秒，显示的时间 都是毫秒
 // concurrent 并发数
-func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sync.WaitGroup) {
+func ReceivingResults(ctx context.Context, concurrent uint64, ch <-chan *model.RequestResults, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 	}()
@@ -65,39 +66,45 @@ func ReceivingResults(concurrent uint64, ch <-chan *model.RequestResults, wg *sy
 		}
 	}()
 	header()
-	for data := range ch {
-		mutex.Lock()
-		// fmt.Println("处理一条数据", data.ID, data.Time, data.IsSucceed, data.ErrCode)
-		processingTime = processingTime + data.Time
-		if maxTime <= data.Time {
-			maxTime = data.Time
+	for {
+		select {
+		case <-ctx.Done():
+			goto end
+		case data := <-ch:
+			mutex.Lock()
+			// fmt.Println("处理一条数据", data.ID, data.Time, data.IsSucceed, data.ErrCode)
+			processingTime = processingTime + data.Time
+			if maxTime <= data.Time {
+				maxTime = data.Time
+			}
+			if minTime == 0 {
+				minTime = data.Time
+			} else if minTime > data.Time {
+				minTime = data.Time
+			}
+			// 是否请求成功
+			if data.IsSucceed == true {
+				successNum = successNum + 1
+			} else {
+				failureNum = failureNum + 1
+			}
+			// 统计错误码
+			if value, ok := errCode.Load(data.ErrCode); ok {
+				valueInt, _ := value.(int)
+				errCode.Store(data.ErrCode, valueInt+1)
+			} else {
+				errCode.Store(data.ErrCode, 1)
+			}
+			receivedBytes += data.ReceivedBytes
+			if _, ok := chanIDs[data.ChanID]; !ok {
+				chanIDs[data.ChanID] = true
+				chanIDLen = len(chanIDs)
+			}
+			requestTimeList = append(requestTimeList, data.Time)
+			mutex.Unlock()
 		}
-		if minTime == 0 {
-			minTime = data.Time
-		} else if minTime > data.Time {
-			minTime = data.Time
-		}
-		// 是否请求成功
-		if data.IsSucceed == true {
-			successNum = successNum + 1
-		} else {
-			failureNum = failureNum + 1
-		}
-		// 统计错误码
-		if value, ok := errCode.Load(data.ErrCode); ok {
-			valueInt, _ := value.(int)
-			errCode.Store(data.ErrCode, valueInt+1)
-		} else {
-			errCode.Store(data.ErrCode, 1)
-		}
-		receivedBytes += data.ReceivedBytes
-		if _, ok := chanIDs[data.ChanID]; !ok {
-			chanIDs[data.ChanID] = true
-			chanIDLen = len(chanIDs)
-		}
-		requestTimeList = append(requestTimeList, data.Time)
-		mutex.Unlock()
 	}
+end:
 	// 数据全部接受完成，停止定时输出统计数据
 	stopChan <- true
 	endTime := uint64(time.Now().UnixNano())

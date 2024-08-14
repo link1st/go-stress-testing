@@ -27,7 +27,7 @@ func init() {
 }
 
 // WebSocket webSocket go link
-func WebSocket(_ context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64,
+func WebSocket(ctx context.Context, chanID uint64, ch chan<- *model.RequestResults, totalNumber uint64,
 	wg *sync.WaitGroup, request *model.Request, ws *client.WebSocket) {
 	defer func() {
 		wg.Done()
@@ -44,6 +44,8 @@ func WebSocket(_ context.Context, chanID uint64, ch chan<- *model.RequestResults
 	t := time.NewTimer(firstTime)
 	for {
 		select {
+		case <-ctx.Done():
+			goto end
 		case <-t.C:
 			t.Reset(intervalTime)
 			// 请求
@@ -60,8 +62,11 @@ end:
 
 	if keepAlive {
 		// 保持连接
-		chWaitFor := make(chan int, 0)
-		<-chWaitFor
+		chWaitFor := make(chan int)
+		select {
+		case <-ctx.Done():
+		case <-chWaitFor:
+		}
 	}
 	return
 }
