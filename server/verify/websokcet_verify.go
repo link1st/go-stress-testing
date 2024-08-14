@@ -38,6 +38,9 @@ func WebSocketJSON(request *model.Request, seq string, msg []byte) (code int, is
 			// body 中code返回200为返回数据成功
 			if code == 200 {
 				isSucceed = true
+			} else {
+				resp, _ := json.Marshal(responseJSON)
+				fmt.Printf("请求结果 %s 的 code != 200\n", string(resp))
 			}
 		}
 	}
