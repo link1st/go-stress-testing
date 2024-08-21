@@ -70,7 +70,10 @@ func ReceivingResults(ctx context.Context, concurrent uint64, ch <-chan *model.R
 		select {
 		case <-ctx.Done():
 			goto end
-		case data := <-ch:
+		case data, ok := <-ch:
+			if !ok {
+				goto end
+			}
 			mutex.Lock()
 			// fmt.Println("处理一条数据", data.ID, data.Time, data.IsSucceed, data.ErrCode)
 			processingTime = processingTime + data.Time
