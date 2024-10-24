@@ -27,7 +27,6 @@ func (a *array) String() string {
 // Set arr set
 func (a *array) Set(s string) error {
 	*a = append(*a, s)
-
 	return nil
 }
 
@@ -67,7 +66,6 @@ func init() {
 	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
 	flag.Int64Var(&appTimeout, "timeout", appTimeout, "压测程序最大执行时间 单位 秒,默认一直压测")
 	flag.BoolVar(&redirect, "redirect", redirect, "是否重定向")
-	// 解析参数
 	flag.Parse()
 }
 
