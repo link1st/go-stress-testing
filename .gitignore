@@ -20,3 +20,4 @@ model/modeltest*
 server.go
 vendor
 test.sh
+push.sh
