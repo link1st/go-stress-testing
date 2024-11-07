@@ -33,56 +33,50 @@ func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, re
 
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
+		logErr.Println("Error creating request:", err)
 		return
 	}
 
-	// 在req中设置Host，解决在header中设置Host不生效问题
-	if _, ok := headers["Host"]; ok {
-		req.Host = headers["Host"]
+	// Set Host if provided in headers
+	if host, ok := headers["Host"]; ok {
+		req.Host = host
 	}
-	// 设置默认为utf-8编码
+
+	// Ensure Content-Type is set
 	if _, ok := headers["Content-Type"]; !ok {
-		if headers == nil {
-			headers = make(map[string]string)
-		}
-		headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
+		headers["Content-Type"] = "application/json; charset=utf-8"
 	}
+
+	// Set headers
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
+
 	var client *http.Client
 	if request.Keepalive {
 		client = httplongclinet.NewClient(chanID, request)
-		startTime := time.Now()
-		resp, err = client.Do(req)
-		requestTime = uint64(helper.DiffNano(startTime))
-		if err != nil {
-			logErr.Println("请求失败:", err)
-
-			return
+	} else {
+		req.Close = true
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
-		return
-	}
-	req.Close = true
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	if request.HTTP2 {
-		// 使用真实证书 验证证书 模拟真实请求
-		tr = &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
+		if request.HTTP2 {
+			tr = &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
+			}
+			if err = http2.ConfigureTransport(tr); err != nil {
+				logErr.Println("Error configuring HTTP2 transport:", err)
+				return
+			}
 		}
-		if err = http2.ConfigureTransport(tr); err != nil {
-			return
+		client = &http.Client{
+			Transport: tr,
+			Timeout:   timeout,
 		}
-	}
-	client = &http.Client{
-		Transport: tr,
-		Timeout:   timeout,
-	}
-	if !request.Redirect {
-		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
+		if !request.Redirect {
+			client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			}
 		}
 	}
 
@@ -90,9 +84,9 @@ func HTTPRequest(chanID uint64, request *model.Request) (resp *http.Response, re
 	resp, err = client.Do(req)
 	requestTime = uint64(helper.DiffNano(startTime))
 	if err != nil {
-		logErr.Println("请求失败:", err)
-
+		logErr.Println("Request failed:", err)
 		return
 	}
+
 	return
 }
