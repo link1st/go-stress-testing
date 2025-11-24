@@ -107,7 +107,7 @@ func main() {
 	// 处理 ctrl+c 信号
 	ctx, cancelFunc := context.WithCancel(ctx)
 	go func() {
-		c := make(chan os.Signal)
+		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT)
 		<-c
 		cancelFunc()
