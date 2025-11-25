@@ -542,6 +542,43 @@ curl是Linux在命令行下的工作的文件传输工具，是一款很强大�
 go run main.go -c 1 -n 1 -p curl/baidu.curl.txt
 ```
 
+**III:** 支持从文件读取数据（@filename 语法）
+
+从本版本开始，支持类似 curl 的 `@filename` 语法，可以直接从文件读取数据进行压测。
+
+支持的参数：
+- `--data @file` / `-d @file` - 从文件读取文本数据
+- `--data-binary @file` - 从文件读取二进制数据
+- `--data-urlencode @file` - 从文件读取并进行 URL 编码
+
+使用示例：
+
+```bash
+# 示例1：上传二进制文件（图片、PDF等）
+cat > curl/upload_binary.curl.txt << 'EOF'
+curl -X POST http://localhost:8088/upload \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @test.bin
+EOF
+
+# 示例2：从文件读取表单数据
+cat > curl/upload_data.curl.txt << 'EOF'
+curl -X POST http://localhost:8088/api/user \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data @data.txt
+EOF
+
+# 执行压测
+./go-stress-testing -c 10 -n 100 -p curl/upload_binary.curl.txt
+./go-stress-testing -c 10 -n 100 -p curl/upload_data.curl.txt
+```
+
+适用场景：
+- 图片、视频等二进制文件上传压测
+- PDF、Excel 等文档上传压测
+- 从文件读取 JSON 或表单数据
+- 任何需要从文件读取数据的接口压测
+
 
 ### 4.3 实现
 
