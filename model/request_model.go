@@ -78,7 +78,8 @@ type Request struct {
 	Form      string            // http/webSocket/tcp
 	Method    string            // 方法 GET/POST/PUT
 	Headers   map[string]string // Headers
-	Body      string            // body
+	Body      string            // body 文本数据
+	BodyBytes []byte            // body 二进制数据，优先使用
 	Verify    string            // 验证的方法
 	Timeout   time.Duration     // 请求超时时间
 	Debug     bool              // 是否开启Debug模式
@@ -90,7 +91,11 @@ type Request struct {
 }
 
 // GetBody 获取请求数据
+// 优先使用二进制数据BodyBytes，如果为空则使用字符串Body
 func (r *Request) GetBody() (body io.Reader) {
+	if len(r.BodyBytes) > 0 {
+		return strings.NewReader(string(r.BodyBytes))
+	}
 	return strings.NewReader(r.Body)
 }
 
@@ -135,9 +140,10 @@ func (r *Request) GetVerifyWebSocket() VerifyWebSocket {
 func NewRequest(url string, verify string, code int, timeout time.Duration, debug bool, path string,
 	reqHeaders []string, reqBody string, maxCon int, http2, keepalive, redirect bool) (request *Request, err error) {
 	var (
-		method  = "GET"
-		headers = make(map[string]string)
-		body    string
+		method    = "GET"
+		headers   = make(map[string]string)
+		body      string
+		bodyBytes []byte
 	)
 	if path != "" {
 		var curl *CURL
@@ -150,7 +156,15 @@ func NewRequest(url string, verify string, code int, timeout time.Duration, debu
 		}
 		method = curl.GetMethod()
 		headers = curl.GetHeaders()
-		body = curl.GetBody()
+		// 优先获取二进制数据（支持 --data-binary @filename）
+		bodyBytes, err = curl.GetBodyBytes()
+		if err != nil {
+			return nil, err
+		}
+		// 如果没有二进制数据，则获取文本数据
+		if len(bodyBytes) == 0 {
+			body = curl.GetBody()
+		}
 	} else {
 		if reqBody != "" {
 			method = "POST"
@@ -203,6 +217,7 @@ func NewRequest(url string, verify string, code int, timeout time.Duration, debu
 		Method:    strings.ToUpper(method),
 		Headers:   headers,
 		Body:      body,
+		BodyBytes: bodyBytes,
 		Verify:    verify,
 		Timeout:   timeout,
 		Debug:     debug,
