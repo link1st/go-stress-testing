@@ -21,3 +21,4 @@ server.go
 vendor
 test.sh
 .claude
+report.md
