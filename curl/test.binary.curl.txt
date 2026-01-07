@@ -1,0 +1,3 @@
+curl -X POST http://localhost:8088/upload \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @test.bin

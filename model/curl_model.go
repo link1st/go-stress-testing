@@ -186,6 +186,7 @@ func (c *CURL) GetHeadersStr() string {
 }
 
 // GetBody 获取body
+// 返回字符串格式body，不支持二进制文件
 func (c *CURL) GetBody() (body string) {
 	keys := []string{"--data", "-d", "--data-urlencode", "--data-raw", "--data-binary"}
 	value := c.getDataValue(keys)
@@ -195,6 +196,34 @@ func (c *CURL) GetBody() (body string) {
 	}
 	body = value[0]
 	return
+}
+
+// GetBodyBytes 获取body二进制数据
+// 支持 --data、-d、--data-binary 等参数的 @filename 语法，从文件读取内容
+// 注意：--data-raw 不支持 @filename（curl 原生行为）
+func (c *CURL) GetBodyBytes() (bodyBytes []byte, err error) {
+	// 处理所有支持 @filename 的 data 参数
+	// 注意：--data-raw 故意不包含在内，因为它不处理 @ 符号
+	keys := []string{"--data", "-d", "--data-urlencode", "--data-binary"}
+	value := c.getDataValue(keys)
+	if len(value) <= 0 {
+		return nil, nil
+	}
+
+	data := value[0]
+	// 检查是否以 @ 开头，表示从文件读取
+	if strings.HasPrefix(data, "@") {
+		filePath := strings.TrimPrefix(data, "@")
+		// 读取文件内容
+		bodyBytes, err = os.ReadFile(filePath)
+		if err != nil {
+			return nil, errors.New("读取文件失败:" + err.Error())
+		}
+		return bodyBytes, nil
+	}
+
+	// 如果不是文件路径，直接返回字符串的字节数组
+	return []byte(data), nil
 }
 
 // getPostForm get post form
