@@ -36,14 +36,17 @@ func TestAddTimeRecord(t *testing.T) {
 	InitReportData("http://example.com", 5)
 
 	record := TimeRecord{
-		Elapsed:    1.0,
-		Concurrent: 5,
-		Success:    100,
-		Failure:    0,
-		QPS:        100.0,
-		MaxTime:    50.0,
-		MinTime:    10.0,
-		AvgTime:    25.0,
+		Timestamp:   time.Now(),
+		Elapsed:     1.0,
+		Concurrent:  5,
+		Success:     100,
+		Failure:     0,
+		SuccessRate: 100.0,
+		QPS:         100.0,
+		MaxTime:     50.0,
+		MinTime:     10.0,
+		AvgTime:     25.0,
+		ErrorCodes:  map[int]int{200: 100},
 	}
 
 	AddTimeRecord(record)
@@ -53,6 +56,9 @@ func TestAddTimeRecord(t *testing.T) {
 	}
 	if CurrentReportData.TimeRecords[0].QPS != 100.0 {
 		t.Errorf("QPS = %f, 期望 100.0", CurrentReportData.TimeRecords[0].QPS)
+	}
+	if CurrentReportData.TimeRecords[0].SuccessRate != 100.0 {
+		t.Errorf("SuccessRate = %f, 期望 100.0", CurrentReportData.TimeRecords[0].SuccessRate)
 	}
 }
 
@@ -190,8 +196,8 @@ func TestGenerateMarkdownReport_WithTimeRecords(t *testing.T) {
 	InitReportData("http://example.com", 5)
 	CurrentReportData.ErrorCodeMap = map[int]int{200: 100}
 	CurrentReportData.TimeRecords = []TimeRecord{
-		{Elapsed: 1.0, Concurrent: 5, Success: 50, Failure: 0, QPS: 50.0, MaxTime: 100.0, MinTime: 10.0, AvgTime: 50.0},
-		{Elapsed: 2.0, Concurrent: 5, Success: 100, Failure: 0, QPS: 50.0, MaxTime: 100.0, MinTime: 10.0, AvgTime: 50.0},
+		{Timestamp: time.Now(), Elapsed: 1.0, Concurrent: 5, Success: 50, Failure: 0, SuccessRate: 100.0, QPS: 50.0, MaxTime: 100.0, MinTime: 10.0, AvgTime: 50.0, ErrorCodes: map[int]int{200: 50}},
+		{Timestamp: time.Now(), Elapsed: 2.0, Concurrent: 5, Success: 100, Failure: 0, SuccessRate: 100.0, QPS: 50.0, MaxTime: 100.0, MinTime: 10.0, AvgTime: 50.0, ErrorCodes: map[int]int{200: 100}},
 	}
 
 	err := GenerateMarkdownReport(reportPath)
@@ -237,15 +243,19 @@ func TestReportData_Struct(t *testing.T) {
 
 // TestTimeRecord_Struct 测试TimeRecord结构体
 func TestTimeRecord_Struct(t *testing.T) {
+	now := time.Now()
 	record := TimeRecord{
-		Elapsed:    1.5,
-		Concurrent: 10,
-		Success:    100,
-		Failure:    5,
-		QPS:        66.67,
-		MaxTime:    200.0,
-		MinTime:    20.0,
-		AvgTime:    100.0,
+		Timestamp:   now,
+		Elapsed:     1.5,
+		Concurrent:  10,
+		Success:     100,
+		Failure:     5,
+		SuccessRate: 95.24,
+		QPS:         66.67,
+		MaxTime:     200.0,
+		MinTime:     20.0,
+		AvgTime:     100.0,
+		ErrorCodes:  map[int]int{200: 100, 500: 5},
 	}
 
 	if record.Elapsed != 1.5 {
@@ -253,6 +263,12 @@ func TestTimeRecord_Struct(t *testing.T) {
 	}
 	if record.Concurrent != 10 {
 		t.Errorf("Concurrent = %d, 期望 10", record.Concurrent)
+	}
+	if record.SuccessRate != 95.24 {
+		t.Errorf("SuccessRate = %f, 期望 95.24", record.SuccessRate)
+	}
+	if len(record.ErrorCodes) != 2 {
+		t.Errorf("ErrorCodes长度 = %d, 期望 2", len(record.ErrorCodes))
 	}
 }
 

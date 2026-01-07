@@ -37,18 +37,24 @@ type ReportData struct {
 
 // TimeRecord 时间序列记录
 type TimeRecord struct {
-	Elapsed    float64 // 耗时(秒)
-	Concurrent int     // 并发数
-	Success    uint64  // 成功数
-	Failure    uint64  // 失败数
-	QPS        float64 // QPS
-	MaxTime    float64 // 最大响应时间(ms)
-	MinTime    float64 // 最小响应时间(ms)
-	AvgTime    float64 // 平均响应时间(ms)
+	Timestamp   time.Time // 记录时间点
+	Elapsed     float64   // 耗时(秒)
+	Concurrent  int       // 并发数
+	Success     uint64    // 成功数
+	Failure     uint64    // 失败数
+	SuccessRate float64   // 成功率(%)
+	QPS         float64   // QPS
+	MaxTime     float64   // 最大响应时间(ms)
+	MinTime     float64   // 最小响应时间(ms)
+	AvgTime     float64   // 平均响应时间(ms)
+	ErrorCodes  map[int]int // 错误码分布
 }
 
-// OutputPath markdown输出路径
+// OutputPath 报告输出路径
 var OutputPath string
+
+// OutputFormat 报告格式: html(默认) 或 md
+var OutputFormat string = "html"
 
 // CurrentReportData 当前报告数据
 var CurrentReportData *ReportData
@@ -109,9 +115,13 @@ func FinalizeReport(successNum, failureNum uint64, totalTime, qps, maxTime, minT
 		CurrentReportData.TP99 = float64(all[int(float64(len(all))*0.99)]) / 1e6
 	}
 
-	// 如果设置了输出路径，生成markdown报告
+	// 如果设置了输出路径，根据格式生成报告
 	if OutputPath != "" {
-		GenerateMarkdownReport(OutputPath)
+		if OutputFormat == "md" {
+			GenerateMarkdownReport(OutputPath)
+		} else {
+			GenerateHTMLReport(OutputPath)
+		}
 	}
 }
 

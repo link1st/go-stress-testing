@@ -186,6 +186,41 @@ func calculateData(concurrent, processingTime, requestTime, maxTime, minTime, su
 	// 打印的时长都为毫秒
 	table(successNum, failureNum, errCode, qps, averageTime, maxTimeFloat, minTimeFloat, requestTimeFloat, chanIDLen,
 		receivedBytes)
+
+	// 记录时间序列数据
+	if OutputPath != "" && CurrentReportData != nil {
+		totalRequests := successNum + failureNum
+		successRate := float64(0)
+		if totalRequests > 0 {
+			successRate = float64(successNum) / float64(totalRequests) * 100
+		}
+
+		// 复制错误码分布
+		errorCodes := make(map[int]int)
+		errCode.Range(func(key, value interface{}) bool {
+			if k, ok := key.(int); ok {
+				if v, ok := value.(int); ok {
+					errorCodes[k] = v
+				}
+			}
+			return true
+		})
+
+		record := TimeRecord{
+			Timestamp:   time.Now(),
+			Elapsed:     requestTimeFloat,
+			Concurrent:  chanIDLen,
+			Success:     successNum,
+			Failure:     failureNum,
+			SuccessRate: successRate,
+			QPS:         qps,
+			MaxTime:     maxTimeFloat,
+			MinTime:     minTimeFloat,
+			AvgTime:     averageTime,
+			ErrorCodes:  errorCodes,
+		}
+		AddTimeRecord(record)
+	}
 }
 
 // header 打印表头信息

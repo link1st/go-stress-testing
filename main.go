@@ -48,7 +48,11 @@ var (
 	timeout     int64  = 0       // 接口超时时间
 	appTimeout  int64  = 0       // 压测程序最大执行时间，默认不设置
 	redirect           = true    // 是否重定向
-	outputPath         = ""      // 测试报告输出路径(markdown格式)
+	outputPath         = "report.html" // 测试报告输出路径
+	outputFormat       = "html"  // 报告格式: html(默认) 或 md
+	aiAPIEndpoint      = ""      // AI API地址(可选)
+	aiAPIKey           = ""      // AI API Key(可选)
+	aiModel            = ""      // AI模型名称(可选)
 )
 
 func init() {
@@ -68,7 +72,11 @@ func init() {
 	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
 	flag.Int64Var(&appTimeout, "timeout", appTimeout, "压测程序最大执行时间 单位 秒,默认一直压测")
 	flag.BoolVar(&redirect, "redirect", redirect, "是否重定向")
-	flag.StringVar(&outputPath, "o", outputPath, "测试报告输出路径(markdown格式)")
+	flag.StringVar(&outputPath, "o", outputPath, "测试报告输出路径(默认HTML格式)")
+	flag.StringVar(&outputFormat, "format", outputFormat, "报告格式: html(默认) 或 md")
+	flag.StringVar(&aiAPIEndpoint, "ai-api", aiAPIEndpoint, "AI API地址(可选,用于智能评分)")
+	flag.StringVar(&aiAPIKey, "ai-key", aiAPIKey, "AI API Key(可选)")
+	flag.StringVar(&aiModel, "ai-model", aiModel, "AI模型名称(可选,默认gpt-3.5-turbo)")
 	flag.Parse()
 }
 
@@ -95,11 +103,19 @@ func main() {
 	fmt.Printf("\n 开始启动  并发数:%d 请求数:%d 请求参数: \n", concurrency, totalNumber)
 	request.Print()
 
-	// 设置报告输出路径
-	if outputPath != "" {
-		statistics.OutputPath = outputPath
-		statistics.InitReportData(requestURL, concurrency)
+	// 设置报告输出路径和格式
+	statistics.OutputPath = outputPath
+	statistics.OutputFormat = outputFormat
+	statistics.SuccessCode = code // 成功状态码
+	// 设置AI配置
+	if aiAPIEndpoint != "" {
+		statistics.AIAPIEndpoint = aiAPIEndpoint
+		statistics.AIAPIKey = aiAPIKey
+		if aiModel != "" {
+			statistics.AIModel = aiModel
+		}
 	}
+	statistics.InitReportData(requestURL, concurrency)
 
 	// 开始处理
 	ctx := context.Background()

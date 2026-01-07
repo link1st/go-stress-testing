@@ -22,3 +22,5 @@ vendor
 test.sh
 .claude
 report.md
+report.html
+*.html
