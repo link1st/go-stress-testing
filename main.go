@@ -14,6 +14,7 @@ import (
 
 	"github.com/link1st/go-stress-testing/model"
 	"github.com/link1st/go-stress-testing/server"
+	"github.com/link1st/go-stress-testing/server/statistics"
 )
 
 // array 自定义数组参数
@@ -47,6 +48,7 @@ var (
 	timeout     int64  = 0       // 接口超时时间
 	appTimeout  int64  = 0       // 压测程序最大执行时间，默认不设置
 	redirect           = true    // 是否重定向
+	outputPath         = ""      // 测试报告输出路径(markdown格式)
 )
 
 func init() {
@@ -66,6 +68,7 @@ func init() {
 	flag.IntVar(&cpuNumber, "cpuNumber", cpuNumber, "CUP 核数，默认为一核")
 	flag.Int64Var(&appTimeout, "timeout", appTimeout, "压测程序最大执行时间 单位 秒,默认一直压测")
 	flag.BoolVar(&redirect, "redirect", redirect, "是否重定向")
+	flag.StringVar(&outputPath, "o", outputPath, "测试报告输出路径(markdown格式)")
 	flag.Parse()
 }
 
@@ -91,6 +94,12 @@ func main() {
 	}
 	fmt.Printf("\n 开始启动  并发数:%d 请求数:%d 请求参数: \n", concurrency, totalNumber)
 	request.Print()
+
+	// 设置报告输出路径
+	if outputPath != "" {
+		statistics.OutputPath = outputPath
+		statistics.InitReportData(requestURL, concurrency)
+	}
 
 	// 开始处理
 	ctx := context.Background()

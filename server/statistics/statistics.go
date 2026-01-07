@@ -30,6 +30,8 @@ func ReceivingResults(ctx context.Context, concurrent uint64, ch <-chan *model.R
 	defer func() {
 		wg.Done()
 	}()
+	// 重置请求时间列表
+	requestTimeList = nil
 	var stopChan = make(chan bool)
 	// 时间
 	var (
@@ -124,6 +126,23 @@ end:
 	printTop(requestTimeList)
 	fmt.Println("*************************  结果 end   ****************************")
 	fmt.Printf("\n\n")
+
+	// 生成报告
+	if OutputPath != "" {
+		requestTimeFloat := float64(requestTime) / 1e9
+		var qps, averageTime float64
+		if processingTime > 0 {
+			qps = float64(successNum*concurrent) * (1e9 / float64(processingTime))
+		}
+		if successNum > 0 && concurrent > 0 {
+			averageTime = float64(processingTime) / float64(successNum*1e6)
+		}
+		maxTimeFloat := float64(maxTime) / 1e6
+		minTimeFloat := float64(minTime) / 1e6
+
+		FinalizeReport(successNum, failureNum, requestTimeFloat, qps, maxTimeFloat, minTimeFloat, averageTime,
+			receivedBytes, errCode, requestTimeList)
+	}
 }
 
 // printTop 排序后计算 top 90 95 99
