@@ -6,8 +6,8 @@ require (
 	github.com/mattn/go-shellwords v1.0.12
 	golang.org/x/net v0.55.0
 	golang.org/x/text v0.37.0
-	google.golang.org/grpc v1.79.3
-	google.golang.org/protobuf v1.36.10
+	google.golang.org/grpc v1.82.1
+	google.golang.org/protobuf v1.36.11
 	layeh.com/radius v0.0.0-20210819152912-ad72663a72ab
 )
 
