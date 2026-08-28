@@ -32,27 +32,27 @@ func (a *array) Set(s string) error {
 }
 
 var (
-	concurrency uint64 = 1       // 并发数
-	totalNumber uint64 = 1       // 请求数(单个并发/协程)
-	debugStr           = "false" // 是否是debug
-	requestURL         = ""      // 压测的url 目前支持，http/https ws/wss
-	path               = ""      // curl文件路径 http接口压测，自定义参数设置
-	verify             = ""      // verify 验证方法 在server/verify中 http 支持:statusCode、json webSocket支持:json
-	headers     array            // 自定义头信息传递给服务器
-	body               = ""      // HTTP POST方式传送数据
-	maxCon             = 1       // 单个连接最大请求数
-	code               = 200     // 成功状态码
-	http2              = false   // 是否开http2.0
-	keepalive          = false   // 是否开启长连接
-	cpuNumber          = 1       // CUP 核数，默认为一核，一般场景下单核已经够用了
-	timeout     int64  = 0       // 接口超时时间
-	appTimeout  int64  = 0       // 压测程序最大执行时间，默认不设置
-	redirect           = true    // 是否重定向
-	outputPath         = "report.html" // 测试报告输出路径
-	outputFormat       = "html"  // 报告格式: html(默认) 或 md
-	aiAPIEndpoint      = ""      // AI API地址(可选)
-	aiAPIKey           = ""      // AI API Key(可选)
-	aiModel            = ""      // AI模型名称(可选)
+	concurrency   uint64 = 1             // 并发数
+	totalNumber   uint64 = 1             // 请求数(单个并发/协程)
+	debugStr             = "false"       // 是否是debug
+	requestURL           = ""            // 压测的url 目前支持，http/https ws/wss
+	path                 = ""            // curl文件路径 http接口压测，自定义参数设置
+	verify               = ""            // verify 验证方法 在server/verify中 http 支持:statusCode、json webSocket支持:json
+	headers       array                  // 自定义头信息传递给服务器
+	body                 = ""            // HTTP POST方式传送数据
+	maxCon               = 1             // 单个连接最大请求数
+	code                 = 200           // 成功状态码
+	http2                = false         // 是否开http2.0
+	keepalive            = false         // 是否开启长连接
+	cpuNumber            = 1             // CUP 核数，默认为一核，一般场景下单核已经够用了
+	timeout       int64  = 0             // 接口超时时间
+	appTimeout    int64  = 0             // 压测程序最大执行时间，默认不设置
+	redirect             = true          // 是否重定向
+	outputPath           = "report.html" // 测试报告输出路径
+	outputFormat         = "html"        // 报告格式: html(默认) 或 md
+	aiAPIEndpoint        = ""            // AI API地址(可选)
+	aiAPIKey             = ""            // AI API Key(可选)
+	aiModel              = ""            // AI模型名称(可选)
 )
 
 func init() {
@@ -74,9 +74,9 @@ func init() {
 	flag.BoolVar(&redirect, "redirect", redirect, "是否重定向")
 	flag.StringVar(&outputPath, "o", outputPath, "测试报告输出路径(默认HTML格式)")
 	flag.StringVar(&outputFormat, "format", outputFormat, "报告格式: html(默认) 或 md")
-	flag.StringVar(&aiAPIEndpoint, "ai-api", aiAPIEndpoint, "AI API地址(可选,用于智能评分)")
+	flag.StringVar(&aiAPIEndpoint, "ai-api", aiAPIEndpoint, "AI API地址或命名provider别名(可选,用于智能评分,支持orcarouter/openrouter)")
 	flag.StringVar(&aiAPIKey, "ai-key", aiAPIKey, "AI API Key(可选)")
-	flag.StringVar(&aiModel, "ai-model", aiModel, "AI模型名称(可选,默认gpt-3.5-turbo)")
+	flag.StringVar(&aiModel, "ai-model", aiModel, "AI模型名称(可选,默认gpt-3.5-turbo,命名provider使用各自默认模型)")
 	flag.Parse()
 }
 
@@ -109,10 +109,15 @@ func main() {
 	statistics.SuccessCode = code // 成功状态码
 	// 设置AI配置
 	if aiAPIEndpoint != "" {
-		statistics.AIAPIEndpoint = aiAPIEndpoint
+		// Resolve named-provider aliases (e.g. orcarouter/openrouter) to real endpoints
+		statistics.AIAPIEndpoint = statistics.ResolveAIEndpoint(aiAPIEndpoint)
 		statistics.AIAPIKey = aiAPIKey
 		if aiModel != "" {
 			statistics.AIModel = aiModel
+		}
+		// Use the provider default model when the alias provider does not override it
+		if m := statistics.ResolveAIModel(statistics.AIAPIEndpoint); m != "" {
+			statistics.AIModel = m
 		}
 	}
 	statistics.InitReportData(requestURL, concurrency)

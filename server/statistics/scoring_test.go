@@ -109,11 +109,11 @@ func TestCalculateGrade(t *testing.T) {
 // TestCalculateSuccessRateScore 测试成功率评分
 func TestCalculateSuccessRateScore(t *testing.T) {
 	tests := []struct {
-		name       string
-		success    uint64
-		total      uint64
-		minScore   int
-		maxScore   int
+		name     string
+		success  uint64
+		total    uint64
+		minScore int
+		maxScore int
 	}{
 		{"100%成功率", 1000, 1000, 30, 30},
 		{"99%成功率", 990, 1000, 24, 24},
@@ -172,18 +172,18 @@ func TestCalculateAvgTimeScore(t *testing.T) {
 		avgTime  float64
 		minScore int
 	}{
-		{30, 20},   // 极快
-		{80, 19},   // 很快
-		{150, 18},  // 快速
-		{250, 17},  // 较快
-		{400, 15},  // 良好
-		{700, 13},  // 一般
-		{900, 11},  // 可接受
-		{1200, 9},  // 略慢
-		{1800, 7},  // 较慢
-		{2500, 5},  // 慢
-		{4000, 3},  // 很慢
-		{6000, 0},  // 极慢
+		{30, 20},  // 极快
+		{80, 19},  // 很快
+		{150, 18}, // 快速
+		{250, 17}, // 较快
+		{400, 15}, // 良好
+		{700, 13}, // 一般
+		{900, 11}, // 可接受
+		{1200, 9}, // 略慢
+		{1800, 7}, // 较慢
+		{2500, 5}, // 慢
+		{4000, 3}, // 很慢
+		{6000, 0}, // 极慢
 	}
 
 	for _, tt := range tests {
@@ -203,11 +203,11 @@ func TestCalculateTP99Score(t *testing.T) {
 		tp99     float64
 		minScore int
 	}{
-		{100, 120, 12},  // 非常稳定 (1.2x)
-		{100, 180, 10},  // 稳定 (1.8x)
-		{100, 250, 5},   // 一般 (2.5x)
-		{100, 400, 3},   // 不稳定 (4x)
-		{100, 600, 0},   // 非常不稳定 (6x)
+		{100, 120, 12}, // 非常稳定 (1.2x)
+		{100, 180, 10}, // 稳定 (1.8x)
+		{100, 250, 5},  // 一般 (2.5x)
+		{100, 400, 3},  // 不稳定 (4x)
+		{100, 600, 0},  // 非常不稳定 (6x)
 	}
 
 	for _, tt := range tests {
@@ -331,6 +331,44 @@ func TestParseAIResponse(t *testing.T) {
 
 	if len(result.Suggestions) != 4 {
 		t.Errorf("应该解析出4条建议, 实际: %d", len(result.Suggestions))
+	}
+}
+
+// TestResolveAIEndpoint tests named-provider alias resolution
+func TestResolveAIEndpoint(t *testing.T) {
+	tests := []struct {
+		name     string
+		endpoint string
+		want     string
+	}{
+		{"orcarouter alias", "orcarouter", "https://api.orcarouter.ai/v1/chat/completions"},
+		{"openrouter alias", "openrouter", "https://openrouter.ai/api/v1/chat/completions"},
+		{"full URL passes through", "https://api.example.com/v1/chat/completions", "https://api.example.com/v1/chat/completions"},
+		{"empty string passes through", "", ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ResolveAIEndpoint(tt.endpoint); got != tt.want {
+				t.Errorf("ResolveAIEndpoint(%q) = %q, want %q", tt.endpoint, got, tt.want)
+			}
+		})
+	}
+}
+
+// TestResolveAIModel tests the default model of named providers
+func TestResolveAIModel(t *testing.T) {
+	if got := ResolveAIModel("https://api.orcarouter.ai/v1/chat/completions"); got != "orcarouter/fusion-mini" {
+		t.Errorf("orcarouter URL should resolve to orcarouter/fusion-mini, got %q", got)
+	}
+	if got := ResolveAIModel("orcarouter"); got != "orcarouter/fusion-mini" {
+		t.Errorf("orcarouter alias should resolve to orcarouter/fusion-mini, got %q", got)
+	}
+	if got := ResolveAIModel("https://openrouter.ai/api/v1/chat/completions"); got != "" {
+		t.Errorf("openrouter should not have a default model, got %q", got)
+	}
+	if got := ResolveAIModel("https://api.example.com/v1/chat/completions"); got != "" {
+		t.Errorf("custom URL should not have a default model, got %q", got)
 	}
 }
 

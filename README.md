@@ -488,11 +488,11 @@ Usage of ./go-stress-testing-mac:
   -format string
       报告格式: html(默认) 或 md
   -ai-api string
-      AI API地址(可选,用于智能评分)
+      AI API地址或命名provider别名(可选,用于智能评分,支持orcarouter/openrouter)
   -ai-key string
       AI API Key(可选)
   -ai-model string
-      AI模型名称(可选,默认gpt-3.5-turbo)
+      AI模型名称(可选,默认gpt-3.5-turbo,命名provider使用各自默认模型)
 ```
 
 - `-n` 是单个用户请求的次数，请求总次数 = `-c`* `-n`， 这里考虑的是模拟用户行为，所以这个是每个用户请求的次数
@@ -768,6 +768,22 @@ request:
   -ai-api "https://api.openai.com/v1/chat/completions" \
   -ai-key "your-api-key"
 ```
+
+`-ai-api` 也支持命名 provider 别名，直接一行接入内置的 AI 网关，无需手填完整 URL：
+
+```bash
+# 使用 OrcaRouter（OpenAI 兼容 AI 网关）进行智能分析
+./go-stress-testing -c 10 -n 100 -u https://example.com \
+  -ai-api orcarouter \
+  -ai-key "your-orcarouter-api-key"
+
+# 使用 OpenRouter 进行智能分析
+./go-stress-testing -c 10 -n 100 -u https://example.com \
+  -ai-api openrouter \
+  -ai-key "your-openrouter-api-key"
+```
+
+别名 provider 会自动使用该服务推荐的默认模型（如 OrcaRouter 使用 `orcarouter/fusion-mini`），也可用 `-ai-model` 覆盖。
 
 #### 4.6.2 可视化图表
 

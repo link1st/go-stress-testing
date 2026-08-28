@@ -13,15 +13,15 @@ import (
 
 // ScoreResult 评分结果
 type ScoreResult struct {
-	TotalScore      int            `json:"total_score"`      // 总分 (0-100)
-	Grade           string         `json:"grade"`            // 评级 (A/B/C/D/F)
-	SuccessRateScore int           `json:"success_rate_score"` // 成功率得分
-	QPSScore        int            `json:"qps_score"`        // QPS得分
-	AvgTimeScore    int            `json:"avg_time_score"`   // 平均响应时间得分
-	TP99Score       int            `json:"tp99_score"`       // TP99稳定性得分
-	ErrorCodeScore  int            `json:"error_code_score"` // 错误码得分
-	Suggestions     []string       `json:"suggestions"`      // 改进建议
-	Details         map[string]string `json:"details"`       // 详细说明
+	TotalScore       int               `json:"total_score"`        // 总分 (0-100)
+	Grade            string            `json:"grade"`              // 评级 (A/B/C/D/F)
+	SuccessRateScore int               `json:"success_rate_score"` // 成功率得分
+	QPSScore         int               `json:"qps_score"`          // QPS得分
+	AvgTimeScore     int               `json:"avg_time_score"`     // 平均响应时间得分
+	TP99Score        int               `json:"tp99_score"`         // TP99稳定性得分
+	ErrorCodeScore   int               `json:"error_code_score"`   // 错误码得分
+	Suggestions      []string          `json:"suggestions"`        // 改进建议
+	Details          map[string]string `json:"details"`            // 详细说明
 }
 
 // AIConfig AI API配置
@@ -37,6 +37,41 @@ var (
 	AIAPIKey      string
 	AIModel       string = "gpt-3.5-turbo"
 )
+
+// namedAIEndpoints maps a short -ai-api alias to an OpenAI-compatible
+// Chat Completions endpoint. Aliased providers reuse the exact same
+// OpenAI-compatible request path as a plain custom base URL.
+var namedAIEndpoints = map[string]string{
+	"openrouter": "https://openrouter.ai/api/v1/chat/completions",
+	"orcarouter": "https://api.orcarouter.ai/v1/chat/completions",
+}
+
+// ResolveAIEndpoint resolves a -ai-api alias to its real OpenAI-compatible
+// Chat Completions endpoint. Values that are not a known alias are returned
+// unchanged, keeping the existing "pass a full URL" usage working.
+func ResolveAIEndpoint(endpoint string) string {
+	if named, ok := namedAIEndpoints[endpoint]; ok {
+		return named
+	}
+	return endpoint
+}
+
+// ResolveAIModel returns the default model for a named provider.
+// It accepts either the -ai-api alias or the resolved endpoint URL.
+// Non-named providers return "", meaning -ai-model or the global default is used.
+func ResolveAIModel(endpointOrAlias string) string {
+	endpoint := endpointOrAlias
+	if named, ok := namedAIEndpoints[endpointOrAlias]; ok {
+		endpoint = named
+	}
+
+	switch endpoint {
+	case namedAIEndpoints["orcarouter"]:
+		return "orcarouter/fusion-mini"
+	default:
+		return ""
+	}
+}
 
 // SuccessCode 成功状态码（由 -code 参数指定）
 var SuccessCode int = 200
@@ -391,8 +426,8 @@ func buildAIPrompt(data *ReportData, baseResult *ScoreResult) string {
 
 // AIRequest AI API请求结构
 type AIRequest struct {
-	Model    string       `json:"model"`
-	Messages []AIMessage  `json:"messages"`
+	Model    string      `json:"model"`
+	Messages []AIMessage `json:"messages"`
 }
 
 // AIMessage AI消息结构
@@ -415,8 +450,15 @@ type AIResponse struct {
 
 // callAIAPI 调用AI API
 func callAIAPI(prompt string) (string, error) {
+	// Resolve named-provider aliases passed via -ai-api to the real endpoint
+	endpoint := ResolveAIEndpoint(AIAPIEndpoint)
+	model := AIModel
+	if m := ResolveAIModel(endpoint); m != "" {
+		model = m
+	}
+
 	reqBody := AIRequest{
-		Model: AIModel,
+		Model: model,
 		Messages: []AIMessage{
 			{Role: "user", Content: prompt},
 		},
@@ -427,7 +469,7 @@ func callAIAPI(prompt string) (string, error) {
 		return "", fmt.Errorf("JSON编码失败: %v", err)
 	}
 
-	req, err := http.NewRequest("POST", AIAPIEndpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("创建请求失败: %v", err)
 	}
