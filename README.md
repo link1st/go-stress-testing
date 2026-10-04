@@ -488,7 +488,7 @@ Usage of ./go-stress-testing-mac:
   -format string
       报告格式: html(默认) 或 md
   -ai-api string
-      AI API地址或命名provider别名(可选,用于智能评分,支持orcarouter/openrouter)
+      AI API地址或命名provider别名(可选,用于智能评分,支持orcarouter/openrouter/cheaperinference)
   -ai-key string
       AI API Key(可选)
   -ai-model string
@@ -781,9 +781,14 @@ request:
 ./go-stress-testing -c 10 -n 100 -u https://example.com \
   -ai-api openrouter \
   -ai-key "your-openrouter-api-key"
+
+# 使用 Cheaper Inference（OpenAI 兼容 AI 网关）进行智能分析
+./go-stress-testing -c 10 -n 100 -u https://example.com \
+  -ai-api cheaperinference \
+  -ai-key "your-cheaperinference-api-key"
 ```
 
-别名 provider 会自动使用该服务推荐的默认模型（如 OrcaRouter 使用 `orcarouter/fusion-mini`），也可用 `-ai-model` 覆盖。
+别名 provider 会自动使用该服务推荐的默认模型（如 OrcaRouter 使用 `orcarouter/fusion-mini`，Cheaper Inference 使用 `gpt-5.4-mini`），也可用 `-ai-model` 覆盖。
 
 #### 4.6.2 可视化图表
 

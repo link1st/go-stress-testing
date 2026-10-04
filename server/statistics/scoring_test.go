@@ -341,6 +341,7 @@ func TestResolveAIEndpoint(t *testing.T) {
 		endpoint string
 		want     string
 	}{
+		{"cheaperinference alias", "cheaperinference", "https://api.cheaperinference.com/v1/chat/completions"},
 		{"orcarouter alias", "orcarouter", "https://api.orcarouter.ai/v1/chat/completions"},
 		{"openrouter alias", "openrouter", "https://openrouter.ai/api/v1/chat/completions"},
 		{"full URL passes through", "https://api.example.com/v1/chat/completions", "https://api.example.com/v1/chat/completions"},
@@ -363,6 +364,12 @@ func TestResolveAIModel(t *testing.T) {
 	}
 	if got := ResolveAIModel("orcarouter"); got != "orcarouter/fusion-mini" {
 		t.Errorf("orcarouter alias should resolve to orcarouter/fusion-mini, got %q", got)
+	}
+	if got := ResolveAIModel("https://api.cheaperinference.com/v1/chat/completions"); got != "gpt-5.4-mini" {
+		t.Errorf("cheaperinference URL should resolve to gpt-5.4-mini, got %q", got)
+	}
+	if got := ResolveAIModel("cheaperinference"); got != "gpt-5.4-mini" {
+		t.Errorf("cheaperinference alias should resolve to gpt-5.4-mini, got %q", got)
 	}
 	if got := ResolveAIModel("https://openrouter.ai/api/v1/chat/completions"); got != "" {
 		t.Errorf("openrouter should not have a default model, got %q", got)

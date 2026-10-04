@@ -42,8 +42,9 @@ var (
 // Chat Completions endpoint. Aliased providers reuse the exact same
 // OpenAI-compatible request path as a plain custom base URL.
 var namedAIEndpoints = map[string]string{
-	"openrouter": "https://openrouter.ai/api/v1/chat/completions",
-	"orcarouter": "https://api.orcarouter.ai/v1/chat/completions",
+	"cheaperinference": "https://api.cheaperinference.com/v1/chat/completions",
+	"openrouter":       "https://openrouter.ai/api/v1/chat/completions",
+	"orcarouter":       "https://api.orcarouter.ai/v1/chat/completions",
 }
 
 // ResolveAIEndpoint resolves a -ai-api alias to its real OpenAI-compatible
@@ -66,6 +67,8 @@ func ResolveAIModel(endpointOrAlias string) string {
 	}
 
 	switch endpoint {
+	case namedAIEndpoints["cheaperinference"]:
+		return "gpt-5.4-mini"
 	case namedAIEndpoints["orcarouter"]:
 		return "orcarouter/fusion-mini"
 	default:
