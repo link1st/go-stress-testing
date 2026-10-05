@@ -74,7 +74,7 @@ func init() {
 	flag.BoolVar(&redirect, "redirect", redirect, "是否重定向")
 	flag.StringVar(&outputPath, "o", outputPath, "测试报告输出路径(默认HTML格式)")
 	flag.StringVar(&outputFormat, "format", outputFormat, "报告格式: html(默认) 或 md")
-	flag.StringVar(&aiAPIEndpoint, "ai-api", aiAPIEndpoint, "AI API地址或命名provider别名(可选,用于智能评分,支持orcarouter/openrouter)")
+	flag.StringVar(&aiAPIEndpoint, "ai-api", aiAPIEndpoint, "AI API地址或命名provider别名(可选,用于智能评分,支持orcarouter/openrouter/cheaperinference)")
 	flag.StringVar(&aiAPIKey, "ai-key", aiAPIKey, "AI API Key(可选)")
 	flag.StringVar(&aiModel, "ai-model", aiModel, "AI模型名称(可选,默认gpt-3.5-turbo,命名provider使用各自默认模型)")
 	flag.Parse()
